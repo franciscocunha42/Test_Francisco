@@ -13,7 +13,7 @@
 
 DO $$
 DECLARE
-  v_user_id       uuid := 'a0000000-0000-0000-0000-000000000001';
+  v_user_id       uuid := '2e913d5d-c416-4618-b6d0-9f8465fadda1';
   v_wedding_id    uuid := 'b0000000-0000-0000-0000-000000000001';
   v_wedding_date  date := CURRENT_DATE + INTERVAL '200 days';
 
