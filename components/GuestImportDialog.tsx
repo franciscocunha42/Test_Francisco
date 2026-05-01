@@ -2,8 +2,8 @@
 
 import { useState, useRef } from "react";
 import { toast } from "sonner";
-import { Upload } from "lucide-react";
-import { parseGuestCsv } from "@/lib/utils/csv";
+import { Upload, Download } from "lucide-react";
+import { parseGuestCsv, downloadGuestCsvTemplate } from "@/lib/utils/csv";
 import { bulkImportGuests } from "@/lib/actions/guest";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -45,9 +45,21 @@ export function GuestImportDialog({ weddingId, trigger }: GuestImportDialogProps
       <DialogContent>
         <DialogHeader><DialogTitle>Import Guests from CSV</DialogTitle></DialogHeader>
         <div className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            CSV must have headers: <code className="font-mono text-xs bg-muted px-1 rounded">first_name, last_name</code>. Optional: email, phone, party_name, dietary_requirements, plus_one_allowed.
-          </p>
+          <div className="flex items-start justify-between gap-3">
+            <p className="text-sm text-muted-foreground">
+              CSV must have headers: <code className="font-mono text-xs bg-muted px-1 rounded">first_name, last_name</code>. Optional: email, phone, party_name, dietary_requirements, plus_one_allowed.
+            </p>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="shrink-0"
+              onClick={() => downloadGuestCsvTemplate()}
+            >
+              <Download className="mr-1.5 h-3.5 w-3.5" />
+              Template
+            </Button>
+          </div>
           <div
             className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border p-8 cursor-pointer hover:bg-muted/50 transition-colors"
             onClick={() => inputRef.current?.click()}

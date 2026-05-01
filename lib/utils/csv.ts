@@ -49,3 +49,27 @@ export function exportToCsv(rows: Record<string, unknown>[], filename: string): 
   link.click();
   URL.revokeObjectURL(url);
 }
+
+export function downloadGuestCsvTemplate(): void {
+  const rows: Record<string, string>[] = [
+    {
+      first_name: "Jane",
+      last_name: "Doe",
+      email: "jane.doe@example.com",
+      phone: "+1 555 123 4567",
+      party_name: "Doe Family",
+      dietary_requirements: "Vegetarian",
+      plus_one_allowed: "true",
+    },
+    {
+      first_name: "John",
+      last_name: "Smith",
+      email: "",
+      phone: "",
+      party_name: "College Friends",
+      dietary_requirements: "",
+      plus_one_allowed: "false",
+    },
+  ];
+  exportToCsv(rows, "vowplan-guests-template.csv");
+}
