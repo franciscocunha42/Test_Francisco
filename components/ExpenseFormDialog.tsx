@@ -27,9 +27,10 @@ interface ExpenseFormDialogProps {
   categories: BudgetCategory[];
   vendors: { id: string; name: string }[];
   trigger: React.ReactNode;
+  onSubmit?: (data: ExpenseFormValues, existing?: Expense) => Promise<{ ok: boolean; error?: string }>;
 }
 
-export function ExpenseFormDialog({ weddingId, expense, categories, vendors, trigger }: ExpenseFormDialogProps) {
+export function ExpenseFormDialog({ weddingId, expense, categories, vendors, trigger, onSubmit: onSubmitProp }: ExpenseFormDialogProps) {
   const [open, setOpen] = useState(false);
   const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<ExpenseFormValues>({
     resolver: zodResolver(expenseSchema),
@@ -37,9 +38,11 @@ export function ExpenseFormDialog({ weddingId, expense, categories, vendors, tri
   });
 
   async function onSubmit(data: ExpenseFormValues) {
-    const result = expense
-      ? await updateExpense(weddingId, expense.id, data)
-      : await createExpense(weddingId, data);
+    const result = onSubmitProp
+      ? await onSubmitProp(data, expense)
+      : expense
+        ? await updateExpense(weddingId, expense.id, data)
+        : await createExpense(weddingId, data);
     if (result?.ok === false) { toast.error(result.error); return; }
     toast.success(expense ? "Expense updated" : "Expense added");
     setOpen(false);

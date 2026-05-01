@@ -11,9 +11,10 @@ import { Button } from "@/components/ui/button";
 interface GuestImportDialogProps {
   weddingId: string;
   trigger: React.ReactNode;
+  onImport?: (rows: ReturnType<typeof parseGuestCsv>["data"]) => Promise<{ ok: boolean; error?: string; count?: number }>;
 }
 
-export function GuestImportDialog({ weddingId, trigger }: GuestImportDialogProps) {
+export function GuestImportDialog({ weddingId, trigger, onImport }: GuestImportDialogProps) {
   const [open, setOpen] = useState(false);
   const [preview, setPreview] = useState<{ data: ReturnType<typeof parseGuestCsv>["data"]; errors: string[] } | null>(null);
   const [importing, setImporting] = useState(false);
@@ -31,10 +32,12 @@ export function GuestImportDialog({ weddingId, trigger }: GuestImportDialogProps
   async function handleImport() {
     if (!preview?.data.length) return;
     setImporting(true);
-    const result = await bulkImportGuests(weddingId, preview.data);
+    const result = onImport
+      ? await onImport(preview.data)
+      : await bulkImportGuests(weddingId, preview.data);
     setImporting(false);
     if (result?.ok === false) { toast.error(result.error); return; }
-    toast.success(`Imported ${result.count} guests`);
+    toast.success(`Imported ${result.count ?? preview.data.length} guests`);
     setOpen(false);
     setPreview(null);
   }

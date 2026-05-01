@@ -12,6 +12,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { VendorFormDialog } from "@/components/VendorFormDialog";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import type { Vendor } from "@/lib/types/database";
+import type { VendorFormValues } from "@/lib/schemas/vendor";
 
 const statusColors: Record<string, "default" | "secondary" | "warning" | "info" | "success" | "destructive"> = {
   researching: "secondary",
@@ -21,9 +22,19 @@ const statusColors: Record<string, "default" | "secondary" | "warning" | "info" 
   rejected: "destructive",
 };
 
-export function VendorCard({ vendor, weddingId, currency = "USD" }: { vendor: Vendor; weddingId: string; currency?: string }) {
+interface VendorCardProps {
+  vendor: Vendor;
+  weddingId: string;
+  currency?: string;
+  onEditSubmit?: (data: VendorFormValues, existing?: Vendor) => Promise<{ ok: boolean; error?: string }>;
+  onDelete?: (vendorId: string) => Promise<{ ok: boolean; error?: string }>;
+}
+
+export function VendorCard({ vendor, weddingId, currency = "USD", onEditSubmit, onDelete }: VendorCardProps) {
   async function handleDelete() {
-    const result = await deleteVendor(weddingId, vendor.id);
+    const result = onDelete
+      ? await onDelete(vendor.id)
+      : await deleteVendor(weddingId, vendor.id);
     if (result?.ok === false) toast.error(result.error);
     else toast.success("Vendor removed");
   }
@@ -40,6 +51,7 @@ export function VendorCard({ vendor, weddingId, currency = "USD" }: { vendor: Ve
             <VendorFormDialog
               weddingId={weddingId}
               vendor={vendor}
+              onSubmit={onEditSubmit}
               trigger={<Button variant="ghost" size="icon" className="h-7 w-7"><Pencil className="h-3.5 w-3.5" /></Button>}
             />
             <ConfirmDialog

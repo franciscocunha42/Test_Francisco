@@ -18,9 +18,10 @@ interface TaskFormDialogProps {
   weddingId: string;
   task?: TimelineTask;
   trigger: React.ReactNode;
+  onSubmit?: (data: TaskFormValues, existing?: TimelineTask) => Promise<{ ok: boolean; error?: string }>;
 }
 
-export function TaskFormDialog({ weddingId, task, trigger }: TaskFormDialogProps) {
+export function TaskFormDialog({ weddingId, task, trigger, onSubmit: onSubmitProp }: TaskFormDialogProps) {
   const [open, setOpen] = useState(false);
   const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
@@ -28,9 +29,11 @@ export function TaskFormDialog({ weddingId, task, trigger }: TaskFormDialogProps
   });
 
   async function onSubmit(data: TaskFormValues) {
-    const result = task
-      ? await updateTask(weddingId, task.id, data)
-      : await createTask(weddingId, data);
+    const result = onSubmitProp
+      ? await onSubmitProp(data, task)
+      : task
+        ? await updateTask(weddingId, task.id, data)
+        : await createTask(weddingId, data);
     if (result?.ok === false) { toast.error(result.error); return; }
     toast.success(task ? "Task updated" : "Task created");
     setOpen(false);

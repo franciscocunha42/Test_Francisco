@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { GuestFormDialog } from "@/components/GuestFormDialog";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import type { Guest } from "@/lib/types/database";
+import type { GuestFormValues } from "@/lib/schemas/guest";
 
 const rsvpColors: Record<string, "success" | "destructive" | "secondary"> = {
   attending: "success",
@@ -25,9 +26,12 @@ const rsvpLabels: Record<string, string> = {
 interface GuestTableProps {
   guests: Guest[];
   weddingId: string;
+  /** Override default server-action mutations (used by guest mode). */
+  onEditSubmit?: (data: GuestFormValues, existing?: Guest) => Promise<{ ok: boolean; error?: string }>;
+  onDelete?: (guestId: string) => Promise<{ ok: boolean; error?: string }>;
 }
 
-export function GuestTable({ guests, weddingId }: GuestTableProps) {
+export function GuestTable({ guests, weddingId, onEditSubmit, onDelete }: GuestTableProps) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string>("all");
 
@@ -39,7 +43,9 @@ export function GuestTable({ guests, weddingId }: GuestTableProps) {
   });
 
   async function handleDelete(guest: Guest) {
-    const result = await deleteGuest(weddingId, guest.id);
+    const result = onDelete
+      ? await onDelete(guest.id)
+      : await deleteGuest(weddingId, guest.id);
     if (result?.ok === false) toast.error(result.error);
     else toast.success("Guest removed");
   }
@@ -96,6 +102,7 @@ export function GuestTable({ guests, weddingId }: GuestTableProps) {
                     <GuestFormDialog
                       weddingId={weddingId}
                       guest={guest}
+                      onSubmit={onEditSubmit}
                       trigger={<Button variant="ghost" size="icon" className="h-7 w-7"><Pencil className="h-3.5 w-3.5" /></Button>}
                     />
                     <ConfirmDialog

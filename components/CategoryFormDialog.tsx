@@ -16,9 +16,10 @@ interface CategoryFormDialogProps {
   weddingId: string;
   category?: BudgetCategory;
   trigger: React.ReactNode;
+  onSubmit?: (data: BudgetCategoryFormValues, existing?: BudgetCategory) => Promise<{ ok: boolean; error?: string }>;
 }
 
-export function CategoryFormDialog({ weddingId, category, trigger }: CategoryFormDialogProps) {
+export function CategoryFormDialog({ weddingId, category, trigger, onSubmit: onSubmitProp }: CategoryFormDialogProps) {
   const [open, setOpen] = useState(false);
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<BudgetCategoryFormValues>({
     resolver: zodResolver(budgetCategorySchema),
@@ -26,9 +27,11 @@ export function CategoryFormDialog({ weddingId, category, trigger }: CategoryFor
   });
 
   async function onSubmit(data: BudgetCategoryFormValues) {
-    const result = category
-      ? await updateBudgetCategory(weddingId, category.id, data)
-      : await createBudgetCategory(weddingId, data);
+    const result = onSubmitProp
+      ? await onSubmitProp(data, category)
+      : category
+        ? await updateBudgetCategory(weddingId, category.id, data)
+        : await createBudgetCategory(weddingId, data);
     if (result?.ok === false) { toast.error(result.error); return; }
     toast.success(category ? "Category updated" : "Category created");
     setOpen(false);

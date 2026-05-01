@@ -26,13 +26,20 @@ const NEXT_STATUS: Record<TaskStatus, TaskStatus> = {
   completed: "not_started",
 };
 
+import type { TaskFormValues } from "@/lib/schemas/timeline";
+
 interface TimelineTaskCardProps {
   task: TimelineTask;
   weddingId: string;
   onToggle?: (taskId: string, newStatus: TaskStatus) => void;
+  /** When provided, replace the default server-action calls. Used by
+   *  guest mode to write into the local store. */
+  onUpdate?: (taskId: string, patch: Partial<TimelineTask>) => Promise<{ ok: boolean; error?: string }>;
+  onDelete?: (taskId: string) => Promise<{ ok: boolean; error?: string }>;
+  onEditSubmit?: (data: TaskFormValues, existing?: TimelineTask) => Promise<{ ok: boolean; error?: string }>;
 }
 
-export function TimelineTaskCard({ task, weddingId, onToggle }: TimelineTaskCardProps) {
+export function TimelineTaskCard({ task, weddingId, onToggle, onUpdate, onDelete, onEditSubmit }: TimelineTaskCardProps) {
   const [status, setStatus] = useState<TaskStatus>(task.status as TaskStatus);
   const [pending, setPending] = useState(false);
   const done = status === "completed";
@@ -47,7 +54,9 @@ export function TimelineTaskCard({ task, weddingId, onToggle }: TimelineTaskCard
     onToggle?.(task.id, next);
     setPending(true);
 
-    const result = await updateTask(weddingId, task.id, { status: next });
+    const result = onUpdate
+      ? await onUpdate(task.id, { status: next })
+      : await updateTask(weddingId, task.id, { status: next });
     setPending(false);
 
     if (result?.ok === false) {
@@ -58,7 +67,9 @@ export function TimelineTaskCard({ task, weddingId, onToggle }: TimelineTaskCard
   }
 
   async function handleDelete() {
-    const result = await deleteTask(weddingId, task.id);
+    const result = onDelete
+      ? await onDelete(task.id)
+      : await deleteTask(weddingId, task.id);
     if (result?.ok === false) toast.error(result.error);
     else toast.success("Task deleted");
   }
@@ -109,6 +120,7 @@ export function TimelineTaskCard({ task, weddingId, onToggle }: TimelineTaskCard
         <TaskFormDialog
           weddingId={weddingId}
           task={task}
+          onSubmit={onEditSubmit}
           trigger={
             <Button variant="ghost" size="icon" className="h-7 w-7">
               <Pencil className="h-3.5 w-3.5" />

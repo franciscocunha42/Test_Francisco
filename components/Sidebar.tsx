@@ -4,22 +4,31 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Calendar, Users, Store,
-  PiggyBank, FileText, Settings, Heart,
+  PiggyBank, FileText, Settings, Heart, Lock,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
 const navItems = [
-  { href: "dashboard",  label: "Dashboard",   icon: LayoutDashboard },
-  { href: "timeline",   label: "Timeline",     icon: Calendar },
-  { href: "guests",     label: "Guests & RSVP", icon: Users },
-  { href: "suppliers",  label: "Suppliers",    icon: Store },
-  { href: "budget",     label: "Budget",       icon: PiggyBank },
-  { href: "forms",      label: "Forms",        icon: FileText },
-  { href: "settings",   label: "Settings",     icon: Settings },
+  { href: "dashboard",  label: "Dashboard",   icon: LayoutDashboard, lockInGuest: false },
+  { href: "timeline",   label: "Timeline",     icon: Calendar,        lockInGuest: false },
+  { href: "guests",     label: "Guests & RSVP", icon: Users,           lockInGuest: false },
+  { href: "suppliers",  label: "Suppliers",    icon: Store,           lockInGuest: false },
+  { href: "budget",     label: "Budget",       icon: PiggyBank,       lockInGuest: false },
+  { href: "forms",      label: "Forms",        icon: FileText,        lockInGuest: true  },
+  { href: "settings",   label: "Settings",     icon: Settings,        lockInGuest: false },
 ];
 
-export function Sidebar({ weddingId }: { weddingId: string }) {
+interface SidebarProps {
+  weddingId?: string;
+  /** Path prefix for nav links. Defaults to `/${weddingId}`. Guest
+   *  mode passes `/plan`. */
+  basePath?: string;
+}
+
+export function Sidebar({ weddingId, basePath }: SidebarProps) {
   const pathname = usePathname();
+  const prefix = basePath ?? `/${weddingId}`;
+  const isGuest = prefix === "/plan";
 
   return (
     <>
@@ -30,9 +39,10 @@ export function Sidebar({ weddingId }: { weddingId: string }) {
           <span className="font-serif text-xl font-semibold text-primary">VowPlan</span>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1">
-          {navItems.map(({ href, label, icon: Icon }) => {
-            const full = `/${weddingId}/${href}`;
+          {navItems.map(({ href, label, icon: Icon, lockInGuest }) => {
+            const full = `${prefix}/${href}`;
             const active = pathname === full;
+            const locked = isGuest && lockInGuest;
             return (
               <Link
                 key={href}
@@ -45,7 +55,8 @@ export function Sidebar({ weddingId }: { weddingId: string }) {
                 )}
               >
                 <Icon className="h-4 w-4" />
-                {label}
+                <span className="flex-1">{label}</span>
+                {locked && <Lock className="h-3 w-3 opacity-60" />}
               </Link>
             );
           })}
@@ -55,7 +66,7 @@ export function Sidebar({ weddingId }: { weddingId: string }) {
       {/* Mobile bottom tab bar */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t bg-card flex justify-around py-2">
         {navItems.slice(0, 5).map(({ href, label, icon: Icon }) => {
-          const full = `/${weddingId}/${href}`;
+          const full = `${prefix}/${href}`;
           const active = pathname === full;
           return (
             <Link key={href} href={full} className="flex flex-col items-center gap-0.5">

@@ -25,9 +25,10 @@ interface VendorFormDialogProps {
   weddingId: string;
   vendor?: Vendor;
   trigger: React.ReactNode;
+  onSubmit?: (data: VendorFormValues, existing?: Vendor) => Promise<{ ok: boolean; error?: string }>;
 }
 
-export function VendorFormDialog({ weddingId, vendor, trigger }: VendorFormDialogProps) {
+export function VendorFormDialog({ weddingId, vendor, trigger, onSubmit: onSubmitProp }: VendorFormDialogProps) {
   const [open, setOpen] = useState(false);
   const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<VendorFormValues>({
     resolver: zodResolver(vendorSchema),
@@ -35,9 +36,11 @@ export function VendorFormDialog({ weddingId, vendor, trigger }: VendorFormDialo
   });
 
   async function onSubmit(data: VendorFormValues) {
-    const result = vendor
-      ? await updateVendor(weddingId, vendor.id, data)
-      : await createVendor(weddingId, data);
+    const result = onSubmitProp
+      ? await onSubmitProp(data, vendor)
+      : vendor
+        ? await updateVendor(weddingId, vendor.id, data)
+        : await createVendor(weddingId, data);
     if (result?.ok === false) { toast.error(result.error); return; }
     toast.success(vendor ? "Vendor updated" : "Vendor added");
     setOpen(false);

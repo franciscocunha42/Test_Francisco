@@ -7,7 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 
-export function CreateWeddingForm({ hasWeddings }: { hasWeddings: boolean }) {
+interface CreateWeddingFormProps {
+  hasWeddings: boolean;
+  /** When provided, the form posts to this handler instead of the
+   *  createWedding server action. Used by guest mode to write into
+   *  the local Zustand store. */
+  onSubmit?: (data: FormData) => Promise<{ ok: boolean; error?: string }>;
+  submitLabel?: string;
+}
+
+export function CreateWeddingForm({ hasWeddings, onSubmit, submitLabel }: CreateWeddingFormProps) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -16,7 +25,7 @@ export function CreateWeddingForm({ hasWeddings }: { hasWeddings: boolean }) {
     const fd = new FormData(e.currentTarget);
     setError(null);
     startTransition(async () => {
-      const result = await createWedding(fd);
+      const result = onSubmit ? await onSubmit(fd) : await createWedding(fd);
       if (result && !result.ok) {
         setError(result.error ?? "Something went wrong. Please try again.");
       }
@@ -68,7 +77,7 @@ export function CreateWeddingForm({ hasWeddings }: { hasWeddings: boolean }) {
         ) : (
           <>
             <Plus className="mr-2 h-4 w-4" />
-            {hasWeddings ? "Create New Wedding" : "Create Wedding"}
+            {submitLabel ?? (hasWeddings ? "Create New Wedding" : "Create Wedding")}
           </>
         )}
       </Button>

@@ -20,9 +20,10 @@ interface GuestFormDialogProps {
   guest?: Guest;
   trigger: React.ReactNode;
   onSaved?: () => void;
+  onSubmit?: (data: GuestFormValues, existing?: Guest) => Promise<{ ok: boolean; error?: string }>;
 }
 
-export function GuestFormDialog({ weddingId, guest, trigger, onSaved }: GuestFormDialogProps) {
+export function GuestFormDialog({ weddingId, guest, trigger, onSaved, onSubmit: onSubmitProp }: GuestFormDialogProps) {
   const [open, setOpen] = useState(false);
   const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<GuestFormValues>({
     resolver: zodResolver(guestSchema),
@@ -32,9 +33,11 @@ export function GuestFormDialog({ weddingId, guest, trigger, onSaved }: GuestFor
   const plusOneAllowed = watch("plus_one_allowed");
 
   async function onSubmit(data: GuestFormValues) {
-    const result = guest
-      ? await updateGuest(weddingId, guest.id, data)
-      : await createGuest(weddingId, data);
+    const result = onSubmitProp
+      ? await onSubmitProp(data, guest)
+      : guest
+        ? await updateGuest(weddingId, guest.id, data)
+        : await createGuest(weddingId, data);
     if (result?.ok === false) { toast.error(result.error); return; }
     toast.success(guest ? "Guest updated" : "Guest added");
     setOpen(false);
