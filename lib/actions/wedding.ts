@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { requireUser } from "@/lib/auth";
 import { weddingSchema } from "@/lib/schemas/wedding";
 
@@ -12,8 +13,11 @@ export async function createWedding(formData: FormData) {
   const parsed = weddingSchema.safeParse(raw);
   if (!parsed.success) return { ok: false, error: parsed.error.errors[0].message };
 
-  const supabase = createClient();
-  const { data: wedding, error } = await supabase
+  // Use the service-role client for the insert. Auth has already been
+  // verified by requireUser(); this avoids edge cases where the SSR
+  // client's JWT isn't picked up by PostgREST during a server action.
+  const admin = createAdminClient();
+  const { data: wedding, error } = await admin
     .from("weddings")
     .insert({ ...parsed.data, created_by: user.id })
     .select()
@@ -21,11 +25,13 @@ export async function createWedding(formData: FormData) {
 
   if (error) return { ok: false, error: error.message };
 
-  await supabase.from("wedding_members").insert({
+  const { error: memberError } = await admin.from("wedding_members").insert({
     wedding_id: wedding.id,
     user_id: user.id,
     role: "owner",
   });
+
+  if (memberError) return { ok: false, error: memberError.message };
 
   redirect(`/${wedding.id}/dashboard`);
 }
