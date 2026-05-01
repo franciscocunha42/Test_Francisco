@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
 import { toRgba } from "@/lib/utils/budget-colors";
+import { getCategoryEmoji } from "@/lib/utils/category-emojis";
 import { deleteBudgetCategory } from "@/lib/actions/budget";
 import type { BudgetCategory } from "@/lib/types/database";
 import type { BudgetCategoryFormValues } from "@/lib/schemas/budget";
@@ -112,6 +113,7 @@ export function BudgetCategoriesCard({
                       style={{ background: toRgba(rgb, 1) }}
                     />
                   )}
+                  <span className="shrink-0">{getCategoryEmoji(cat.name)}</span>
                   <span className="font-medium truncate">{cat.name}</span>
                 </div>
                 <div className="flex items-center gap-2 shrink-0 ml-2">

@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { PiggyBank, Plus, Pencil, Trash2 } from "lucide-react";
 import { formatCurrency, formatDate, capitalize } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
+import { getCategoryEmoji } from "@/lib/utils/category-emojis";
 import { deleteExpense } from "@/lib/actions/budget";
 
 const paymentColors: Record<string, "secondary" | "warning" | "info" | "success"> = {
@@ -109,7 +110,9 @@ export default async function BudgetPage({ params }: { params: { weddingId: stri
                         return (
                           <tr key={exp.id} className="hover:bg-muted/30">
                             <td className="py-2.5">{exp.title}</td>
-                            <td className="py-2.5 hidden sm:table-cell text-muted-foreground">{cat?.name ?? "—"}</td>
+                            <td className="py-2.5 hidden sm:table-cell text-muted-foreground">
+                              {cat ? <>{getCategoryEmoji(cat.name)} {cat.name}</> : "—"}
+                            </td>
                             <td className="py-2.5">{formatCurrency(exp.planned_amount, currency)}</td>
                             <td className={cn("py-2.5", exp.actual_amount > exp.planned_amount && "text-destructive")}>
                               {formatCurrency(exp.actual_amount, currency)}

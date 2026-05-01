@@ -6,6 +6,7 @@ import {
 } from "recharts";
 import { formatCurrency } from "@/lib/utils/format";
 import { toRgba } from "@/lib/utils/budget-colors";
+import { getCategoryEmoji } from "@/lib/utils/category-emojis";
 import type { BudgetCategory } from "@/lib/types/database";
 
 interface BudgetChartProps {
@@ -19,13 +20,17 @@ interface BudgetChartProps {
 const FALLBACK_RGB: [number, number, number] = [140, 140, 140];
 
 export function BudgetChart({ categories, currency = "USD", colorMap }: BudgetChartProps) {
-  const data = categories.map((c) => ({
-    id: c.id,
-    name: c.name.length > 12 ? c.name.slice(0, 12) + "…" : c.name,
-    Planned: c.planned_amount,
-    Actual: c.actual_amount,
-    overBudget: c.actual_amount > c.planned_amount,
-  }));
+  const data = categories.map((c) => {
+    const emoji = getCategoryEmoji(c.name);
+    const truncated = c.name.length > 12 ? c.name.slice(0, 12) + "…" : c.name;
+    return {
+      id: c.id,
+      name: `${emoji} ${truncated}`,
+      Planned: c.planned_amount,
+      Actual: c.actual_amount,
+      overBudget: c.actual_amount > c.planned_amount,
+    };
+  });
 
   return (
     <div className="space-y-3">
@@ -117,6 +122,7 @@ function ChartLegend({
                 className="inline-block h-2.5 w-2.5 rounded-full shrink-0"
                 style={{ background: toRgba(rgb, 1) }}
               />
+              <span>{getCategoryEmoji(cat.name)}</span>
               {cat.name}
             </div>
           );
