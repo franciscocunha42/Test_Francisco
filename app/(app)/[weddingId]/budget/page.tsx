@@ -3,6 +3,7 @@ import { requireWeddingMember } from "@/lib/auth";
 import type { Wedding, BudgetCategory, Expense, Vendor } from "@/lib/types/database";
 import { BudgetSummary } from "@/components/BudgetSummary";
 import { BudgetChart } from "@/components/BudgetChart";
+import { BudgetCategoriesCard } from "@/components/BudgetCategoriesCard";
 import { CategoryFormDialog } from "@/components/CategoryFormDialog";
 import { ExpenseFormDialog } from "@/components/ExpenseFormDialog";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
@@ -77,40 +78,11 @@ export default async function BudgetPage({ params }: { params: { weddingId: stri
                 <BudgetChart categories={allCategories} currency={currency} />
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader className="pb-2">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base">Categories</CardTitle>
-                  <CategoryFormDialog weddingId={weddingId} trigger={<Button variant="ghost" size="sm"><Plus className="h-3.5 w-3.5" /></Button>} />
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {allCategories.map((cat) => {
-                  const pct = cat.planned_amount > 0 ? Math.min(100, Math.round((cat.actual_amount / cat.planned_amount) * 100)) : 0;
-                  const over = cat.actual_amount > cat.planned_amount;
-                  return (
-                    <div key={cat.id} className="space-y-1.5">
-                      <div className="flex items-center justify-between text-sm">
-                        <span className="font-medium">{cat.name}</span>
-                        <div className="flex items-center gap-2">
-                          <span className={cn("text-xs", over && "text-destructive")}>
-                            {formatCurrency(cat.actual_amount, currency)} / {formatCurrency(cat.planned_amount, currency)}
-                          </span>
-                          <CategoryFormDialog weddingId={weddingId} category={cat} trigger={<button className="text-muted-foreground hover:text-foreground"><Pencil className="h-3 w-3" /></button>} />
-                          <ConfirmDialog
-                            trigger={<button className="text-muted-foreground hover:text-destructive"><Trash2 className="h-3 w-3" /></button>}
-                            title="Delete category"
-                            description={`Delete "${cat.name}"?`}
-                            onConfirm={async () => { "use server"; await deleteBudgetCategory(weddingId, cat.id); }}
-                          />
-                        </div>
-                      </div>
-                      <Progress value={pct} className={cn(over && "[&>*]:bg-destructive")} />
-                    </div>
-                  );
-                })}
-              </CardContent>
-            </Card>
+            <BudgetCategoriesCard
+              categories={allCategories}
+              currency={currency}
+              weddingId={weddingId}
+            />
           </div>
 
           {/* Expenses table */}
