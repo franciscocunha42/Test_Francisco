@@ -5,8 +5,7 @@ import { useRouter } from "next/navigation";
 import { PiggyBank, Plus, Pencil, Trash2 } from "lucide-react";
 import { GuestAppShell } from "@/components/GuestAppShell";
 import { BudgetSummary } from "@/components/BudgetSummary";
-import { BudgetChart } from "@/components/BudgetChart";
-import { BudgetCategoriesCard } from "@/components/BudgetCategoriesCard";
+import { BudgetSortableSection } from "@/components/BudgetSortableSection";
 import { CategoryFormDialog } from "@/components/CategoryFormDialog";
 import { ExpenseFormDialog } from "@/components/ExpenseFormDialog";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
@@ -14,7 +13,6 @@ import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { formatCurrency, formatDate, capitalize } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
 import { useGuestStore } from "@/lib/guest-store/store";
@@ -89,23 +87,17 @@ export default function GuestBudgetPage() {
           <>
             <BudgetSummary totalBudget={wedding.total_budget} categories={categories} currency={currency} />
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <Card>
-                <CardHeader className="pb-2"><CardTitle className="text-base">Planned vs Actual</CardTitle></CardHeader>
-                <CardContent><BudgetChart categories={categories} currency={currency} /></CardContent>
-              </Card>
-              <BudgetCategoriesCard
-                categories={categories}
-                currency={currency}
-                weddingId="guest"
-                onSubmitCategory={async (data, existing) => {
-                  if (existing) { updateCategory(existing.id, data); return { ok: true }; }
-                  createCategory(data);
-                  return { ok: true };
-                }}
-                onDeleteCategory={(id) => deleteCategory(id)}
-              />
-            </div>
+            <BudgetSortableSection
+              categories={categories}
+              currency={currency}
+              weddingId="guest"
+              onSubmitCategory={async (data, existing) => {
+                if (existing) { updateCategory(existing.id, data); return { ok: true }; }
+                createCategory(data);
+                return { ok: true };
+              }}
+              onDeleteCategory={(id) => deleteCategory(id)}
+            />
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between pb-2">

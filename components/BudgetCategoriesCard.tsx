@@ -1,24 +1,52 @@
 "use client";
 
-import { useState } from "react";
 import { Plus, Pencil, Trash2, ArrowDownUp } from "lucide-react";
 import { CategoryFormDialog } from "@/components/CategoryFormDialog";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils/cn";
 import { formatCurrency } from "@/lib/utils/format";
+import { cn } from "@/lib/utils/cn";
+import { toRgba } from "@/lib/utils/budget-colors";
 import { deleteBudgetCategory } from "@/lib/actions/budget";
 import type { BudgetCategory } from "@/lib/types/database";
 import type { BudgetCategoryFormValues } from "@/lib/schemas/budget";
 
-type SortOrder = "desc" | "asc";
+function CategoryProgress({
+  pct,
+  over,
+  rgb,
+}: {
+  pct: number;
+  over: boolean;
+  rgb?: [number, number, number];
+}) {
+  const fill = over
+    ? "hsl(var(--destructive))"
+    : rgb
+      ? toRgba(rgb, 0.85)
+      : "hsl(var(--primary))";
+  return (
+    <div className="relative h-2 w-full overflow-hidden rounded-full bg-secondary">
+      <div
+        className="h-full rounded-full transition-all"
+        style={{ width: `${pct}%`, background: fill }}
+      />
+    </div>
+  );
+}
+
+export type SortOrder = "desc" | "asc";
 
 interface Props {
+  /** Pre-sorted categories — order is controlled by the parent. */
   categories: BudgetCategory[];
   currency: string;
   weddingId: string;
+  sortOrder: SortOrder;
+  onSortToggle: () => void;
+  /** Stable color map built from the original (unsorted) category list. */
+  colorMap?: Map<string, [number, number, number]>;
   /** When provided (guest mode), called instead of the server action. */
   onSubmitCategory?: (
     data: BudgetCategoryFormValues,
@@ -31,17 +59,12 @@ export function BudgetCategoriesCard({
   categories,
   currency,
   weddingId,
+  sortOrder,
+  onSortToggle,
+  colorMap,
   onSubmitCategory,
   onDeleteCategory,
 }: Props) {
-  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
-
-  const sorted = [...categories].sort((a, b) =>
-    sortOrder === "desc"
-      ? b.planned_amount - a.planned_amount
-      : a.planned_amount - b.planned_amount,
-  );
-
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -51,7 +74,7 @@ export function BudgetCategoriesCard({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => setSortOrder((s) => (s === "desc" ? "asc" : "desc"))}
+              onClick={onSortToggle}
               className="h-7 gap-1.5 px-2 text-xs text-muted-foreground"
               title={sortOrder === "desc" ? "Sorted: highest first" : "Sorted: lowest first"}
             >
@@ -71,17 +94,27 @@ export function BudgetCategoriesCard({
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        {sorted.map((cat) => {
+        {categories.map((cat) => {
           const pct =
             cat.planned_amount > 0
               ? Math.min(100, Math.round((cat.actual_amount / cat.planned_amount) * 100))
               : 0;
           const over = cat.actual_amount > cat.planned_amount;
+          const rgb = colorMap?.get(cat.id);
+
           return (
             <div key={cat.id} className="space-y-1.5">
               <div className="flex items-center justify-between text-sm">
-                <span className="font-medium">{cat.name}</span>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  {rgb && (
+                    <span
+                      className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+                      style={{ background: toRgba(rgb, 1) }}
+                    />
+                  )}
+                  <span className="font-medium truncate">{cat.name}</span>
+                </div>
+                <div className="flex items-center gap-2 shrink-0 ml-2">
                   <span className={cn("text-xs", over && "text-destructive")}>
                     {formatCurrency(cat.actual_amount, currency)} /{" "}
                     {formatCurrency(cat.planned_amount, currency)}
@@ -114,7 +147,7 @@ export function BudgetCategoriesCard({
                   />
                 </div>
               </div>
-              <Progress value={pct} className={cn(over && "[&>*]:bg-destructive")} />
+              <CategoryProgress pct={pct} over={over} rgb={rgb} />
             </div>
           );
         })}

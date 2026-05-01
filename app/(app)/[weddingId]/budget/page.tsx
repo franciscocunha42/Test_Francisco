@@ -2,8 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { requireWeddingMember } from "@/lib/auth";
 import type { Wedding, BudgetCategory, Expense, Vendor } from "@/lib/types/database";
 import { BudgetSummary } from "@/components/BudgetSummary";
-import { BudgetChart } from "@/components/BudgetChart";
-import { BudgetCategoriesCard } from "@/components/BudgetCategoriesCard";
+import { BudgetSortableSection } from "@/components/BudgetSortableSection";
 import { CategoryFormDialog } from "@/components/CategoryFormDialog";
 import { ExpenseFormDialog } from "@/components/ExpenseFormDialog";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
@@ -11,11 +10,10 @@ import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { PiggyBank, Plus, Pencil, Trash2 } from "lucide-react";
 import { formatCurrency, formatDate, capitalize } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
-import { deleteBudgetCategory, deleteExpense } from "@/lib/actions/budget";
+import { deleteExpense } from "@/lib/actions/budget";
 
 const paymentColors: Record<string, "secondary" | "warning" | "info" | "success"> = {
   unpaid: "secondary",
@@ -71,19 +69,11 @@ export default async function BudgetPage({ params }: { params: { weddingId: stri
         <>
           <BudgetSummary totalBudget={wedding?.total_budget ?? 0} categories={allCategories} currency={currency} />
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <Card>
-              <CardHeader className="pb-2"><CardTitle className="text-base">Planned vs Actual</CardTitle></CardHeader>
-              <CardContent>
-                <BudgetChart categories={allCategories} currency={currency} />
-              </CardContent>
-            </Card>
-            <BudgetCategoriesCard
-              categories={allCategories}
-              currency={currency}
-              weddingId={weddingId}
-            />
-          </div>
+          <BudgetSortableSection
+            categories={allCategories}
+            currency={currency}
+            weddingId={weddingId}
+          />
 
           {/* Expenses table */}
           <Card>
