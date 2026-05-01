@@ -39,7 +39,7 @@ export default function TimelinePage({ params }: { params: { weddingId: string }
 
   useEffect(() => { fetchTasks(); }, [weddingId]);
 
-  function handleTaskToggle(taskId: string, newStatus: "not_started" | "completed") {
+  function handleTaskToggle(taskId: string, newStatus: "not_started" | "in_progress" | "completed") {
     setTasks((prev) =>
       prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t))
     );
