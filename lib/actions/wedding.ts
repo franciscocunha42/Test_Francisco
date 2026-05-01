@@ -7,13 +7,13 @@ import { requireUser } from "@/lib/auth";
 import { weddingSchema } from "@/lib/schemas/wedding";
 
 const DEFAULT_BUDGET_CATEGORIES = [
-  "Venue & Rentals",
-  "Catering & Cake",
-  "Photography & Video",
-  "Flowers & Decor",
-  "Music & Entertainment",
-  "Beauty & Attire",
-  "Honeymoon",
+  { name: "Venue & Rentals",        planned_amount: 10500 },
+  { name: "Catering & Cake",        planned_amount:  8500 },
+  { name: "Photography & Video",    planned_amount:  3500 },
+  { name: "Flowers & Decor",        planned_amount:  2500 },
+  { name: "Music & Entertainment",  planned_amount:  1500 },
+  { name: "Beauty & Attire",        planned_amount:  2000 },
+  { name: "Honeymoon",              planned_amount:  1500 },
 ];
 
 export async function createWedding(formData: FormData) {
@@ -40,10 +40,10 @@ export async function createWedding(formData: FormData) {
   if (memberError) return { ok: false, error: memberError.message };
 
   await supabase.from("budget_categories").insert(
-    DEFAULT_BUDGET_CATEGORIES.map((name) => ({
+    DEFAULT_BUDGET_CATEGORIES.map(({ name, planned_amount }) => ({
       wedding_id: wedding.id,
       name,
-      planned_amount: 0,
+      planned_amount,
       actual_amount: 0,
     }))
   );

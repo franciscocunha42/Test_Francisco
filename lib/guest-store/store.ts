@@ -14,13 +14,13 @@ import type {
 
 // Default budget categories — kept in sync with lib/actions/wedding.ts
 export const DEFAULT_BUDGET_CATEGORIES = [
-  "Venue & Rentals",
-  "Catering & Cake",
-  "Photography & Video",
-  "Flowers & Decor",
-  "Music & Entertainment",
-  "Beauty & Attire",
-  "Honeymoon",
+  { name: "Venue & Rentals",        planned_amount: 10500 },
+  { name: "Catering & Cake",        planned_amount:  8500 },
+  { name: "Photography & Video",    planned_amount:  3500 },
+  { name: "Flowers & Decor",        planned_amount:  2500 },
+  { name: "Music & Entertainment",  planned_amount:  1500 },
+  { name: "Beauty & Attire",        planned_amount:  2000 },
+  { name: "Honeymoon",              planned_amount:  1500 },
 ];
 
 const SCHEMA_VERSION = 1 as const;
@@ -143,11 +143,11 @@ export const useGuestStore = create<StoreState>()(
             currency: input.currency ?? "USD",
             created_at: nowIso(),
           };
-          const defaultCategories: GuestBudgetCategory[] = DEFAULT_BUDGET_CATEGORIES.map((name) => ({
+          const defaultCategories: GuestBudgetCategory[] = DEFAULT_BUDGET_CATEGORIES.map(({ name, planned_amount }) => ({
             id: uuid(),
             wedding_id: weddingId,
             name,
-            planned_amount: 0,
+            planned_amount,
             actual_amount: 0,
             created_at: nowIso(),
           }));
