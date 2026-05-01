@@ -56,7 +56,13 @@ export default async function OnboardingPage() {
             <CardDescription>Set up your wedding workspace to get started</CardDescription>
           </CardHeader>
           <CardContent>
-            <form action={async (fd: FormData) => { await createWedding(fd); }} className="space-y-4">
+            <form
+              action={async (fd: FormData) => {
+                "use server";
+                await createWedding(fd);
+              }}
+              className="space-y-4"
+            >
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <Label htmlFor="partner_one_name">Your Name *</Label>
