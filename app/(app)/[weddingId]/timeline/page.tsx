@@ -5,13 +5,14 @@ import { createClient } from "@/lib/supabase/client";
 import { generateDefaultTimelineTasks } from "@/lib/actions/timeline";
 import { TimelineTaskCard } from "@/components/TimelineTaskCard";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
+import { TimelineGantt } from "@/components/TimelineGantt";
 import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, Plus, Wand2 } from "lucide-react";
+import { Calendar, Plus, Wand2, List, GanttChartSquare } from "lucide-react";
 import { toast } from "sonner";
-import { formatDate } from "@/lib/utils/format";
+import { cn } from "@/lib/utils/cn";
+import { Badge } from "@/components/ui/badge";
 import type { TimelineTask } from "@/lib/types/database";
 import { format, parseISO } from "date-fns";
 
@@ -22,18 +23,24 @@ export default function TimelinePage({ params }: { params: { weddingId: string }
   const { weddingId } = params;
   const supabase = createClient();
   const [tasks, setTasks] = useState<TimelineTask[]>([]);
+  const [weddingDate, setWeddingDate] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
+  const [view, setView] = useState<"list" | "gantt">("list");
   const [generating, startGenerating] = useTransition();
 
   async function fetchTasks() {
-    const { data } = await supabase
-      .from("timeline_tasks")
-      .select("*")
-      .eq("wedding_id", weddingId)
-      .order("due_date", { ascending: true, nullsFirst: false });
-    setTasks(data ?? []);
+    const [tasksRes, weddingRes] = await Promise.all([
+      supabase
+        .from("timeline_tasks")
+        .select("*")
+        .eq("wedding_id", weddingId)
+        .order("due_date", { ascending: true, nullsFirst: false }),
+      supabase.from("weddings").select("wedding_date").eq("id", weddingId).single(),
+    ]);
+    setTasks(tasksRes.data ?? []);
+    setWeddingDate(weddingRes.data?.wedding_date ?? null);
     setLoading(false);
   }
 
@@ -80,7 +87,8 @@ export default function TimelinePage({ params }: { params: { weddingId: string }
             {tasks.length > 0 ? `${completed} / ${tasks.length} tasks completed` : "Track your wedding preparation tasks"}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <ViewToggle view={view} onChange={setView} />
           {tasks.length === 0 && (
             <Button variant="outline" size="sm" onClick={handleGenerate} disabled={generating}>
               <Wand2 className="mr-1.5 h-3.5 w-3.5" />
@@ -95,7 +103,7 @@ export default function TimelinePage({ params }: { params: { weddingId: string }
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-2">
+      <div className={cn("flex flex-wrap gap-2", view === "gantt" && "hidden")}>
         <div className="flex flex-wrap gap-1">
           {STATUS_OPTIONS.map((s) => (
             <button
@@ -122,6 +130,8 @@ export default function TimelinePage({ params }: { params: { weddingId: string }
 
       {loading ? (
         <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}</div>
+      ) : view === "gantt" ? (
+        <TimelineGantt tasks={tasks} weddingDate={weddingDate} />
       ) : filtered.length === 0 ? (
         <EmptyState
           icon={Calendar}
@@ -150,6 +160,33 @@ export default function TimelinePage({ params }: { params: { weddingId: string }
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+function ViewToggle({ view, onChange }: { view: "list" | "gantt"; onChange: (v: "list" | "gantt") => void }) {
+  return (
+    <div className="inline-flex items-center rounded-lg border bg-muted/40 p-0.5">
+      <button
+        type="button"
+        onClick={() => onChange("list")}
+        className={cn(
+          "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
+          view === "list" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
+        )}
+      >
+        <List className="h-3.5 w-3.5" /> List
+      </button>
+      <button
+        type="button"
+        onClick={() => onChange("gantt")}
+        className={cn(
+          "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
+          view === "gantt" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
+        )}
+      >
+        <GanttChartSquare className="h-3.5 w-3.5" /> Gantt
+      </button>
     </div>
   );
 }

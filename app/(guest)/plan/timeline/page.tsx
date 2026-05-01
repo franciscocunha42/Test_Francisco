@@ -3,12 +3,14 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { format, parseISO } from "date-fns";
-import { Calendar, Plus, Wand2 } from "lucide-react";
+import { Calendar, Plus, Wand2, List, GanttChartSquare } from "lucide-react";
 import { GuestAppShell } from "@/components/GuestAppShell";
 import { TimelineTaskCard } from "@/components/TimelineTaskCard";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
+import { TimelineGantt } from "@/components/TimelineGantt";
 import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils/cn";
 import { useGuestStore } from "@/lib/guest-store/store";
 import { useState } from "react";
 
@@ -26,6 +28,7 @@ export default function GuestTimelinePage() {
 
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [priorityFilter, setPriorityFilter] = useState<string>("all");
+  const [view, setView] = useState<"list" | "gantt">("list");
 
   useEffect(() => {
     if (!wedding) router.replace("/plan");
@@ -58,7 +61,8 @@ export default function GuestTimelinePage() {
               {tasks.length > 0 ? `${completed} / ${tasks.length} tasks completed` : "Track your wedding preparation tasks"}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <ViewToggle view={view} onChange={setView} />
             {tasks.length === 0 && wedding.wedding_date && (
               <Button variant="outline" size="sm" onClick={() => generateDefaults()}>
                 <Wand2 className="mr-1.5 h-3.5 w-3.5" />Generate tasks
@@ -72,7 +76,7 @@ export default function GuestTimelinePage() {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        <div className={cn("flex flex-wrap gap-2", view === "gantt" && "hidden")}>
           <div className="flex flex-wrap gap-1">
             {STATUS_OPTIONS.map((s) => (
               <button
@@ -97,7 +101,9 @@ export default function GuestTimelinePage() {
           </div>
         </div>
 
-        {filtered.length === 0 ? (
+        {view === "gantt" ? (
+          <TimelineGantt tasks={tasks} weddingDate={wedding.wedding_date} />
+        ) : filtered.length === 0 ? (
           <EmptyState
             icon={Calendar}
             title="No tasks yet"
@@ -143,5 +149,32 @@ export default function GuestTimelinePage() {
         )}
       </div>
     </GuestAppShell>
+  );
+}
+
+function ViewToggle({ view, onChange }: { view: "list" | "gantt"; onChange: (v: "list" | "gantt") => void }) {
+  return (
+    <div className="inline-flex items-center rounded-lg border bg-muted/40 p-0.5">
+      <button
+        type="button"
+        onClick={() => onChange("list")}
+        className={cn(
+          "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
+          view === "list" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
+        )}
+      >
+        <List className="h-3.5 w-3.5" /> List
+      </button>
+      <button
+        type="button"
+        onClick={() => onChange("gantt")}
+        className={cn(
+          "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
+          view === "gantt" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
+        )}
+      >
+        <GanttChartSquare className="h-3.5 w-3.5" /> Gantt
+      </button>
+    </div>
   );
 }
