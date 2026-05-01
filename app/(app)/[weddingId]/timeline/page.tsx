@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, Plus, Wand2 } from "lucide-react";
 import { toast } from "sonner";
 import { formatDate } from "@/lib/utils/format";
-import type { TimelineTask } from "@/lib/types/database";
+import type { TimelineTask, TaskStatus } from "@/lib/types/database";
 import { format, parseISO } from "date-fns";
 
 const STATUS_OPTIONS = ["all", "not_started", "in_progress", "completed"] as const;
@@ -39,7 +39,7 @@ export default function TimelinePage({ params }: { params: { weddingId: string }
 
   useEffect(() => { fetchTasks(); }, [weddingId]);
 
-  function handleTaskToggle(taskId: string, newStatus: "not_started" | "completed") {
+  function handleTaskToggle(taskId: string, newStatus: TaskStatus) {
     setTasks((prev) =>
       prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t))
     );

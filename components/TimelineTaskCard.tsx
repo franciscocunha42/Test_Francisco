@@ -10,7 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
-import type { TimelineTask } from "@/lib/types/database";
+import type { TimelineTask, TaskStatus } from "@/lib/types/database";
+import type { TaskFormValues } from "@/lib/schemas/timeline";
 
 const priorityColors: Record<string, string> = {
   high: "destructive",
@@ -21,7 +22,7 @@ const priorityColors: Record<string, string> = {
 interface TimelineTaskCardProps {
   task: TimelineTask;
   weddingId: string;
-  onToggle?: (taskId: string, newStatus: "not_started" | "completed") => void;
+  onToggle?: (taskId: string, newStatus: TaskStatus) => void;
 }
 
 export function TimelineTaskCard({ task, weddingId, onToggle }: TimelineTaskCardProps) {
@@ -42,6 +43,11 @@ export function TimelineTaskCard({ task, weddingId, onToggle }: TimelineTaskCard
       onToggle?.(task.id, done ? "completed" : "not_started"); // revert parent
       toast.error(result.error ?? "Failed to update task");
     }
+  }
+
+  function handleFormUpdate(data: TaskFormValues) {
+    setOptimisticDone(data.status === "completed");
+    onToggle?.(task.id, data.status);
   }
 
   async function handleDelete() {
@@ -87,6 +93,7 @@ export function TimelineTaskCard({ task, weddingId, onToggle }: TimelineTaskCard
         <TaskFormDialog
           weddingId={weddingId}
           task={task}
+          onSuccess={handleFormUpdate}
           trigger={
             <Button variant="ghost" size="icon" className="h-7 w-7">
               <Pencil className="h-3.5 w-3.5" />
