@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Pencil, Trash2, Circle } from "lucide-react";
+import { Check, Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils/cn";
 import { formatDate } from "@/lib/utils/format";
@@ -21,18 +21,27 @@ const priorityColors: Record<string, string> = {
 interface TimelineTaskCardProps {
   task: TimelineTask;
   weddingId: string;
+  onToggle?: (taskId: string, newStatus: "not_started" | "completed") => void;
 }
 
-export function TimelineTaskCard({ task, weddingId }: TimelineTaskCardProps) {
-  const [completing, setCompleting] = useState(false);
-  const done = task.status === "completed";
+export function TimelineTaskCard({ task, weddingId, onToggle }: TimelineTaskCardProps) {
+  const [optimisticDone, setOptimisticDone] = useState(task.status === "completed");
+  const [pending, setPending] = useState(false);
+  const done = optimisticDone;
 
   async function handleToggle() {
-    setCompleting(true);
+    if (pending) return;
     const newStatus = done ? "not_started" : "completed";
+    setOptimisticDone(!done);
+    onToggle?.(task.id, newStatus);
+    setPending(true);
     const result = await updateTask(weddingId, task.id, { status: newStatus });
-    if (result?.ok === false) toast.error(result.error);
-    setCompleting(false);
+    setPending(false);
+    if (result?.ok === false) {
+      setOptimisticDone(done); // revert
+      onToggle?.(task.id, done ? "completed" : "not_started"); // revert parent
+      toast.error(result.error ?? "Failed to update task");
+    }
   }
 
   async function handleDelete() {
@@ -45,12 +54,12 @@ export function TimelineTaskCard({ task, weddingId }: TimelineTaskCardProps) {
     <div className={cn("flex items-start gap-3 rounded-lg border bg-card p-4 transition-opacity", done && "opacity-60")}>
       <button
         onClick={handleToggle}
-        disabled={completing}
         className={cn(
-          "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+          "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-all",
           done
             ? "border-primary bg-primary text-primary-foreground"
-            : "border-muted-foreground hover:border-primary"
+            : "border-muted-foreground hover:border-primary",
+          pending && "opacity-70"
         )}
         aria-label={done ? "Mark incomplete" : "Mark complete"}
       >

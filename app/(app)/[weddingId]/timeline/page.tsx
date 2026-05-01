@@ -39,6 +39,12 @@ export default function TimelinePage({ params }: { params: { weddingId: string }
 
   useEffect(() => { fetchTasks(); }, [weddingId]);
 
+  function handleTaskToggle(taskId: string, newStatus: "not_started" | "completed") {
+    setTasks((prev) =>
+      prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t))
+    );
+  }
+
   async function handleGenerate() {
     startGenerating(async () => {
       const result = await generateDefaultTimelineTasks(weddingId);
@@ -137,7 +143,7 @@ export default function TimelinePage({ params }: { params: { weddingId: string }
               <h2 className="mb-3 text-sm font-semibold text-muted-foreground">{month}</h2>
               <div className="space-y-2">
                 {monthTasks.map((task) => (
-                  <TimelineTaskCard key={task.id} task={task} weddingId={weddingId} />
+                  <TimelineTaskCard key={task.id} task={task} weddingId={weddingId} onToggle={handleTaskToggle} />
                 ))}
               </div>
             </div>
