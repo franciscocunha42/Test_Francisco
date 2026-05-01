@@ -6,6 +6,16 @@ import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/auth";
 import { weddingSchema } from "@/lib/schemas/wedding";
 
+const DEFAULT_BUDGET_CATEGORIES = [
+  "Venue & Rentals",
+  "Catering & Cake",
+  "Photography & Video",
+  "Flowers & Decor",
+  "Music & Entertainment",
+  "Beauty & Attire",
+  "Honeymoon",
+];
+
 export async function createWedding(formData: FormData) {
   const user = await requireUser();
   const raw = Object.fromEntries(formData);
@@ -28,6 +38,15 @@ export async function createWedding(formData: FormData) {
   });
 
   if (memberError) return { ok: false, error: memberError.message };
+
+  await supabase.from("budget_categories").insert(
+    DEFAULT_BUDGET_CATEGORIES.map((name) => ({
+      wedding_id: wedding.id,
+      name,
+      planned_amount: 0,
+      actual_amount: 0,
+    }))
+  );
 
   redirect(`/${wedding.id}/dashboard`);
 }
