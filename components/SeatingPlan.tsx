@@ -419,8 +419,12 @@ function UnassignedGuestsCard({
           {unassigned.map((g) => (
             <div
               key={g.id}
-              className="flex items-center gap-2 rounded-md border bg-muted/40 pl-3 pr-1 py-1 text-sm"
+              className={`flex items-center gap-2 rounded-md border px-2.5 py-1 text-sm ${g.dietary_requirements ? "bg-amber-50/50 border-amber-200" : "bg-muted/40"}`}
+              title={g.dietary_requirements ? `Dietary: ${g.dietary_requirements}` : undefined}
             >
+              {g.dietary_requirements && (
+                <span className="text-amber-600 text-xs font-bold">⚠</span>
+              )}
               <span className="truncate">{g.first_name} {g.last_name}</span>
               <Select
                 onValueChange={(v) => onAssign(g.id, v)}
