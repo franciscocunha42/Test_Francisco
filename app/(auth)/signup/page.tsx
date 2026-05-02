@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { SignupForm } from "@/components/auth/SignupForm";
 import { ClaimGuestDataDialog } from "@/components/ClaimGuestDataDialog";
 import { hasGuestData } from "@/lib/guest-store/store";
+import { getPostLoginRedirect } from "@/lib/actions/auth";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function SignupPage() {
@@ -17,7 +18,8 @@ export default function SignupPage() {
       setShowClaim(true);
       return;
     }
-    router.push("/onboarding");
+    const redirect = await getPostLoginRedirect();
+    router.push(redirect);
     router.refresh();
   }
 

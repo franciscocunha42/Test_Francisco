@@ -7,6 +7,7 @@ import { Calendar, Plus, Wand2, List, GanttChartSquare } from "lucide-react";
 import { GuestAppShell } from "@/components/GuestAppShell";
 import { TimelineTaskCard } from "@/components/TimelineTaskCard";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
+import { InlineTaskCreator } from "@/components/InlineTaskCreator";
 import { TimelineGantt } from "@/components/TimelineGantt";
 import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
@@ -100,6 +101,13 @@ export default function GuestTimelinePage() {
             ))}
           </div>
         </div>
+
+        {view === "list" && (
+          <InlineTaskCreator
+            weddingId="guest"
+            onSubmit={async (data) => { createTask(data); return { ok: true }; }}
+          />
+        )}
 
         {view === "gantt" ? (
           <TimelineGantt tasks={tasks} weddingDate={wedding.wedding_date} />

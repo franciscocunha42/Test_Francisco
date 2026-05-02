@@ -40,3 +40,19 @@ export async function getUserWeddings() {
 
   return data ?? [];
 }
+
+export async function getLatestWeddingId(): Promise<string | null> {
+  const user = await getUser();
+  if (!user) return null;
+  const supabase = createClient();
+
+  const { data } = await supabase
+    .from("wedding_members")
+    .select("wedding_id")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+
+  return data?.wedding_id ?? null;
+}

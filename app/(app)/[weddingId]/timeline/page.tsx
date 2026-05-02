@@ -6,6 +6,7 @@ import { generateDefaultTimelineTasks } from "@/lib/actions/timeline";
 import { TimelineTaskCard } from "@/components/TimelineTaskCard";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
 import { TimelineGantt } from "@/components/TimelineGantt";
+import { InlineTaskCreator } from "@/components/InlineTaskCreator";
 import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -127,6 +128,10 @@ export default function TimelinePage({ params }: { params: { weddingId: string }
           ))}
         </div>
       </div>
+
+      {view === "list" && (
+        <InlineTaskCreator weddingId={weddingId} onSuccess={fetchTasks} />
+      )}
 
       {loading ? (
         <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-20 w-full" />)}</div>
