@@ -36,18 +36,18 @@ export function RsvpSummaryCard({ guests, href }: RsvpSummaryCardProps) {
         )}
       </CardHeader>
       <CardContent>
-        <div className="flex items-center gap-4">
-          <div className="h-28 w-28 shrink-0">
+        <div className="flex flex-col lg:flex-row items-center justify-center gap-6">
+          <div className="h-48 w-48 shrink-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={data} cx="50%" cy="50%" innerRadius={28} outerRadius={48} dataKey="value" paddingAngle={2}>
+                <Pie data={data} cx="50%" cy="50%" innerRadius={40} outerRadius={70} dataKey="value" paddingAngle={2}>
                   {data.map((_, i) => <Cell key={i} fill={COLORS[i]} />)}
                 </Pie>
                 <Tooltip formatter={(v: number) => `${v} guests`} contentStyle={{ fontSize: 11 }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="space-y-1.5 text-sm">
+          <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 shrink-0" />
               <span className="text-muted-foreground">Attending</span>
