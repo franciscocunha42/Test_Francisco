@@ -55,6 +55,17 @@ const guestShape = z.object({
   plus_one_allowed: z.boolean(),
   plus_one_name: z.string().nullable(),
   notes: z.string().nullable(),
+  table_id: z.string().nullable().optional().default(null),
+  created_at: z.string(),
+});
+
+const seatingTableShape = z.object({
+  id: z.string(),
+  wedding_id: z.string(),
+  name: z.string(),
+  capacity: z.number(),
+  notes: z.string().nullable(),
+  sort_order: z.number(),
   created_at: z.string(),
 });
 
@@ -105,6 +116,7 @@ export const guestSnapshotSchema = z.object({
   guests: z.array(guestShape),
   budgetCategories: z.array(budgetCategoryShape),
   expenses: z.array(expenseShape),
+  seatingTables: z.array(seatingTableShape).optional().default([]),
 });
 
 export type GuestSnapshotPayload = z.infer<typeof guestSnapshotSchema>;

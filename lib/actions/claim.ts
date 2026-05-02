@@ -103,7 +103,27 @@ export async function claimGuestWedding(snapshot: unknown): Promise<ClaimResult>
     });
   }
 
-  // 5. Tasks and guests in parallel — no foreign keys between them and others
+  // 5a. Seating tables — capture id map so we can rewrite guest.table_id below.
+  const seatingTableIdMap = new Map<string, string>();
+  if (data.seatingTables.length > 0) {
+    const seatingRows = data.seatingTables.map((t) => ({
+      wedding_id: weddingId,
+      name: t.name,
+      capacity: t.capacity,
+      notes: t.notes,
+      sort_order: t.sort_order,
+    }));
+    const { data: insertedTables, error: seatErr } = await supabase
+      .from("seating_tables")
+      .insert(seatingRows)
+      .select();
+    if (seatErr || !insertedTables) return rollback(seatErr?.message ?? "Failed to insert seating tables");
+    insertedTables.forEach((row, i) => {
+      seatingTableIdMap.set(data.seatingTables[i].id, row.id as string);
+    });
+  }
+
+  // 5b. Tasks and guests in parallel — guests can now carry a (rewritten) table_id.
   const taskInsert = data.tasks.length > 0
     ? supabase.from("timeline_tasks").insert(
         data.tasks.map((t) => ({
@@ -136,6 +156,7 @@ export async function claimGuestWedding(snapshot: unknown): Promise<ClaimResult>
           plus_one_allowed: g.plus_one_allowed,
           plus_one_name: g.plus_one_name,
           notes: g.notes,
+          table_id: g.table_id ? seatingTableIdMap.get(g.table_id) ?? null : null,
         }))
       )
     : Promise.resolve({ error: null });

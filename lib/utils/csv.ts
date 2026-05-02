@@ -50,6 +50,50 @@ export function exportToCsv(rows: Record<string, unknown>[], filename: string): 
   URL.revokeObjectURL(url);
 }
 
+export interface SeatingCsvRow {
+  table_name: string;
+  capacity?: number;
+  first_name: string;
+  last_name: string;
+}
+
+export function parseSeatingCsv(csvText: string): { data: SeatingCsvRow[]; errors: string[] } {
+  const result = Papa.parse<Record<string, string>>(csvText, {
+    header: true,
+    skipEmptyLines: true,
+    transformHeader: (h) => h.trim().toLowerCase().replace(/\s+/g, "_"),
+  });
+
+  const errors: string[] = result.errors.map((e) => e.message);
+  const data: SeatingCsvRow[] = [];
+
+  for (const row of result.data) {
+    if (!row.table_name || !row.first_name || !row.last_name) {
+      errors.push(`Row missing table_name, first_name or last_name: ${JSON.stringify(row)}`);
+      continue;
+    }
+    const capRaw = row.capacity?.trim();
+    const capacity = capRaw ? Number(capRaw) : undefined;
+    data.push({
+      table_name: row.table_name.trim(),
+      capacity: Number.isFinite(capacity) && capacity! > 0 ? capacity : undefined,
+      first_name: row.first_name.trim(),
+      last_name: row.last_name.trim(),
+    });
+  }
+
+  return { data, errors };
+}
+
+export function downloadSeatingCsvTemplate(): void {
+  const rows: Record<string, string>[] = [
+    { table_name: "Table 1", capacity: "8", first_name: "Jane",  last_name: "Doe" },
+    { table_name: "Table 1", capacity: "8", first_name: "John",  last_name: "Doe" },
+    { table_name: "Table 2", capacity: "10", first_name: "Alice", last_name: "Smith" },
+  ];
+  exportToCsv(rows, "vowplan-seating-template.csv");
+}
+
 export function downloadGuestCsvTemplate(): void {
   const rows: Record<string, string>[] = [
     {

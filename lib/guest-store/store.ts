@@ -10,6 +10,7 @@ import type {
   Guest,
   BudgetCategory,
   Expense,
+  SeatingTable,
 } from "@/lib/types/database";
 
 // Default budget categories — kept in sync with lib/actions/wedding.ts
@@ -45,6 +46,7 @@ export type GuestVendor = Vendor;
 export type GuestGuest = Guest;
 export type GuestBudgetCategory = BudgetCategory;
 export type GuestExpense = Expense;
+export type GuestSeatingTable = SeatingTable;
 
 export interface GuestSnapshot {
   schemaVersion: typeof SCHEMA_VERSION;
@@ -55,6 +57,7 @@ export interface GuestSnapshot {
   guests: GuestGuest[];
   budgetCategories: GuestBudgetCategory[];
   expenses: GuestExpense[];
+  seatingTables: GuestSeatingTable[];
 }
 
 interface Actions {
@@ -92,6 +95,15 @@ interface Actions {
   updateExpense: (id: string, patch: Partial<GuestExpense>) => void;
   deleteExpense: (id: string) => void;
 
+  createSeatingTable: (data: Partial<GuestSeatingTable>) => GuestSeatingTable;
+  updateSeatingTable: (id: string, patch: Partial<GuestSeatingTable>) =>
+    { ok: boolean; error?: string };
+  deleteSeatingTable: (id: string) => void;
+  assignGuestToTable: (guestId: string, tableId: string | null) =>
+    { ok: boolean; error?: string };
+  bulkImportSeating: (rows: { table_name: string; capacity?: number; first_name: string; last_name: string }[]) =>
+    { count: number; skippedFull: number; skippedMissing: number };
+
   reset: () => void;
   exportSnapshot: () => GuestSnapshot;
 }
@@ -108,6 +120,7 @@ function emptyState(weddingId: string): GuestSnapshot {
     guests: [],
     budgetCategories: [],
     expenses: [],
+    seatingTables: [],
   };
 }
 
@@ -253,6 +266,7 @@ export const useGuestStore = create<StoreState>()(
             plus_one_allowed: data.plus_one_allowed ?? false,
             plus_one_name: data.plus_one_name ?? null,
             notes: data.notes ?? null,
+            table_id: data.table_id ?? null,
             created_at: nowIso(),
           };
           set({ guests: [...get().guests, g] });
@@ -281,6 +295,7 @@ export const useGuestStore = create<StoreState>()(
             plus_one_allowed: r.plus_one_allowed ?? false,
             plus_one_name: null,
             notes: null,
+            table_id: null,
             created_at: nowIso(),
           }));
           set({ guests: [...get().guests, ...newGuests] });
@@ -357,6 +372,128 @@ export const useGuestStore = create<StoreState>()(
           }
         },
 
+        createSeatingTable: (data) => {
+          const t: GuestSeatingTable = {
+            id: uuid(),
+            wedding_id: get().weddingId,
+            name: data.name ?? "New table",
+            capacity: data.capacity ?? 8,
+            notes: data.notes ?? null,
+            sort_order: data.sort_order ?? get().seatingTables.length,
+            created_at: nowIso(),
+          };
+          set({ seatingTables: [...get().seatingTables, t] });
+          return t;
+        },
+        updateSeatingTable: (id, patch) => {
+          if (typeof patch.capacity === "number") {
+            const seated = get().guests.filter((g) => g.table_id === id).length;
+            if (seated > patch.capacity) {
+              return {
+                ok: false,
+                error: `Capacity (${patch.capacity}) is below current assignments (${seated}).`,
+              };
+            }
+          }
+          set({
+            seatingTables: get().seatingTables.map((t) => (t.id === id ? { ...t, ...patch } : t)),
+          });
+          return { ok: true };
+        },
+        deleteSeatingTable: (id) => {
+          set({
+            seatingTables: get().seatingTables.filter((t) => t.id !== id),
+            guests: get().guests.map((g) =>
+              g.table_id === id ? { ...g, table_id: null } : g,
+            ),
+          });
+        },
+        assignGuestToTable: (guestId, tableId) => {
+          if (tableId) {
+            const table = get().seatingTables.find((t) => t.id === tableId);
+            if (!table) return { ok: false, error: "Table not found" };
+            const taken = get().guests.filter((g) => g.table_id === tableId && g.id !== guestId).length;
+            if (taken >= table.capacity) {
+              return { ok: false, error: "This table is full." };
+            }
+          }
+          set({
+            guests: get().guests.map((g) => (g.id === guestId ? { ...g, table_id: tableId } : g)),
+          });
+          return { ok: true };
+        },
+        bulkImportSeating: (rows) => {
+          const weddingId = get().weddingId;
+          const tables = [...get().seatingTables];
+          const guests = [...get().guests];
+
+          const tablesByName = new Map<string, GuestSeatingTable>(
+            tables.map((t) => [t.name.toLowerCase(), t]),
+          );
+          const guestsByName = new Map<string, GuestGuest>(
+            guests.map((g) => [`${g.first_name.toLowerCase()} ${g.last_name.toLowerCase()}`, g]),
+          );
+
+          // Group by table to figure out capacity for any new tables.
+          const grouped = new Map<string, { capacity?: number; rows: typeof rows }>();
+          for (const row of rows) {
+            const key = row.table_name.toLowerCase();
+            const entry = grouped.get(key) ?? { rows: [] };
+            if (typeof row.capacity === "number") entry.capacity = row.capacity;
+            entry.rows.push(row);
+            grouped.set(key, entry);
+          }
+
+          for (const [key, group] of grouped.entries()) {
+            if (!tablesByName.has(key)) {
+              const sample = group.rows[0];
+              const t: GuestSeatingTable = {
+                id: uuid(),
+                wedding_id: weddingId,
+                name: sample.table_name,
+                capacity: group.capacity ?? Math.max(group.rows.length, 8),
+                notes: null,
+                sort_order: tables.length,
+                created_at: nowIso(),
+              };
+              tables.push(t);
+              tablesByName.set(key, t);
+            }
+          }
+
+          const occupancy = new Map<string, number>();
+          for (const t of tables) {
+            occupancy.set(t.id, guests.filter((g) => g.table_id === t.id).length);
+          }
+
+          let count = 0;
+          let skippedFull = 0;
+          let skippedMissing = 0;
+
+          for (const row of rows) {
+            const table = tablesByName.get(row.table_name.toLowerCase());
+            if (!table) continue;
+            const guest = guestsByName.get(
+              `${row.first_name.toLowerCase()} ${row.last_name.toLowerCase()}`,
+            );
+            if (!guest) { skippedMissing++; continue; }
+            if (guest.table_id === table.id) { count++; continue; }
+
+            const taken = occupancy.get(table.id) ?? 0;
+            if (taken >= table.capacity) { skippedFull++; continue; }
+
+            if (guest.table_id) {
+              occupancy.set(guest.table_id, Math.max(0, (occupancy.get(guest.table_id) ?? 1) - 1));
+            }
+            guest.table_id = table.id;
+            occupancy.set(table.id, taken + 1);
+            count++;
+          }
+
+          set({ seatingTables: tables, guests });
+          return { count, skippedFull, skippedMissing };
+        },
+
         reset: () => {
           set(emptyState(uuid()));
         },
@@ -372,6 +509,7 @@ export const useGuestStore = create<StoreState>()(
             guests: s.guests,
             budgetCategories: s.budgetCategories,
             expenses: s.expenses,
+            seatingTables: s.seatingTables,
           };
         },
       };
@@ -389,6 +527,7 @@ export const useGuestStore = create<StoreState>()(
         guests: state.guests,
         budgetCategories: state.budgetCategories,
         expenses: state.expenses,
+        seatingTables: state.seatingTables,
       }),
     }
   )

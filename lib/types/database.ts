@@ -91,6 +91,17 @@ export interface Guest {
   plus_one_allowed: boolean;
   plus_one_name: string | null;
   notes: string | null;
+  table_id: string | null;
+  created_at: string;
+}
+
+export interface SeatingTable {
+  id: string;
+  wedding_id: string;
+  name: string;
+  capacity: number;
+  notes: string | null;
+  sort_order: number;
   created_at: string;
 }
 
@@ -220,6 +231,12 @@ export interface Database {
         Row: DR<Expense>;
         Insert: DR<Omit<Expense, "id" | "created_at">>;
         Update: DR<Partial<Expense>>;
+        Relationships: [];
+      };
+      seating_tables: {
+        Row: DR<SeatingTable>;
+        Insert: DR<Omit<SeatingTable, "id" | "created_at">>;
+        Update: DR<Partial<SeatingTable>>;
         Relationships: [];
       };
     };

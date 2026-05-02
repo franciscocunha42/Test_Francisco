@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Calendar, Users, Store,
-  PiggyBank, FileText, Settings, Heart, Lock,
+  PiggyBank, FileText, Settings, Heart, Lock, Armchair,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
@@ -12,6 +12,7 @@ const navItems = [
   { href: "dashboard",  label: "Dashboard",   icon: LayoutDashboard, lockInGuest: false },
   { href: "timeline",   label: "Timeline",     icon: Calendar,        lockInGuest: false },
   { href: "guests",     label: "Guests & RSVP", icon: Users,           lockInGuest: false },
+  { href: "seating",    label: "Seating",      icon: Armchair,        lockInGuest: false },
   { href: "suppliers",  label: "Suppliers",    icon: Store,           lockInGuest: false },
   { href: "budget",     label: "Budget",       icon: PiggyBank,       lockInGuest: false },
   { href: "forms",      label: "Forms",        icon: FileText,        lockInGuest: true  },
