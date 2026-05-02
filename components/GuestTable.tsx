@@ -3,37 +3,37 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Pencil, Trash2 } from "lucide-react";
-import { deleteGuest } from "@/lib/actions/guest";
-import { Badge } from "@/components/ui/badge";
+import { deleteGuest, updateGuest } from "@/lib/actions/guest";
 import { Button } from "@/components/ui/button";
 import { GuestFormDialog } from "@/components/GuestFormDialog";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
-import type { Guest } from "@/lib/types/database";
+import type { Guest, RsvpStatus } from "@/lib/types/database";
 import type { GuestFormValues } from "@/lib/schemas/guest";
 
-const rsvpColors: Record<string, "success" | "destructive" | "secondary"> = {
-  attending: "success",
-  not_attending: "destructive",
-  pending: "secondary",
+const rsvpStyles: Record<RsvpStatus, string> = {
+  attending:     "bg-emerald-100 text-emerald-800 border-emerald-200",
+  not_attending: "bg-red-100 text-red-800 border-red-200",
+  pending:       "bg-secondary text-secondary-foreground border-transparent",
 };
 
-const rsvpLabels: Record<string, string> = {
-  attending: "Attending",
+const rsvpLabels: Record<RsvpStatus, string> = {
+  attending:     "Attending",
   not_attending: "Not Attending",
-  pending: "Pending",
+  pending:       "Pending",
 };
 
 interface GuestTableProps {
   guests: Guest[];
   weddingId: string;
-  /** Override default server-action mutations (used by guest mode). */
   onEditSubmit?: (data: GuestFormValues, existing?: Guest) => Promise<{ ok: boolean; error?: string }>;
   onDelete?: (guestId: string) => Promise<{ ok: boolean; error?: string }>;
+  onRsvpChange?: (guestId: string, status: RsvpStatus) => Promise<{ ok: boolean; error?: string }>;
 }
 
-export function GuestTable({ guests, weddingId, onEditSubmit, onDelete }: GuestTableProps) {
+export function GuestTable({ guests, weddingId, onEditSubmit, onDelete, onRsvpChange }: GuestTableProps) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string>("all");
+  const [pendingRsvp, setPendingRsvp] = useState<Record<string, boolean>>({});
 
   const filtered = guests.filter((g) => {
     const name = `${g.first_name} ${g.last_name}`.toLowerCase();
@@ -48,6 +48,17 @@ export function GuestTable({ guests, weddingId, onEditSubmit, onDelete }: GuestT
       : await deleteGuest(weddingId, guest.id);
     if (result?.ok === false) toast.error(result.error);
     else toast.success("Guest removed");
+  }
+
+  async function handleRsvpChange(guest: Guest, status: RsvpStatus) {
+    if (status === guest.rsvp_status) return;
+    setPendingRsvp((p) => ({ ...p, [guest.id]: true }));
+    const result = onRsvpChange
+      ? await onRsvpChange(guest.id, status)
+      : await updateGuest(weddingId, guest.id, { rsvp_status: status });
+    setPendingRsvp((p) => { const { [guest.id]: _, ...rest } = p; return rest; });
+    if (result?.ok === false) toast.error(result.error);
+    else toast.success(`${guest.first_name} marked as ${rsvpLabels[status]}`);
   }
 
   return (
@@ -66,7 +77,7 @@ export function GuestTable({ guests, weddingId, onEditSubmit, onDelete }: GuestT
               onClick={() => setFilter(f)}
               className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${filter === f ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"}`}
             >
-              {f === "all" ? "All" : f === "dietary" ? "Dietary Needs" : rsvpLabels[f]}
+              {f === "all" ? "All" : f === "dietary" ? "Dietary Needs" : rsvpLabels[f as RsvpStatus]}
             </button>
           ))}
         </div>
@@ -94,7 +105,16 @@ export function GuestTable({ guests, weddingId, onEditSubmit, onDelete }: GuestT
                 </td>
                 <td className="hidden sm:table-cell px-4 py-3 text-muted-foreground">{guest.email ?? "—"}</td>
                 <td className="px-4 py-3">
-                  <Badge variant={rsvpColors[guest.rsvp_status]}>{rsvpLabels[guest.rsvp_status]}</Badge>
+                  <select
+                    value={guest.rsvp_status}
+                    disabled={!!pendingRsvp[guest.id]}
+                    onChange={(e) => handleRsvpChange(guest, e.target.value as RsvpStatus)}
+                    className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors appearance-none disabled:opacity-50 ${rsvpStyles[guest.rsvp_status]}`}
+                  >
+                    <option value="attending">Attending</option>
+                    <option value="not_attending">Not Attending</option>
+                    <option value="pending">Pending</option>
+                  </select>
                 </td>
                 <td className="hidden md:table-cell px-4 py-3 text-muted-foreground">{guest.meal_choice ?? "—"}</td>
                 <td className="px-4 py-3">

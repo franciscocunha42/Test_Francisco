@@ -72,6 +72,7 @@ export default function GuestGuestsPage() {
             return { ok: true };
           }}
           onDelete={async (id) => { deleteGuest(id); return { ok: true }; }}
+          onRsvpChange={async (id, status) => { updateGuest(id, { rsvp_status: status }); return { ok: true }; }}
         />
       </div>
     </GuestAppShell>
