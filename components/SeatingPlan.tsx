@@ -256,12 +256,20 @@ export function SeatingPlan({
                           <ul className="space-y-1">
                             {seated.map((g) => (
                               <li key={g.id} className="flex items-center justify-between rounded-md border px-2 py-1.5 text-sm">
-                                <span className="truncate">
-                                  {g.first_name} {g.last_name}
-                                  {g.dietary_requirements && (
-                                    <span className="ml-1 text-xs text-amber-600">⚠</span>
+                                <div className="min-w-0">
+                                  <span className="truncate font-medium">
+                                    {g.first_name} {g.last_name}
+                                  </span>
+                                  {(g.meal_choice || g.dietary_requirements) && (
+                                    <p className="truncate text-xs text-muted-foreground">
+                                      {g.meal_choice && <span>{g.meal_choice}</span>}
+                                      {g.meal_choice && g.dietary_requirements && <span> · </span>}
+                                      {g.dietary_requirements && (
+                                        <span className="text-amber-600">⚠ {g.dietary_requirements}</span>
+                                      )}
+                                    </p>
                                   )}
-                                </span>
+                                </div>
                                 <Button
                                   variant="ghost"
                                   size="icon"
