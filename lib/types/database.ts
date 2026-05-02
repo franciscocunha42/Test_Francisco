@@ -105,6 +105,12 @@ export interface SeatingTable {
   created_at: string;
 }
 
+export interface RsvpConfig {
+  meal_options?: string[];
+  allow_new_guests?: boolean;
+  deadline?: string | null;
+}
+
 export interface Form {
   id: string;
   wedding_id: string;
@@ -113,6 +119,7 @@ export interface Form {
   type: FormType;
   public_slug: string;
   is_active: boolean;
+  config_json: RsvpConfig | null;
   created_at: string;
 }
 

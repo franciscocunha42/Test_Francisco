@@ -80,6 +80,24 @@ export async function upsertFormQuestions(
   return { ok: true };
 }
 
+export async function updateRsvpConfig(
+  weddingId: string,
+  formId: string,
+  config: { meal_options?: string[]; allow_new_guests?: boolean; deadline?: string | null }
+) {
+  await requireWeddingMember(weddingId);
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("forms")
+    .update({ config_json: config })
+    .eq("id", formId)
+    .eq("wedding_id", weddingId);
+
+  if (error) return { ok: false, error: error.message };
+  revalidatePath(`/${weddingId}/forms/${formId}`);
+  return { ok: true };
+}
+
 // Seed canonical RSVP questions into a form
 export async function applyRsvpTemplate(weddingId: string, formId: string) {
   const questions = [

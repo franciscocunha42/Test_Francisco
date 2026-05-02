@@ -5,10 +5,11 @@ import { requireWeddingMember } from "@/lib/auth";
 import type { Form, FormQuestion, FormResponse } from "@/lib/types/database";
 import { applyRsvpTemplate } from "@/lib/actions/forms";
 import { FormBuilder } from "@/components/FormBuilder";
+import { RsvpConfigPanel } from "@/components/RsvpConfigPanel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Copy, ExternalLink, Wand2 } from "lucide-react";
+import { ArrowLeft, ExternalLink, Wand2 } from "lucide-react";
 import { formatDate } from "@/lib/utils/format";
 
 export default async function FormDetailPage({ params }: { params: { weddingId: string; formId: string } }) {
@@ -58,20 +59,28 @@ export default async function FormDetailPage({ params }: { params: { weddingId: 
         </CardContent>
       </Card>
 
-      {/* Questions builder */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold">Questions</h2>
-          {form.type === "rsvp" && (questions?.length ?? 0) === 0 && (
-            <form action={async () => { "use server"; await applyRsvpTemplate(weddingId, formId); }}>
-              <Button variant="outline" size="sm" type="submit">
-                <Wand2 className="mr-1.5 h-3.5 w-3.5" />Use RSVP Template
-              </Button>
-            </form>
-          )}
+      {/* RSVP config panel (replaces question builder for rsvp type) */}
+      {form.type === "rsvp" ? (
+        <RsvpConfigPanel
+          weddingId={weddingId}
+          formId={formId}
+          initialConfig={(form as Form).config_json}
+        />
+      ) : (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base font-semibold">Questions</h2>
+            {(questions?.length ?? 0) === 0 && (
+              <form action={async () => { "use server"; await applyRsvpTemplate(weddingId, formId); }}>
+                <Button variant="outline" size="sm" type="submit">
+                  <Wand2 className="mr-1.5 h-3.5 w-3.5" />Use RSVP Template
+                </Button>
+              </form>
+            )}
+          </div>
+          <FormBuilder weddingId={weddingId} formId={formId} initialQuestions={questions ?? []} />
         </div>
-        <FormBuilder weddingId={weddingId} formId={formId} initialQuestions={questions ?? []} />
-      </div>
+      )}
 
       {/* Responses */}
       <div className="space-y-3">

@@ -1,26 +1,28 @@
 import { createClient } from "@/lib/supabase/server";
 import { requireWeddingMember } from "@/lib/auth";
-import type { Guest } from "@/lib/types/database";
+import type { Guest, Form } from "@/lib/types/database";
 import { GuestTable } from "@/components/GuestTable";
 import { GuestFormDialog } from "@/components/GuestFormDialog";
 import { GuestImportDialog } from "@/components/GuestImportDialog";
+import { SendRsvpDialog } from "@/components/SendRsvpDialog";
 import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Users, Plus, Upload, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { Users, Plus, Upload, CheckCircle2, Clock, XCircle, Mail } from "lucide-react";
 
 export default async function GuestsPage({ params }: { params: { weddingId: string } }) {
   const { weddingId } = params;
   await requireWeddingMember(weddingId);
   const supabase = createClient();
 
-  const { data: guestsData } = await supabase
-    .from("guests")
-    .select("*")
-    .eq("wedding_id", weddingId)
-    .order("last_name");
+  const [guestsRes, rsvpFormRes] = await Promise.all([
+    supabase.from("guests").select("*").eq("wedding_id", weddingId).order("last_name"),
+    supabase.from("forms").select("id, public_slug").eq("wedding_id", weddingId).eq("type", "rsvp").eq("is_active", true).limit(1).maybeSingle(),
+  ]);
 
-  const allGuests = (guestsData ?? []) as Guest[];
+  const allGuests = (guestsRes.data ?? []) as Guest[];
+  const rsvpForm = rsvpFormRes.data as Pick<Form, "id" | "public_slug"> | null;
+
   const attending = allGuests.filter((g) => g.rsvp_status === "attending").length;
   const notAttending = allGuests.filter((g) => g.rsvp_status === "not_attending").length;
   const pending = allGuests.filter((g) => g.rsvp_status === "pending").length;
@@ -28,12 +30,20 @@ export default async function GuestsPage({ params }: { params: { weddingId: stri
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h1 className="font-serif text-2xl font-semibold">Guests & RSVP</h1>
           <p className="text-sm text-muted-foreground">{allGuests.length} guests total</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
+          {rsvpForm && allGuests.length > 0 && (
+            <SendRsvpDialog
+              weddingId={weddingId}
+              formId={rsvpForm.id}
+              guests={allGuests}
+              trigger={<Button variant="outline" size="sm"><Mail className="mr-1.5 h-3.5 w-3.5" />Send RSVP</Button>}
+            />
+          )}
           <GuestImportDialog weddingId={weddingId} trigger={<Button variant="outline" size="sm"><Upload className="mr-1.5 h-3.5 w-3.5" />Import CSV</Button>} />
           <GuestFormDialog weddingId={weddingId} trigger={<Button size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" />Add Guest</Button>} />
         </div>
