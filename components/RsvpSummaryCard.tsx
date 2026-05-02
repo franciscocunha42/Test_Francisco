@@ -1,17 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import type { Guest } from "@/lib/types/database";
 
 const COLORS = ["#10b981", "#ef4444", "#f59e0b", "#6b7280"];
-const LABELS = ["Attending", "Not Attending", "Pending", "Not Sent"];
 
 interface RsvpSummaryCardProps {
   guests: Guest[];
+  href?: string;
 }
 
-export function RsvpSummaryCard({ guests }: RsvpSummaryCardProps) {
+export function RsvpSummaryCard({ guests, href }: RsvpSummaryCardProps) {
   const attending = guests.filter((g) => g.rsvp_status === "attending").length;
   const notAttending = guests.filter((g) => g.rsvp_status === "not_attending").length;
   const pending = guests.filter((g) => g.rsvp_status === "pending").length;
@@ -25,8 +27,13 @@ export function RsvpSummaryCard({ guests }: RsvpSummaryCardProps) {
 
   return (
     <Card>
-      <CardHeader className="pb-2">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-base">Guest RSVP Summary</CardTitle>
+        {href && (
+          <Button variant="ghost" size="sm" asChild>
+            <Link href={href}>View all</Link>
+          </Button>
+        )}
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-4">

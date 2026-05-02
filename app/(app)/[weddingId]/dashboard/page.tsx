@@ -99,32 +99,37 @@ export default async function DashboardPage({ params }: { params: { weddingId: s
             title="Total Budget"
             value={formatCurrency(wedding?.total_budget ?? 0, wedding?.currency ?? "USD")}
             icon={PiggyBank}
+            href={`/${weddingId}/budget`}
           />
           <DashboardCard
             title="Total Spent"
             value={formatCurrency(totalActual, wedding?.currency ?? "USD")}
             icon={PiggyBank}
+            href={`/${weddingId}/budget`}
           />
           <DashboardCard
             title="Remaining"
             value={formatCurrency(Math.abs(remaining), wedding?.currency ?? "USD")}
             subtitle={remaining < 0 ? "Over budget" : "Available"}
             icon={PiggyBank}
+            href={`/${weddingId}/budget`}
           />
           <DashboardCard
             title="Tasks Complete"
             value={`${taskPct}%`}
             subtitle={`${completedTasks} / ${allTasks.length} tasks`}
             icon={CheckCircle2}
+            href={`/${weddingId}/timeline`}
           />
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <RsvpSummaryCard guests={allGuests} />
+        <RsvpSummaryCard guests={allGuests} href={`/${weddingId}/guests`} />
         <Card>
-          <CardHeader className="pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-base">Budget Overview</CardTitle>
+            <Button variant="ghost" size="sm" asChild><Link href={`/${weddingId}/budget`}>View all</Link></Button>
           </CardHeader>
           <CardContent>
             {allCategories.length > 0 ? (
