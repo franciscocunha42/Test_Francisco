@@ -1,6 +1,6 @@
 "use client";
 
-import { Pencil, Trash2, Globe, Phone, Mail } from "lucide-react";
+import { Pencil, Trash2, Globe, Phone, Mail, Receipt } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils/cn";
 import { formatCurrency } from "@/lib/utils/format";
@@ -11,7 +11,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { VendorFormDialog } from "@/components/VendorFormDialog";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
-import type { Vendor } from "@/lib/types/database";
+import {
+  getVendorFinance,
+  paymentStatusLabel,
+  paymentStatusVariant,
+} from "@/lib/utils/vendor-finance";
+import type { Vendor, Expense } from "@/lib/types/database";
 import type { VendorFormValues } from "@/lib/schemas/vendor";
 
 const statusColors: Record<string, "default" | "secondary" | "warning" | "info" | "success" | "destructive"> = {
@@ -26,11 +31,15 @@ interface VendorCardProps {
   vendor: Vendor;
   weddingId: string;
   currency?: string;
+  /** Expenses for the wedding — used to derive payment status and roll up costs. */
+  expenses?: Pick<Expense, "vendor_id" | "planned_amount" | "actual_amount" | "payment_status">[];
   onEditSubmit?: (data: VendorFormValues, existing?: Vendor) => Promise<{ ok: boolean; error?: string }>;
   onDelete?: (vendorId: string) => Promise<{ ok: boolean; error?: string }>;
 }
 
-export function VendorCard({ vendor, weddingId, currency = "USD", onEditSubmit, onDelete }: VendorCardProps) {
+export function VendorCard({ vendor, weddingId, currency = "USD", expenses = [], onEditSubmit, onDelete }: VendorCardProps) {
+  const finance = getVendorFinance(vendor, expenses);
+
   async function handleDelete() {
     const result = onDelete
       ? await onDelete(vendor.id)
@@ -45,7 +54,12 @@ export function VendorCard({ vendor, weddingId, currency = "USD", onEditSubmit, 
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <p className="font-semibold truncate">{vendor.name}</p>
-            <Badge variant={statusColors[vendor.status]} className="mt-1 text-xs">{capitalize(vendor.status)}</Badge>
+            <div className="mt-1 flex flex-wrap items-center gap-1.5">
+              <Badge variant={statusColors[vendor.status]} className="text-xs">{capitalize(vendor.status)}</Badge>
+              <Badge variant={paymentStatusVariant[finance.status]} className="text-xs">
+                {paymentStatusLabel[finance.status]}
+              </Badge>
+            </div>
           </div>
           <div className="flex gap-1 shrink-0">
             <VendorFormDialog
@@ -85,16 +99,34 @@ export function VendorCard({ vendor, weddingId, currency = "USD", onEditSubmit, 
 
         <div className="grid grid-cols-2 gap-2 rounded-md bg-muted/50 p-2 text-sm">
           <div>
-            <p className="text-xs text-muted-foreground">Quoted</p>
-            <p className="font-medium">{vendor.quoted_price != null ? formatCurrency(vendor.quoted_price, currency) : "—"}</p>
+            <p className="text-xs text-muted-foreground">Planned</p>
+            <p className="font-medium">{finance.planned != null ? formatCurrency(finance.planned, currency) : "—"}</p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Actual</p>
-            <p className={cn("font-medium", vendor.actual_cost != null && vendor.quoted_price != null && vendor.actual_cost > vendor.quoted_price && "text-destructive")}>
-              {vendor.actual_cost != null ? formatCurrency(vendor.actual_cost, currency) : "—"}
+            <p className={cn(
+              "font-medium",
+              finance.actual != null && finance.planned != null && finance.actual > finance.planned && "text-destructive",
+            )}>
+              {finance.actual != null ? formatCurrency(finance.actual, currency) : "—"}
             </p>
           </div>
         </div>
+
+        {finance.fromExpenses && (
+          <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1">
+              <Receipt className="h-3 w-3" />
+              {finance.expenseCount} expense{finance.expenseCount !== 1 ? "s" : ""}
+            </span>
+            <span>
+              {formatCurrency(finance.paidPartial, currency)} paid
+              {finance.actual != null && finance.actual > 0 && (
+                <> · {Math.round((finance.paidPartial / finance.actual) * 100)}%</>
+              )}
+            </span>
+          </div>
+        )}
 
         {vendor.notes && <p className="text-xs text-muted-foreground line-clamp-2">{vendor.notes}</p>}
       </CardContent>

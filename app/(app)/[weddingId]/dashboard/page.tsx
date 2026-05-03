@@ -1,17 +1,17 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { requireWeddingMember, getUserWeddings } from "@/lib/auth";
-import type { Wedding, TimelineTask, Guest, Vendor, BudgetCategory } from "@/lib/types/database";
+import type { Wedding, TimelineTask, Guest, Vendor, BudgetCategory, Expense } from "@/lib/types/database";
 import { formatCurrency, formatDate } from "@/lib/utils/format";
 import { CountdownCard } from "@/components/CountdownCard";
 import { DashboardCard } from "@/components/DashboardCard";
 import { RsvpSummaryCard } from "@/components/RsvpSummaryCard";
 import { BudgetChart } from "@/components/BudgetChart";
+import { SuppliersOverviewCard } from "@/components/SuppliersOverviewCard";
 import { WeddingSwitcher } from "@/components/WeddingSwitcher";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, Users, Store, PiggyBank, FileText, Plus, CheckCircle2, MapPin, Heart } from "lucide-react";
+import { Calendar, Users, Store, PiggyBank, FileText, CheckCircle2, MapPin, Heart } from "lucide-react";
 import { GuestFormDialog } from "@/components/GuestFormDialog";
 import { VendorFormDialog } from "@/components/VendorFormDialog";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
@@ -21,12 +21,13 @@ export default async function DashboardPage({ params }: { params: { weddingId: s
   await requireWeddingMember(weddingId);
   const supabase = createClient();
 
-  const [weddingRes, tasksRes, guestsRes, vendorsRes, categoriesRes, memberships] = await Promise.all([
+  const [weddingRes, tasksRes, guestsRes, vendorsRes, categoriesRes, expensesRes, memberships] = await Promise.all([
     supabase.from("weddings").select("*").eq("id", weddingId).single(),
     supabase.from("timeline_tasks").select("*").eq("wedding_id", weddingId).order("due_date"),
     supabase.from("guests").select("*").eq("wedding_id", weddingId),
     supabase.from("vendors").select("*").eq("wedding_id", weddingId).order("created_at", { ascending: false }),
     supabase.from("budget_categories").select("*").eq("wedding_id", weddingId),
+    supabase.from("expenses").select("vendor_id, planned_amount, actual_amount, payment_status").eq("wedding_id", weddingId),
     getUserWeddings(),
   ]);
 
@@ -35,6 +36,7 @@ export default async function DashboardPage({ params }: { params: { weddingId: s
   const guests = guestsRes.data as Guest[] | null;
   const vendors = vendorsRes.data as Vendor[] | null;
   const categories = categoriesRes.data as BudgetCategory[] | null;
+  const expenses = (expensesRes.data ?? []) as Pick<Expense, "vendor_id" | "planned_amount" | "actual_amount" | "payment_status">[];
 
   const allTasks = tasks ?? [];
   const completedTasks = allTasks.filter((t) => t.status === "completed").length;
@@ -52,8 +54,6 @@ export default async function DashboardPage({ params }: { params: { weddingId: s
     .filter((t) => t.status !== "completed" && t.due_date)
     .sort((a, b) => new Date(a.due_date!).getTime() - new Date(b.due_date!).getTime())
     .slice(0, 5);
-
-  const recentVendors = allVendors.filter((v) => v.status === "booked").slice(0, 4);
 
   return (
     <div className="space-y-6">
@@ -160,24 +160,12 @@ export default async function DashboardPage({ params }: { params: { weddingId: s
             )}
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-base">Booked Suppliers</CardTitle>
-            <Button variant="ghost" size="sm" asChild><Link href={`/${weddingId}/suppliers`}>View all</Link></Button>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {recentVendors.length === 0 ? (
-              <p className="py-4 text-center text-sm text-muted-foreground">No booked suppliers yet</p>
-            ) : (
-              recentVendors.map((v) => (
-                <div key={v.id} className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">
-                  <span className="truncate">{v.name}</span>
-                  <Badge variant="success" className="ml-2 shrink-0 text-xs">Booked</Badge>
-                </div>
-              ))
-            )}
-          </CardContent>
-        </Card>
+        <SuppliersOverviewCard
+          vendors={allVendors}
+          expenses={expenses}
+          currency={wedding?.currency ?? "USD"}
+          href={`/${weddingId}/suppliers`}
+        />
       </div>
 
       {/* Quick actions */}

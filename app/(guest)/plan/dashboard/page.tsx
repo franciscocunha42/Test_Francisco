@@ -10,9 +10,9 @@ import { CountdownCard } from "@/components/CountdownCard";
 import { DashboardCard } from "@/components/DashboardCard";
 import { RsvpSummaryCard } from "@/components/RsvpSummaryCard";
 import { BudgetChart } from "@/components/BudgetChart";
+import { SuppliersOverviewCard } from "@/components/SuppliersOverviewCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Calendar, Users, Store, PiggyBank, FileText, CheckCircle2 } from "lucide-react";
 import { GuestFormDialog } from "@/components/GuestFormDialog";
 import { VendorFormDialog } from "@/components/VendorFormDialog";
@@ -24,6 +24,7 @@ export default function GuestDashboardPage() {
   const tasks = useGuestStore((s) => s.tasks);
   const guests = useGuestStore((s) => s.guests);
   const vendors = useGuestStore((s) => s.vendors);
+  const expenses = useGuestStore((s) => s.expenses);
   const categories = useGuestStore((s) => s.budgetCategories);
   const createTask = useGuestStore((s) => s.createTask);
   const createGuest = useGuestStore((s) => s.createGuest);
@@ -44,8 +45,6 @@ export default function GuestDashboardPage() {
     .filter((t) => t.status !== "completed" && t.due_date)
     .sort((a, b) => new Date(a.due_date!).getTime() - new Date(b.due_date!).getTime())
     .slice(0, 5);
-
-  const recentVendors = vendors.filter((v) => v.status === "booked").slice(0, 4);
 
   return (
     <GuestAppShell>
@@ -110,24 +109,12 @@ export default function GuestDashboardPage() {
               )}
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-base">Booked Suppliers</CardTitle>
-              <Button variant="ghost" size="sm" asChild><Link href="/plan/suppliers">View all</Link></Button>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              {recentVendors.length === 0 ? (
-                <p className="py-4 text-center text-sm text-muted-foreground">No booked suppliers yet</p>
-              ) : (
-                recentVendors.map((v) => (
-                  <div key={v.id} className="flex items-center justify-between rounded-md border px-3 py-2 text-sm">
-                    <span className="truncate">{v.name}</span>
-                    <Badge variant="success" className="ml-2 shrink-0 text-xs">Booked</Badge>
-                  </div>
-                ))
-              )}
-            </CardContent>
-          </Card>
+          <SuppliersOverviewCard
+            vendors={vendors}
+            expenses={expenses}
+            currency={wedding.currency}
+            href="/plan/suppliers"
+          />
         </div>
 
         <Card>
