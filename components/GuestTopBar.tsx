@@ -6,11 +6,34 @@ import { Heart, X, Cloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRequireAuth } from "@/lib/guest-store/use-require-auth";
 import { useGuestStore } from "@/lib/guest-store/store";
+import { WeddingDetailsDialog } from "@/components/WeddingDetailsDialog";
+import type { WeddingDetailsInput } from "@/components/WeddingDetailsDialog";
+
+function isGenericWedding(wedding: { partner_one_name?: string | null; partner_two_name?: string | null } | null): boolean {
+  if (!wedding) return true;
+  return !wedding.partner_one_name?.trim() && !wedding.partner_two_name?.trim();
+}
 
 export function GuestTopBar() {
   const { guard } = useRequireAuth();
   const wedding = useGuestStore((s) => s.wedding);
+  const updateWedding = useGuestStore((s) => s.updateWedding);
   const [bannerDismissed, setBannerDismissed] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+
+  function handleSaveToCloud() {
+    if (isGenericWedding(wedding)) {
+      setDetailsOpen(true);
+    } else {
+      guard("save your wedding");
+    }
+  }
+
+  async function handleDetailsSaved(data: WeddingDetailsInput) {
+    updateWedding(data);
+    // Small delay to let state settle before opening the auth gate
+    setTimeout(() => guard("save your wedding"), 50);
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b bg-card">
@@ -28,7 +51,7 @@ export function GuestTopBar() {
           <Button
             variant="default"
             size="sm"
-            onClick={() => guard("save your wedding")}
+            onClick={handleSaveToCloud}
           >
             <Cloud className="mr-1.5 h-3.5 w-3.5" />
             Save to cloud
@@ -46,7 +69,7 @@ export function GuestTopBar() {
             <button
               type="button"
               className="font-medium text-primary underline-offset-2 hover:underline"
-              onClick={() => guard("save your wedding")}
+              onClick={handleSaveToCloud}
             >
               Save to cloud
             </button>{" "}
@@ -62,6 +85,15 @@ export function GuestTopBar() {
           </button>
         </div>
       )}
+
+      <WeddingDetailsDialog
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+        defaultValues={wedding ?? {}}
+        onSave={handleDetailsSaved}
+        title="Complete your wedding details"
+        requireNames
+      />
     </header>
   );
 }

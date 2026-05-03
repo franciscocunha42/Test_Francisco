@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useGuestStore } from "@/lib/guest-store/store";
@@ -11,9 +11,11 @@ import { DashboardCard } from "@/components/DashboardCard";
 import { RsvpSummaryCard } from "@/components/RsvpSummaryCard";
 import { BudgetChart } from "@/components/BudgetChart";
 import { SuppliersOverviewCard } from "@/components/SuppliersOverviewCard";
+import { WeddingDetailsDialog } from "@/components/WeddingDetailsDialog";
+import type { WeddingDetailsInput } from "@/components/WeddingDetailsDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Users, Store, PiggyBank, FileText, CheckCircle2 } from "lucide-react";
+import { Calendar, Users, Store, PiggyBank, FileText, CheckCircle2, MapPin, Heart, Pencil } from "lucide-react";
 import { GuestFormDialog } from "@/components/GuestFormDialog";
 import { VendorFormDialog } from "@/components/VendorFormDialog";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
@@ -29,6 +31,8 @@ export default function GuestDashboardPage() {
   const createTask = useGuestStore((s) => s.createTask);
   const createGuest = useGuestStore((s) => s.createGuest);
   const createVendor = useGuestStore((s) => s.createVendor);
+  const updateWedding = useGuestStore((s) => s.updateWedding);
+  const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
     if (!wedding) router.replace("/plan");
@@ -46,13 +50,67 @@ export default function GuestDashboardPage() {
     .sort((a, b) => new Date(a.due_date!).getTime() - new Date(b.due_date!).getTime())
     .slice(0, 5);
 
+  const isGeneric = !wedding.partner_one_name?.trim() && !wedding.partner_two_name?.trim();
+
+  async function handleSaveDetails(data: WeddingDetailsInput) {
+    updateWedding(data);
+  }
+
   return (
     <GuestAppShell>
       <div className="space-y-6">
-        <div>
-          <h1 className="font-serif text-2xl font-semibold">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">Here&apos;s your wedding at a glance</p>
+        {/* Wedding info header */}
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <Heart className="h-5 w-5 text-primary fill-primary" />
+              <h1 className="font-serif text-2xl font-semibold">{wedding.name}</h1>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                onClick={() => setEditOpen(true)}
+                aria-label="Edit wedding details"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+            {isGeneric ? (
+              <button
+                type="button"
+                onClick={() => setEditOpen(true)}
+                className="mt-1 text-sm text-primary hover:underline"
+              >
+                Add your names, date &amp; venue →
+              </button>
+            ) : (
+              <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+                {wedding.partner_one_name && wedding.partner_two_name && (
+                  <span>{wedding.partner_one_name} &amp; {wedding.partner_two_name}</span>
+                )}
+                {wedding.wedding_date && (
+                  <span className="flex items-center gap-1">
+                    <Calendar className="h-3.5 w-3.5" />
+                    {formatDate(wedding.wedding_date)}
+                  </span>
+                )}
+                {(wedding.venue_name || wedding.location) && (
+                  <span className="flex items-center gap-1">
+                    <MapPin className="h-3.5 w-3.5" />
+                    {wedding.venue_name ?? wedding.location}
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
         </div>
+
+        <WeddingDetailsDialog
+          open={editOpen}
+          onOpenChange={setEditOpen}
+          defaultValues={wedding}
+          onSave={handleSaveDetails}
+        />
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <div className="lg:col-span-1">

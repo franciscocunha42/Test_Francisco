@@ -68,6 +68,34 @@ export async function updateWedding(weddingId: string, formData: FormData) {
   return { ok: true };
 }
 
+export async function patchWeddingInline(
+  weddingId: string,
+  data: {
+    name: string;
+    partner_one_name: string;
+    partner_two_name: string;
+    wedding_date?: string | null;
+    venue_name?: string | null;
+    location?: string | null;
+    total_budget?: number;
+    currency?: string;
+  }
+): Promise<{ ok: boolean; error?: string }> {
+  const parsed = weddingSchema.safeParse({ total_budget: 0, currency: "USD", ...data });
+  if (!parsed.success) return { ok: false, error: parsed.error.errors[0].message };
+
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("weddings")
+    .update(parsed.data)
+    .eq("id", weddingId);
+
+  if (error) return { ok: false, error: error.message };
+  revalidatePath(`/${weddingId}/settings`);
+  revalidatePath(`/${weddingId}/dashboard`);
+  return { ok: true };
+}
+
 export async function deleteWedding(weddingId: string) {
   const supabase = createClient();
   const { error } = await supabase.from("weddings").delete().eq("id", weddingId);

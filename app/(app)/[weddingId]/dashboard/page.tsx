@@ -8,10 +8,10 @@ import { DashboardCard } from "@/components/DashboardCard";
 import { RsvpSummaryCard } from "@/components/RsvpSummaryCard";
 import { BudgetChart } from "@/components/BudgetChart";
 import { SuppliersOverviewCard } from "@/components/SuppliersOverviewCard";
-import { WeddingSwitcher } from "@/components/WeddingSwitcher";
+import { WeddingHeaderEditor } from "@/components/WeddingHeaderEditor";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Users, Store, PiggyBank, FileText, CheckCircle2, MapPin, Heart } from "lucide-react";
+import { Calendar, Users, Store, PiggyBank, FileText, CheckCircle2 } from "lucide-react";
 import { GuestFormDialog } from "@/components/GuestFormDialog";
 import { VendorFormDialog } from "@/components/VendorFormDialog";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
@@ -57,38 +57,13 @@ export default async function DashboardPage({ params }: { params: { weddingId: s
 
   return (
     <div className="space-y-6">
-      {/* Wedding info header */}
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <Heart className="h-5 w-5 text-primary fill-primary" />
-            <h1 className="font-serif text-2xl font-semibold">{wedding?.name ?? "Dashboard"}</h1>
-          </div>
-          <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-            {wedding?.partner_one_name && wedding?.partner_two_name && (
-              <span>{wedding.partner_one_name} &amp; {wedding.partner_two_name}</span>
-            )}
-            {wedding?.wedding_date && (
-              <span className="flex items-center gap-1">
-                <Calendar className="h-3.5 w-3.5" />
-                {formatDate(wedding.wedding_date)}
-              </span>
-            )}
-            {(wedding?.venue_name || wedding?.location) && (
-              <span className="flex items-center gap-1">
-                <MapPin className="h-3.5 w-3.5" />
-                {wedding.venue_name ?? wedding.location}
-              </span>
-            )}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <WeddingSwitcher currentWeddingId={weddingId} weddings={allWeddings} />
-          <Button variant="outline" size="sm" asChild>
-            <Link href={`/${weddingId}/settings`}>Edit wedding</Link>
-          </Button>
-        </div>
-      </div>
+      {wedding && (
+        <WeddingHeaderEditor
+          wedding={wedding}
+          weddingId={weddingId}
+          allWeddings={allWeddings}
+        />
+      )}
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <div className="lg:col-span-1">
