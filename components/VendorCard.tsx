@@ -1,23 +1,28 @@
 "use client";
 
-import { Pencil, Trash2, Globe, Phone, Mail, Receipt } from "lucide-react";
+import { useState } from "react";
+import { Pencil, Trash2, Globe, Phone, Mail, Receipt, Plus, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils/cn";
 import { formatCurrency } from "@/lib/utils/format";
 import { capitalize } from "@/lib/utils/format";
 import { deleteVendor } from "@/lib/actions/vendor";
+import { deleteExpense, patchExpenseStatus } from "@/lib/actions/budget";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { VendorFormDialog } from "@/components/VendorFormDialog";
+import { ExpenseFormDialog } from "@/components/ExpenseFormDialog";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import {
   getVendorFinance,
   paymentStatusLabel,
   paymentStatusVariant,
 } from "@/lib/utils/vendor-finance";
-import type { Vendor, Expense } from "@/lib/types/database";
+import type { Vendor, Expense, BudgetCategory, PaymentStatus } from "@/lib/types/database";
 import type { VendorFormValues } from "@/lib/schemas/vendor";
+import type { ExpenseFormValues } from "@/lib/schemas/budget";
 
 const statusColors: Record<string, "default" | "secondary" | "warning" | "info" | "success" | "destructive"> = {
   researching: "secondary",
@@ -27,20 +32,54 @@ const statusColors: Record<string, "default" | "secondary" | "warning" | "info" 
   rejected: "destructive",
 };
 
+const PAYMENT_STATUSES: { value: PaymentStatus; label: string }[] = [
+  { value: "unpaid", label: "Unpaid" },
+  { value: "deposit_paid", label: "Deposit Paid" },
+  { value: "partially_paid", label: "Partially Paid" },
+  { value: "paid", label: "Paid" },
+];
+
 interface VendorCardProps {
   vendor: Vendor;
   weddingId: string;
   currency?: string;
-  /** Expenses for the wedding — used to derive payment status and roll up costs. */
-  expenses?: Pick<Expense, "vendor_id" | "planned_amount" | "actual_amount" | "payment_status">[];
+  /** Full expense objects for this wedding. Linked expenses filtered client-side. */
+  expenses?: Expense[];
+  /** Budget categories — required for the add/edit expense form. */
+  categories?: BudgetCategory[];
+  /** Guest-mode override for vendor edit. */
   onEditSubmit?: (data: VendorFormValues, existing?: Vendor) => Promise<{ ok: boolean; error?: string }>;
+  /** Guest-mode override for vendor delete. */
   onDelete?: (vendorId: string) => Promise<{ ok: boolean; error?: string }>;
+  /** Guest-mode override for expense creation. */
+  onAddExpense?: (data: ExpenseFormValues) => Promise<{ ok: boolean; error?: string }>;
+  /** Guest-mode override for expense update. */
+  onUpdateExpense?: (expenseId: string, data: ExpenseFormValues) => Promise<{ ok: boolean; error?: string }>;
+  /** Guest-mode override for expense deletion. */
+  onDeleteExpense?: (expenseId: string) => Promise<{ ok: boolean; error?: string }>;
+  /** Guest-mode override for payment status quick-change. */
+  onUpdateExpenseStatus?: (expenseId: string, status: PaymentStatus) => Promise<{ ok: boolean; error?: string }>;
 }
 
-export function VendorCard({ vendor, weddingId, currency = "USD", expenses = [], onEditSubmit, onDelete }: VendorCardProps) {
+export function VendorCard({
+  vendor,
+  weddingId,
+  currency = "USD",
+  expenses = [],
+  categories,
+  onEditSubmit,
+  onDelete,
+  onAddExpense,
+  onUpdateExpense,
+  onDeleteExpense,
+  onUpdateExpenseStatus,
+}: VendorCardProps) {
+  const [showExpenses, setShowExpenses] = useState(false);
+
+  const linkedExpenses = expenses.filter((e) => e.vendor_id === vendor.id);
   const finance = getVendorFinance(vendor, expenses);
 
-  async function handleDelete() {
+  async function handleVendorDelete() {
     const result = onDelete
       ? await onDelete(vendor.id)
       : await deleteVendor(weddingId, vendor.id);
@@ -48,9 +87,43 @@ export function VendorCard({ vendor, weddingId, currency = "USD", expenses = [],
     else toast.success("Vendor removed");
   }
 
+  async function handleExpenseDelete(expenseId: string) {
+    const result = onDeleteExpense
+      ? await onDeleteExpense(expenseId)
+      : await deleteExpense(weddingId, expenseId);
+    if (result?.ok === false) toast.error(result.error ?? "Failed to delete expense");
+    else toast.success("Expense removed");
+  }
+
+  async function handleStatusChange(expenseId: string, status: PaymentStatus) {
+    const result = onUpdateExpenseStatus
+      ? await onUpdateExpenseStatus(expenseId, status)
+      : await patchExpenseStatus(weddingId, expenseId, status);
+    if (result?.ok === false) toast.error(result.error ?? "Failed to update status");
+  }
+
+  // Single handler for ExpenseFormDialog — covers both create and edit
+  function makeExpenseSubmitHandler(existing?: Expense) {
+    return async (data: ExpenseFormValues) => {
+      if (existing) {
+        return onUpdateExpense
+          ? await onUpdateExpense(existing.id, data)
+          : await import("@/lib/actions/budget").then((m) =>
+              m.updateExpense(weddingId, existing.id, data),
+            );
+      }
+      return onAddExpense
+        ? await onAddExpense(data)
+        : await import("@/lib/actions/budget").then((m) =>
+            m.createExpense(weddingId, data),
+          );
+    };
+  }
+
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-4 space-y-3">
+        {/* Header */}
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
             <p className="font-semibold truncate">{vendor.name}</p>
@@ -72,7 +145,7 @@ export function VendorCard({ vendor, weddingId, currency = "USD", expenses = [],
               trigger={<Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive"><Trash2 className="h-3.5 w-3.5" /></Button>}
               title="Remove vendor"
               description={`Remove "${vendor.name}"?`}
-              onConfirm={handleDelete}
+              onConfirm={handleVendorDelete}
             />
           </div>
         </div>
@@ -97,6 +170,7 @@ export function VendorCard({ vendor, weddingId, currency = "USD", expenses = [],
           )}
         </div>
 
+        {/* Finance summary grid */}
         <div className="grid grid-cols-2 gap-2 rounded-md bg-muted/50 p-2 text-sm">
           <div>
             <p className="text-xs text-muted-foreground">Planned</p>
@@ -113,22 +187,94 @@ export function VendorCard({ vendor, weddingId, currency = "USD", expenses = [],
           </div>
         </div>
 
-        {finance.fromExpenses && (
-          <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
+        {/* Expenses section */}
+        <div className="border-t pt-2 space-y-2">
+          <div className="flex items-center justify-between gap-2">
+            <button
+              type="button"
+              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => setShowExpenses((p) => !p)}
+            >
+              <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", showExpenses && "rotate-180")} />
               <Receipt className="h-3 w-3" />
-              {finance.expenseCount} expense{finance.expenseCount !== 1 ? "s" : ""}
-            </span>
-            <span>
-              {formatCurrency(finance.paidPartial, currency)} paid
-              {finance.actual != null && finance.actual > 0 && (
-                <> · {Math.round((finance.paidPartial / finance.actual) * 100)}%</>
-              )}
-            </span>
-          </div>
-        )}
+              {linkedExpenses.length === 0
+                ? "No linked expenses"
+                : `${linkedExpenses.length} expense${linkedExpenses.length !== 1 ? "s" : ""} · ${formatCurrency(finance.paidPartial, currency)} paid`}
+            </button>
 
-        {vendor.notes && <p className="text-xs text-muted-foreground line-clamp-2">{vendor.notes}</p>}
+            {categories && (
+              <ExpenseFormDialog
+                weddingId={weddingId}
+                categories={categories}
+                vendors={[{ id: vendor.id, name: vendor.name }]}
+                prefill={{ vendor_id: vendor.id }}
+                onSubmit={makeExpenseSubmitHandler()}
+                trigger={
+                  <Button variant="ghost" size="sm" className="h-6 gap-1 px-1.5 text-xs">
+                    <Plus className="h-3 w-3" />Add
+                  </Button>
+                }
+              />
+            )}
+          </div>
+
+          {showExpenses && linkedExpenses.length > 0 && (
+            <div className="space-y-1">
+              {linkedExpenses.map((exp) => (
+                <div
+                  key={exp.id}
+                  className="flex items-center gap-1.5 rounded border bg-muted/20 px-2 py-1.5 text-xs"
+                >
+                  <span className="min-w-0 flex-1 truncate font-medium">{exp.title}</span>
+                  <span className="shrink-0 tabular-nums text-muted-foreground">
+                    {formatCurrency(exp.actual_amount, currency)}
+                  </span>
+                  <Select
+                    value={exp.payment_status}
+                    onValueChange={(v) => handleStatusChange(exp.id, v as PaymentStatus)}
+                  >
+                    <SelectTrigger className="h-5 w-[100px] shrink-0 px-1.5 text-[11px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PAYMENT_STATUSES.map((s) => (
+                        <SelectItem key={s.value} value={s.value} className="text-xs">
+                          {s.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {categories && (
+                    <ExpenseFormDialog
+                      weddingId={weddingId}
+                      expense={exp}
+                      categories={categories}
+                      vendors={[{ id: vendor.id, name: vendor.name }]}
+                      onSubmit={makeExpenseSubmitHandler(exp)}
+                      trigger={
+                        <Button variant="ghost" size="icon" className="h-5 w-5 shrink-0">
+                          <Pencil className="h-3 w-3" />
+                        </Button>
+                      }
+                    />
+                  )}
+                  <ConfirmDialog
+                    trigger={
+                      <Button variant="ghost" size="icon" className="h-5 w-5 shrink-0 text-destructive hover:text-destructive">
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    }
+                    title="Delete expense"
+                    description={`Delete "${exp.title}"?`}
+                    onConfirm={() => handleExpenseDelete(exp.id)}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {vendor.notes && <p className="text-xs text-muted-foreground line-clamp-2 border-t pt-2">{vendor.notes}</p>}
       </CardContent>
     </Card>
   );

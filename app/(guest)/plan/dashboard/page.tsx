@@ -9,12 +9,11 @@ import { formatDate } from "@/lib/utils/format";
 import { DashboardStatTiles } from "@/components/DashboardStatTiles";
 import { BudgetDonutChart } from "@/components/BudgetDonutChart";
 import { BudgetVendorBreakdownTable } from "@/components/BudgetVendorBreakdownTable";
-import { TimelineGantt } from "@/components/TimelineGantt";
 import { WeddingDetailsDialog } from "@/components/WeddingDetailsDialog";
 import type { WeddingDetailsInput } from "@/components/WeddingDetailsDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, MapPin, Heart, Pencil } from "lucide-react";
+import { Calendar, MapPin, Heart, Pencil, AlertCircle } from "lucide-react";
 
 export default function GuestDashboardPage() {
   const router = useRouter();
@@ -36,6 +35,12 @@ export default function GuestDashboardPage() {
   const totalSpent = categories.reduce((s, c) => s + (c.actual_amount ?? 0), 0);
   const guestsAttending = guests.filter((g) => g.rsvp_status === "attending").length;
   const isGeneric = !wedding.partner_one_name?.trim() && !wedding.partner_two_name?.trim();
+
+  const today = new Date().toISOString().split("T")[0];
+  const pendingTasks = tasks.filter((t) => t.status !== "completed" && t.due_date);
+  const overdueTasks = pendingTasks.filter((t) => t.due_date! < today);
+  const futureTasks = pendingTasks.filter((t) => t.due_date! >= today);
+  const upcomingTasks = [...overdueTasks, ...futureTasks].slice(0, 7);
 
   async function handleSaveDetails(data: WeddingDetailsInput) {
     updateWedding(data);
@@ -136,13 +141,40 @@ export default function GuestDashboardPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-base">Wedding Timeline</CardTitle>
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-base">Upcoming Tasks</CardTitle>
+              {overdueTasks.length > 0 && (
+                <span className="flex items-center gap-1 rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">
+                  <AlertCircle className="h-3 w-3" />
+                  {overdueTasks.length} overdue
+                </span>
+              )}
+            </div>
             <Button variant="ghost" size="sm" asChild>
               <Link href="/plan/timeline">View all</Link>
             </Button>
           </CardHeader>
-          <CardContent>
-            <TimelineGantt tasks={tasks} weddingDate={wedding.wedding_date ?? null} />
+          <CardContent className="space-y-1.5">
+            {upcomingTasks.length === 0 ? (
+              <p className="py-6 text-center text-sm text-muted-foreground">No upcoming tasks</p>
+            ) : (
+              upcomingTasks.map((t) => {
+                const overdue = t.due_date! < today;
+                return (
+                  <div
+                    key={t.id}
+                    className={`flex items-center justify-between rounded-md border px-3 py-2 text-sm ${overdue ? "border-destructive/40 bg-destructive/5" : ""}`}
+                  >
+                    <span className={`truncate ${overdue ? "font-medium text-destructive" : ""}`}>{t.title}</span>
+                    {t.due_date && (
+                      <span className={`ml-2 shrink-0 text-xs ${overdue ? "font-medium text-destructive" : "text-muted-foreground"}`}>
+                        {overdue && "Overdue · "}{formatDate(t.due_date)}
+                      </span>
+                    )}
+                  </div>
+                );
+              })
+            )}
           </CardContent>
         </Card>
       </div>

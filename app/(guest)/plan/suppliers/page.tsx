@@ -13,15 +13,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { capitalize, formatCurrency } from "@/lib/utils/format";
 import { summariseVendorFinances } from "@/lib/utils/vendor-finance";
 import { useGuestStore } from "@/lib/guest-store/store";
+import type { ExpenseFormValues } from "@/lib/schemas/budget";
+import type { PaymentStatus } from "@/lib/types/database";
 
 export default function GuestSuppliersPage() {
   const router = useRouter();
   const wedding = useGuestStore((s) => s.wedding);
   const vendors = useGuestStore((s) => s.vendors);
   const expenses = useGuestStore((s) => s.expenses);
+  const categories = useGuestStore((s) => s.budgetCategories);
   const createVendor = useGuestStore((s) => s.createVendor);
   const updateVendor = useGuestStore((s) => s.updateVendor);
   const deleteVendor = useGuestStore((s) => s.deleteVendor);
+  const createExpense = useGuestStore((s) => s.createExpense);
+  const updateExpense = useGuestStore((s) => s.updateExpense);
+  const deleteExpense = useGuestStore((s) => s.deleteExpense);
 
   useEffect(() => {
     if (!wedding) router.replace("/plan");
@@ -35,13 +41,26 @@ export default function GuestSuppliersPage() {
   const totals = summariseVendorFinances(vendors, expenses);
   const remaining = Math.max(0, totals.actual - totals.paid);
 
-  const renderTrigger = (label = "Add Supplier") => (
-    <VendorFormDialog
-      weddingId="guest"
-      onSubmit={async (data) => { createVendor(data); return { ok: true }; }}
-      trigger={<Button size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" />{label}</Button>}
-    />
-  );
+  function vendorCardProps(vendorId: string) {
+    return {
+      weddingId: "guest" as const,
+      currency,
+      expenses,
+      categories,
+      onEditSubmit: async (data: Parameters<typeof updateVendor>[1], existing?: { id: string }) => {
+        if (existing) updateVendor(existing.id, data);
+        return { ok: true as const };
+      },
+      onDelete: async (id: string) => { deleteVendor(id); return { ok: true as const }; },
+      onAddExpense: async (data: ExpenseFormValues) => { createExpense(data); return { ok: true as const }; },
+      onUpdateExpense: async (id: string, data: ExpenseFormValues) => { updateExpense(id, data); return { ok: true as const }; },
+      onDeleteExpense: async (id: string) => { deleteExpense(id); return { ok: true as const }; },
+      onUpdateExpenseStatus: async (id: string, status: PaymentStatus) => {
+        updateExpense(id, { payment_status: status });
+        return { ok: true as const };
+      },
+    };
+  }
 
   return (
     <GuestAppShell>
@@ -51,7 +70,11 @@ export default function GuestSuppliersPage() {
             <h1 className="font-serif text-2xl font-semibold">Suppliers</h1>
             <p className="text-sm text-muted-foreground">{vendors.length} vendors tracked</p>
           </div>
-          {renderTrigger()}
+          <VendorFormDialog
+            weddingId="guest"
+            onSubmit={async (data) => { createVendor(data); return { ok: true }; }}
+            trigger={<Button size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" />Add Supplier</Button>}
+          />
         </div>
 
         {vendors.length > 0 && (
@@ -105,18 +128,7 @@ export default function GuestSuppliersPage() {
             <TabsContent value="all" className="mt-4">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {vendors.map((v) => (
-                  <VendorCard
-                    key={v.id}
-                    vendor={v}
-                    weddingId="guest"
-                    currency={currency}
-                    expenses={expenses}
-                    onEditSubmit={async (data, existing) => {
-                      if (existing) updateVendor(existing.id, data);
-                      return { ok: true };
-                    }}
-                    onDelete={async (id) => { deleteVendor(id); return { ok: true }; }}
-                  />
+                  <VendorCard key={v.id} vendor={v} {...vendorCardProps(v.id)} />
                 ))}
               </div>
             </TabsContent>
@@ -125,18 +137,7 @@ export default function GuestSuppliersPage() {
               <TabsContent key={cat} value={cat} className="mt-4">
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {vendors.filter((v) => v.category === cat).map((v) => (
-                    <VendorCard
-                      key={v.id}
-                      vendor={v}
-                      weddingId="guest"
-                      currency={currency}
-                      expenses={expenses}
-                      onEditSubmit={async (data, existing) => {
-                        if (existing) updateVendor(existing.id, data);
-                        return { ok: true };
-                      }}
-                      onDelete={async (id) => { deleteVendor(id); return { ok: true }; }}
-                    />
+                    <VendorCard key={v.id} vendor={v} {...vendorCardProps(v.id)} />
                   ))}
                 </div>
               </TabsContent>

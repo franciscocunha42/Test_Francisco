@@ -24,17 +24,27 @@ const PAYMENT_STATUSES = [
 interface ExpenseFormDialogProps {
   weddingId: string;
   expense?: Expense;
+  /** Pre-fill fields when creating a new expense (e.g. vendor_id from a VendorCard). */
+  prefill?: { vendor_id?: string; category_id?: string; title?: string };
   categories: BudgetCategory[];
   vendors: { id: string; name: string }[];
   trigger: React.ReactNode;
   onSubmit?: (data: ExpenseFormValues, existing?: Expense) => Promise<{ ok: boolean; error?: string }>;
 }
 
-export function ExpenseFormDialog({ weddingId, expense, categories, vendors, trigger, onSubmit: onSubmitProp }: ExpenseFormDialogProps) {
+export function ExpenseFormDialog({ weddingId, expense, prefill, categories, vendors, trigger, onSubmit: onSubmitProp }: ExpenseFormDialogProps) {
   const [open, setOpen] = useState(false);
+  const defaults = expense ?? {
+    payment_status: "unpaid" as const,
+    planned_amount: 0,
+    actual_amount: 0,
+    vendor_id: prefill?.vendor_id ?? null,
+    category_id: prefill?.category_id ?? null,
+    title: prefill?.title ?? "",
+  };
   const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<ExpenseFormValues>({
     resolver: zodResolver(expenseSchema),
-    defaultValues: expense ?? { payment_status: "unpaid", planned_amount: 0, actual_amount: 0 },
+    defaultValues: defaults,
   });
 
   async function onSubmit(data: ExpenseFormValues) {
@@ -64,7 +74,7 @@ export function ExpenseFormDialog({ weddingId, expense, categories, vendors, tri
             <div className="space-y-1">
               <Label>Category</Label>
               <Select
-                defaultValue={expense?.category_id ?? "none"}
+                defaultValue={expense?.category_id ?? prefill?.category_id ?? "none"}
                 onValueChange={(v) => setValue("category_id", v === "none" ? null : v)}
               >
                 <SelectTrigger><SelectValue placeholder="None" /></SelectTrigger>
@@ -77,7 +87,7 @@ export function ExpenseFormDialog({ weddingId, expense, categories, vendors, tri
             <div className="space-y-1">
               <Label>Vendor</Label>
               <Select
-                defaultValue={expense?.vendor_id ?? "none"}
+                defaultValue={expense?.vendor_id ?? prefill?.vendor_id ?? "none"}
                 onValueChange={(v) => setValue("vendor_id", v === "none" ? null : v)}
               >
                 <SelectTrigger><SelectValue placeholder="None" /></SelectTrigger>

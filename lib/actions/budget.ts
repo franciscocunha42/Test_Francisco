@@ -69,6 +69,7 @@ export async function createExpense(weddingId: string, data: unknown) {
   }
 
   revalidatePath(`/${weddingId}/budget`);
+  revalidatePath(`/${weddingId}/suppliers`);
   revalidatePath(`/${weddingId}/dashboard`);
   return { ok: true };
 }
@@ -97,6 +98,8 @@ export async function updateExpense(weddingId: string, expenseId: string, data: 
   if (categoryId) await recalcCategoryActual(supabase, categoryId);
 
   revalidatePath(`/${weddingId}/budget`);
+  revalidatePath(`/${weddingId}/suppliers`);
+  revalidatePath(`/${weddingId}/dashboard`);
   return { ok: true };
 }
 
@@ -120,6 +123,27 @@ export async function deleteExpense(weddingId: string, expenseId: string) {
   if (existing?.category_id) await recalcCategoryActual(supabase, existing.category_id);
 
   revalidatePath(`/${weddingId}/budget`);
+  revalidatePath(`/${weddingId}/suppliers`);
+  revalidatePath(`/${weddingId}/dashboard`);
+  return { ok: true };
+}
+
+export async function patchExpenseStatus(
+  weddingId: string,
+  expenseId: string,
+  status: "unpaid" | "deposit_paid" | "partially_paid" | "paid",
+): Promise<{ ok: boolean; error?: string }> {
+  await requireWeddingMember(weddingId);
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("expenses")
+    .update({ payment_status: status })
+    .eq("id", expenseId)
+    .eq("wedding_id", weddingId);
+  if (error) return { ok: false, error: error.message };
+  revalidatePath(`/${weddingId}/budget`);
+  revalidatePath(`/${weddingId}/suppliers`);
+  revalidatePath(`/${weddingId}/dashboard`);
   return { ok: true };
 }
 

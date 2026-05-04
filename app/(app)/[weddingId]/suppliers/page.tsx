@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { requireWeddingMember } from "@/lib/auth";
-import type { Vendor, Expense } from "@/lib/types/database";
+import type { Vendor, Expense, BudgetCategory } from "@/lib/types/database";
 import { VendorCard } from "@/components/VendorCard";
 import { VendorFormDialog } from "@/components/VendorFormDialog";
 import { EmptyState } from "@/components/EmptyState";
@@ -16,14 +16,16 @@ export default async function SuppliersPage({ params }: { params: { weddingId: s
   await requireWeddingMember(weddingId);
   const supabase = createClient();
 
-  const [vendorsRes, expensesRes, weddingRes] = await Promise.all([
+  const [vendorsRes, expensesRes, weddingRes, categoriesRes] = await Promise.all([
     supabase.from("vendors").select("*").eq("wedding_id", weddingId).order("created_at"),
-    supabase.from("expenses").select("vendor_id, planned_amount, actual_amount, payment_status").eq("wedding_id", weddingId),
+    supabase.from("expenses").select("*").eq("wedding_id", weddingId),
     supabase.from("weddings").select("currency").eq("id", weddingId).single(),
+    supabase.from("budget_categories").select("*").eq("wedding_id", weddingId).order("created_at"),
   ]);
 
   const allVendors = (vendorsRes.data ?? []) as Vendor[];
-  const expenses = (expensesRes.data ?? []) as Pick<Expense, "vendor_id" | "planned_amount" | "actual_amount" | "payment_status">[];
+  const expenses = (expensesRes.data ?? []) as Expense[];
+  const categories = (categoriesRes.data ?? []) as BudgetCategory[];
   const currency = (weddingRes.data as { currency: string } | null)?.currency ?? "USD";
   const usedCategories = [...new Set(allVendors.map((v) => v.category))];
   const tabCategories = ["all", ...usedCategories];
@@ -47,10 +49,10 @@ export default async function SuppliersPage({ params }: { params: { weddingId: s
       {allVendors.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { label: "Planned",   value: totals.planned, icon: PiggyBank,    color: "text-sky-600" },
-            { label: "Actual",    value: totals.actual,  icon: Wallet,       color: "text-primary" },
-            { label: "Paid",      value: totals.paid,    icon: CheckCircle2, color: "text-emerald-600" },
-            { label: "Outstanding", value: remaining,    icon: Wallet,       color: "text-amber-600" },
+            { label: "Planned",     value: totals.planned, icon: PiggyBank,    color: "text-sky-600" },
+            { label: "Actual",      value: totals.actual,  icon: Wallet,       color: "text-primary" },
+            { label: "Paid",        value: totals.paid,    icon: CheckCircle2, color: "text-emerald-600" },
+            { label: "Outstanding", value: remaining,      icon: Wallet,       color: "text-amber-600" },
           ].map(({ label, value, icon: Icon, color }) => (
             <Card key={label}>
               <CardContent className="flex items-center gap-3 p-4">
@@ -88,7 +90,16 @@ export default async function SuppliersPage({ params }: { params: { weddingId: s
 
           <TabsContent value="all" className="mt-4">
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {allVendors.map((v) => <VendorCard key={v.id} vendor={v} weddingId={weddingId} currency={currency} expenses={expenses} />)}
+              {allVendors.map((v) => (
+                <VendorCard
+                  key={v.id}
+                  vendor={v}
+                  weddingId={weddingId}
+                  currency={currency}
+                  expenses={expenses}
+                  categories={categories}
+                />
+              ))}
             </div>
           </TabsContent>
 
@@ -96,7 +107,14 @@ export default async function SuppliersPage({ params }: { params: { weddingId: s
             <TabsContent key={cat} value={cat} className="mt-4">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {allVendors.filter((v) => v.category === cat).map((v) => (
-                  <VendorCard key={v.id} vendor={v} weddingId={weddingId} currency={currency} expenses={expenses} />
+                  <VendorCard
+                    key={v.id}
+                    vendor={v}
+                    weddingId={weddingId}
+                    currency={currency}
+                    expenses={expenses}
+                    categories={categories}
+                  />
                 ))}
               </div>
             </TabsContent>

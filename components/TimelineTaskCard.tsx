@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Pencil, Trash2, Clock } from "lucide-react";
+import { Check, Pencil, Trash2, Clock, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils/cn";
 import { formatDate } from "@/lib/utils/format";
@@ -39,11 +39,18 @@ interface TimelineTaskCardProps {
   onEditSubmit?: (data: TaskFormValues, existing?: TimelineTask) => Promise<{ ok: boolean; error?: string }>;
 }
 
+function isOverdue(task: TimelineTask): boolean {
+  if (!task.due_date) return false;
+  const today = new Date().toISOString().split("T")[0];
+  return task.due_date < today;
+}
+
 export function TimelineTaskCard({ task, weddingId, onToggle, onUpdate, onDelete, onEditSubmit }: TimelineTaskCardProps) {
   const [status, setStatus] = useState<TaskStatus>(task.status as TaskStatus);
   const [pending, setPending] = useState(false);
   const done = status === "completed";
   const inProgress = status === "in_progress";
+  const overdue = !done && isOverdue(task);
 
   async function handleToggle() {
     if (pending) return;
@@ -82,14 +89,19 @@ export function TimelineTaskCard({ task, weddingId, onToggle, onUpdate, onDelete
         : "Mark not started";
 
   return (
-    <div className={cn("flex items-start gap-3 rounded-lg border bg-card p-4 transition-opacity", done && "opacity-60")}>
+    <div className={cn(
+      "flex items-start gap-3 rounded-lg border bg-card p-4 transition-opacity",
+      done && "opacity-60",
+      overdue && "border-destructive/40 bg-destructive/5",
+    )}>
       <button
         onClick={handleToggle}
         className={cn(
           "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-all",
           done && "border-primary bg-primary text-primary-foreground",
           inProgress && "border-amber-500 bg-amber-500/10 text-amber-600",
-          !done && !inProgress && "border-muted-foreground hover:border-primary",
+          overdue && !done && !inProgress && "border-destructive hover:border-destructive",
+          !done && !inProgress && !overdue && "border-muted-foreground hover:border-primary",
           pending && "opacity-70"
         )}
         aria-label={ariaLabel}
@@ -97,13 +109,24 @@ export function TimelineTaskCard({ task, weddingId, onToggle, onUpdate, onDelete
       >
         {done && <Check className="h-3 w-3" />}
         {inProgress && <Clock className="h-3 w-3" />}
+        {overdue && !inProgress && <AlertCircle className="h-3 w-3 text-destructive" />}
       </button>
       <div className="flex-1 min-w-0">
-        <p className={cn("text-sm font-medium", done && "line-through text-muted-foreground")}>{task.title}</p>
+        <p className={cn(
+          "text-sm font-medium",
+          done && "line-through text-muted-foreground",
+          overdue && "text-destructive",
+        )}>{task.title}</p>
         {task.description && <p className="mt-0.5 text-xs text-muted-foreground">{task.description}</p>}
         <div className="mt-1.5 flex flex-wrap items-center gap-2">
           {task.due_date && (
-            <span className="text-xs text-muted-foreground">{formatDate(task.due_date)}</span>
+            <span className={cn(
+              "text-xs",
+              overdue ? "font-medium text-destructive" : "text-muted-foreground",
+            )}>
+              {overdue && <span className="mr-1">Overdue ·</span>}
+              {formatDate(task.due_date)}
+            </span>
           )}
           {task.category && (
             <Badge variant="outline" className="text-xs py-0">{task.category}</Badge>
