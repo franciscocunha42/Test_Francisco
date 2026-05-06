@@ -15,6 +15,11 @@ export const vendorSchema = z.object({
   actual_cost: z.coerce.number().min(0).optional().nullable(),
   status: z.enum(["researching", "contacted", "shortlisted", "booked", "rejected"]).default("researching"),
   notes: z.string().optional().nullable(),
+  subcategory: z.string().optional().nullable(),
+  min_capacity: z.coerce.number().int().min(1).optional().nullable(),
+  max_capacity: z.coerce.number().int().min(1).optional().nullable(),
+  price_per_person: z.coerce.number().min(0).optional().nullable(),
+  rating: z.coerce.number().min(0).max(5).optional().nullable(),
 });
 
 export type VendorFormValues = z.infer<typeof vendorSchema>;
