@@ -13,6 +13,10 @@ export interface DefaultVenue {
   min_capacity?: number;
   max_capacity?: number;
   notes?: string;
+  /** Photo URLs (relative to /public, or absolute URLs). */
+  photos?: string[];
+  /** Quick highlight tags shown in the detail view. */
+  features?: string[];
 }
 
 export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
@@ -52,6 +56,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     min_capacity: 40,
     max_capacity: 180,
     notes: "Modern and elegant construction in a tranquil environment with natural charm. Responds within 24 hours.",
+    photos: ["/venues/quinta-loureiro-1.jpg"],
+    features: ["Na cidade", "Zona ajardinada", "Espaço para cerimónia civil", "Tem estacionamento"],
   },
   {
     name: "Quinta das Carpas",
@@ -1088,6 +1094,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     subcategory: "quinta",
     rating: 5.0,
     notes: "Luxurious and enchanting place in Vila do Conde, built in 1866 and extensively restored. Exquisite fusion of contemporary and traditional Portuguese architecture.",
+    photos: ["/venues/quinta-alferes-1.jpg"],
+    features: ["Vista panorâmica", "Zona ajardinada", "Espaço para cerimónia civil", "Tem estacionamento"],
   },
 
   // ── Greater Porto quintas (Vila Nova de Gaia, Matosinhos, Maia) ──────────

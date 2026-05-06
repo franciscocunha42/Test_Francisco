@@ -64,6 +64,7 @@ export async function addVenueFromDirectory(weddingId: string, venue: import("@/
     max_capacity: venue.max_capacity ?? null,
     rating: venue.rating ?? null,
     notes: venue.notes ?? null,
+    photos: venue.photos ?? [],
   });
 
   if (error) {

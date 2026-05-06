@@ -20,6 +20,7 @@ export const vendorSchema = z.object({
   max_capacity: z.coerce.number().int().min(1).optional().nullable(),
   price_per_person: z.coerce.number().min(0).optional().nullable(),
   rating: z.coerce.number().min(0).max(5).optional().nullable(),
+  photos: z.array(z.string().url("Invalid photo URL")).optional().default([]),
 });
 
 export type VendorFormValues = z.infer<typeof vendorSchema>;

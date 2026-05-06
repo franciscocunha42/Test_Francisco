@@ -30,13 +30,18 @@ interface VendorFormDialogProps {
 
 export function VendorFormDialog({ weddingId, vendor, trigger, onSubmit: onSubmitProp }: VendorFormDialogProps) {
   const [open, setOpen] = useState(false);
+  const [photosText, setPhotosText] = useState((vendor?.photos ?? []).join("\n"));
   const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<VendorFormValues>({
     resolver: zodResolver(vendorSchema),
-    defaultValues: vendor ?? { category: "other", status: "researching" },
+    defaultValues: vendor ?? { category: "other", status: "researching", photos: [] },
   });
   const selectedCategory = watch("category");
 
   async function onSubmit(data: VendorFormValues) {
+    data.photos = photosText
+      .split(/\r?\n/)
+      .map((s) => s.trim())
+      .filter(Boolean);
     const result = onSubmitProp
       ? await onSubmitProp(data, vendor)
       : vendor
@@ -151,6 +156,18 @@ export function VendorFormDialog({ weddingId, vendor, trigger, onSubmit: onSubmi
           <div className="space-y-1">
             <Label>Notes</Label>
             <Textarea {...register("notes")} rows={2} placeholder="Any additional notes..." />
+          </div>
+          <div className="space-y-1">
+            <Label>Photo URLs</Label>
+            <Textarea
+              rows={3}
+              value={photosText}
+              onChange={(e) => setPhotosText(e.target.value)}
+              placeholder="One image URL per line, e.g.\n/venues/my-venue.jpg\nhttps://example.com/photo.jpg"
+            />
+            <p className="text-xs text-muted-foreground">
+              One URL per line. Use absolute URLs or paths to files in <code>public/</code>.
+            </p>
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>

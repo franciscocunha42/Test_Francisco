@@ -78,6 +78,7 @@ export interface Vendor {
   max_capacity: number | null;
   price_per_person: number | null;
   rating: number | null;
+  photos: string[];
   created_at: string;
 }
 

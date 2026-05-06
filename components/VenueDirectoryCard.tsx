@@ -1,11 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import {
-  Star, Users, Plus, CheckCircle2,
+  Star, Users, Plus, CheckCircle2, Camera,
   TreeDeciduous, Building2, Utensils, Sparkles, Waves,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { Button } from "@/components/ui/button";
+import { VenueDetailDialog } from "@/components/VenueDetailDialog";
 import type { DefaultVenue } from "@/lib/data/default-porto-venues";
 
 const SUBCAT_CONFIG: Record<string, {
@@ -34,6 +36,8 @@ export function VenueDirectoryCard({ venue, isSaved, isAdding, onAdd }: VenueDir
     Icon: Building2,
   };
   const { Icon } = cfg;
+  const heroPhoto = venue.photos?.[0];
+  const photoCount = venue.photos?.length ?? 0;
 
   return (
     <div
@@ -42,25 +46,68 @@ export function VenueDirectoryCard({ venue, isSaved, isAdding, onAdd }: VenueDir
         isSaved && "border-emerald-400/60 bg-emerald-50/20",
       )}
     >
-      {/* Coloured photo placeholder */}
-      <div
-        className={cn(
-          "hidden sm:flex w-44 shrink-0 flex-col items-center justify-center gap-2 bg-gradient-to-br",
-          cfg.gradient,
-        )}
-      >
-        <Icon className="h-10 w-10 text-white/70" />
-        <span className="text-[11px] font-semibold uppercase tracking-wider text-white/80">
-          {cfg.label}
-        </span>
-      </div>
+      {/* Photo or coloured placeholder */}
+      <VenueDetailDialog
+        venue={venue}
+        isSaved={isSaved}
+        isAdding={isAdding}
+        onAdd={onAdd}
+        trigger={
+          <button
+            type="button"
+            className="hidden sm:block relative w-44 shrink-0 cursor-pointer overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label={`Ver detalhes de ${venue.name}`}
+          >
+            {heroPhoto ? (
+              <Image
+                src={heroPhoto}
+                alt={venue.name}
+                fill
+                sizes="176px"
+                className="object-cover transition-transform hover:scale-105"
+              />
+            ) : (
+              <div
+                className={cn(
+                  "flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br",
+                  cfg.gradient,
+                )}
+              >
+                <Icon className="h-10 w-10 text-white/70" />
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-white/80">
+                  {cfg.label}
+                </span>
+              </div>
+            )}
+            {photoCount > 0 && (
+              <span className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[11px] font-medium text-white">
+                <Camera className="h-3 w-3" />
+                Ver Fotos · {photoCount}
+              </span>
+            )}
+          </button>
+        }
+      />
 
       {/* Content */}
       <div className="flex flex-1 flex-col gap-2 p-4 min-w-0">
         {/* Name + CTA */}
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="font-semibold text-base leading-snug">{venue.name}</h3>
+            <VenueDetailDialog
+              venue={venue}
+              isSaved={isSaved}
+              isAdding={isAdding}
+              onAdd={onAdd}
+              trigger={
+                <button
+                  type="button"
+                  className="text-left font-semibold text-base leading-snug hover:underline focus:outline-none"
+                >
+                  {venue.name}
+                </button>
+              }
+            />
             {venue.rating != null && (
               <span className="mt-0.5 flex items-center gap-1 text-sm text-amber-500">
                 <Star className="h-3.5 w-3.5 fill-amber-400" />

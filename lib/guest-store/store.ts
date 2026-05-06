@@ -243,6 +243,7 @@ export const useGuestStore = create<StoreState>()(
             max_capacity: data.max_capacity ?? null,
             price_per_person: data.price_per_person ?? null,
             rating: data.rating ?? null,
+            photos: data.photos ?? [],
             created_at: nowIso(),
           };
           set({ vendors: [...get().vendors, v] });

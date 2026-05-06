@@ -120,8 +120,24 @@ export function VendorCard({
     };
   }
 
+  const photos = vendor.photos ?? [];
   return (
     <Card className="overflow-hidden">
+      {photos.length > 0 && (
+        <div className="relative aspect-[16/9] w-full bg-muted">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={photos[0]}
+            alt={vendor.name}
+            className="h-full w-full object-cover"
+          />
+          {photos.length > 1 && (
+            <span className="absolute bottom-2 right-2 rounded-full bg-black/60 px-2 py-0.5 text-[11px] font-medium text-white">
+              +{photos.length - 1}
+            </span>
+          )}
+        </div>
+      )}
       <CardContent className="p-4 space-y-3">
         {/* Header */}
         <div className="flex items-start justify-between gap-2">

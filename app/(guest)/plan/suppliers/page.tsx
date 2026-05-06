@@ -49,6 +49,7 @@ export default function GuestSuppliersPage() {
             max_capacity: venue.max_capacity,
             rating: venue.rating,
             notes: venue.notes,
+            photos: venue.photos ?? [],
           });
           return { ok: true };
         }}
