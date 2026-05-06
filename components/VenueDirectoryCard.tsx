@@ -1,18 +1,23 @@
 "use client";
 
-import { Star, Users, Plus, CheckCircle2 } from "lucide-react";
+import {
+  Star, Users, Plus, CheckCircle2,
+  TreeDeciduous, Building2, Utensils, Sparkles, Waves,
+} from "lucide-react";
 import { cn } from "@/lib/utils/cn";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import type { DefaultVenue } from "@/lib/data/default-porto-venues";
 
-const SUBCATEGORY_LABELS: Record<string, string> = {
-  quinta: "Quinta",
-  hotel: "Hotel",
-  restaurante: "Restaurante",
-  salão: "Salão",
-  praia: "Praia",
+const SUBCAT_CONFIG: Record<string, {
+  label: string;
+  gradient: string;
+  Icon: React.ElementType;
+}> = {
+  quinta:      { label: "Quinta",       gradient: "from-emerald-500 to-green-700",  Icon: TreeDeciduous },
+  hotel:       { label: "Hotel",        gradient: "from-indigo-500 to-blue-700",    Icon: Building2 },
+  restaurante: { label: "Restaurante",  gradient: "from-orange-400 to-amber-600",   Icon: Utensils },
+  "salão":     { label: "Salão",        gradient: "from-purple-500 to-violet-700",  Icon: Sparkles },
+  praia:       { label: "Praia",        gradient: "from-cyan-400 to-sky-600",       Icon: Waves },
 };
 
 interface VenueDirectoryCardProps {
@@ -23,63 +28,93 @@ interface VenueDirectoryCardProps {
 }
 
 export function VenueDirectoryCard({ venue, isSaved, isAdding, onAdd }: VenueDirectoryCardProps) {
+  const cfg = SUBCAT_CONFIG[venue.subcategory] ?? {
+    label: venue.subcategory,
+    gradient: "from-gray-400 to-gray-600",
+    Icon: Building2,
+  };
+  const { Icon } = cfg;
+
   return (
-    <Card className={cn("overflow-hidden flex flex-col", isSaved && "ring-1 ring-emerald-500/30")}>
-      <CardContent className="p-4 flex flex-col gap-3 flex-1">
-        {/* Header */}
-        <div>
-          <p className="font-semibold leading-tight">{venue.name}</p>
-          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-            <Badge variant="outline" className="text-xs">
-              {SUBCATEGORY_LABELS[venue.subcategory] ?? venue.subcategory}
-            </Badge>
+    <div
+      className={cn(
+        "flex rounded-xl border bg-card overflow-hidden transition-shadow hover:shadow-md",
+        isSaved && "border-emerald-400/60 bg-emerald-50/20",
+      )}
+    >
+      {/* Coloured photo placeholder */}
+      <div
+        className={cn(
+          "hidden sm:flex w-44 shrink-0 flex-col items-center justify-center gap-2 bg-gradient-to-br",
+          cfg.gradient,
+        )}
+      >
+        <Icon className="h-10 w-10 text-white/70" />
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-white/80">
+          {cfg.label}
+        </span>
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-1 flex-col gap-2 p-4 min-w-0">
+        {/* Name + CTA */}
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h3 className="font-semibold text-base leading-snug">{venue.name}</h3>
             {venue.rating != null && (
-              <span className="flex items-center gap-0.5 text-xs text-muted-foreground">
-                <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+              <span className="mt-0.5 flex items-center gap-1 text-sm text-amber-500">
+                <Star className="h-3.5 w-3.5 fill-amber-400" />
                 {venue.rating.toFixed(1)}
               </span>
             )}
           </div>
-        </div>
 
-        {/* Capacity + price */}
-        <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-          {(venue.min_capacity != null || venue.max_capacity != null) && (
-            <span className="flex items-center gap-1">
-              <Users className="h-3 w-3" />
-              {venue.min_capacity != null && venue.max_capacity != null
-                ? `${venue.min_capacity}–${venue.max_capacity} guests`
-                : venue.max_capacity != null
-                  ? `Up to ${venue.max_capacity} guests`
-                  : `From ${venue.min_capacity} guests`}
-            </span>
-          )}
-          {venue.price_per_person != null && (
-            <span>From €{venue.price_per_person}/person</span>
-          )}
-          {venue.quoted_price != null && (
-            <span>Venue rental from €{venue.quoted_price.toLocaleString()}</span>
+          {isSaved ? (
+            <Button
+              variant="outline"
+              size="sm"
+              disabled
+              className="shrink-0 border-emerald-300 text-emerald-600 hover:text-emerald-600"
+            >
+              <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" />
+              Adicionado
+            </Button>
+          ) : (
+            <Button size="sm" className="shrink-0" onClick={onAdd} disabled={isAdding}>
+              <Plus className="mr-1.5 h-3.5 w-3.5" />
+              {isAdding ? "A adicionar…" : "Adicionar"}
+            </Button>
           )}
         </div>
 
         {/* Description */}
         {venue.notes && (
-          <p className="text-xs text-muted-foreground line-clamp-2 flex-1">{venue.notes}</p>
+          <p className="text-sm text-muted-foreground line-clamp-2">{venue.notes}</p>
         )}
 
-        {/* CTA */}
-        {isSaved ? (
-          <Button variant="outline" size="sm" disabled className="w-full mt-auto">
-            <CheckCircle2 className="mr-1.5 h-3.5 w-3.5 text-emerald-500" />
-            Added to My Wedding
-          </Button>
-        ) : (
-          <Button size="sm" className="w-full mt-auto" onClick={onAdd} disabled={isAdding}>
-            <Plus className="mr-1.5 h-3.5 w-3.5" />
-            {isAdding ? "Adding…" : "Add to My Wedding"}
-          </Button>
-        )}
-      </CardContent>
-    </Card>
+        {/* Price + capacity */}
+        <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-1 pt-1 text-sm text-muted-foreground">
+          {(venue.price_per_person != null || venue.quoted_price != null) && (
+            <span className="flex items-center gap-1.5">
+              <span className="text-base">⛺</span>
+              {venue.price_per_person != null
+                ? `A partir de €${venue.price_per_person}/pessoa`
+                : `A partir de €${venue.quoted_price!.toLocaleString()}`}
+            </span>
+          )}
+          {(venue.min_capacity != null || venue.max_capacity != null) && (
+            <span className="flex items-center gap-1.5">
+              <Users className="h-4 w-4" />
+              {venue.min_capacity != null && venue.max_capacity != null
+                ? `${venue.min_capacity} a ${venue.max_capacity}`
+                : venue.max_capacity != null
+                ? `Até ${venue.max_capacity}`
+                : `A partir de ${venue.min_capacity}`}{" "}
+              Convidados
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

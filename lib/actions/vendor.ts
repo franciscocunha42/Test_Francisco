@@ -66,7 +66,23 @@ export async function addVenueFromDirectory(weddingId: string, venue: import("@/
     notes: venue.notes ?? null,
   });
 
-  if (error) return { ok: false as const, error: error.message };
+  if (error) {
+    // Migration 0005 may not have been applied yet — fall back to basic insert
+    if (error.message.includes("schema cache") || error.message.includes("column")) {
+      const { error: fallback } = await supabase.from("vendors").insert({
+        wedding_id: weddingId,
+        name: venue.name,
+        category: "venue" as const,
+        status: "researching" as const,
+        notes: venue.notes ?? null,
+      });
+      if (fallback) return { ok: false as const, error: fallback.message };
+      revalidatePath(`/${weddingId}/suppliers`);
+      revalidatePath(`/${weddingId}/dashboard`);
+      return { ok: true as const };
+    }
+    return { ok: false as const, error: error.message };
+  }
   revalidatePath(`/${weddingId}/suppliers`);
   return { ok: true as const };
 }

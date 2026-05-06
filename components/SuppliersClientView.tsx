@@ -17,7 +17,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -31,12 +31,26 @@ import type { DefaultVenue } from "@/lib/data/default-porto-venues";
 
 // ─── constants ───────────────────────────────────────────────────────────────
 
-const VENUE_SUBCATEGORIES: { value: string; label: string }[] = [
+const VENUE_SUBCATEGORIES = [
   { value: "quinta",      label: "Quintas" },
   { value: "hotel",       label: "Hotéis" },
   { value: "restaurante", label: "Restaurantes" },
   { value: "salão",       label: "Salões" },
-  { value: "praia",       label: "Praia" },
+  { value: "praia",       label: "Casamentos na praia" },
+];
+
+const PRICE_RANGES = [
+  { value: "under40",  label: "Menos de 40€" },
+  { value: "40-70",    label: "40€ – 70€" },
+  { value: "70-100",   label: "70€ – 100€" },
+  { value: "over100",  label: "Mais de 100€" },
+];
+
+const CAPACITY_RANGES = [
+  { value: "0-99",    label: "0 – 99" },
+  { value: "100-199", label: "100 – 199" },
+  { value: "200-299", label: "200 – 299" },
+  { value: "300+",    label: "300+" },
 ];
 
 const VENDOR_STATUSES: VendorStatus[] = ["researching", "contacted", "shortlisted", "booked", "rejected"];
@@ -56,7 +70,6 @@ export interface SuppliersClientViewProps {
   categories: BudgetCategory[];
   weddingId: string;
   currency: string;
-  /** Called when user adds a venue from the directory. */
   onAddFromDirectory?: (venue: DefaultVenue) => Promise<{ ok: boolean; error?: string }>;
   onVendorCreate?: (data: VendorFormValues) => Promise<{ ok: boolean; error?: string }>;
   onVendorEdit?: (data: VendorFormValues, existing?: Vendor) => Promise<{ ok: boolean; error?: string }>;
@@ -65,6 +78,32 @@ export interface SuppliersClientViewProps {
   onUpdateExpense?: (id: string, data: ExpenseFormValues) => Promise<{ ok: boolean; error?: string }>;
   onDeleteExpense?: (id: string) => Promise<{ ok: boolean; error?: string }>;
   onUpdateExpenseStatus?: (id: string, status: PaymentStatus) => Promise<{ ok: boolean; error?: string }>;
+}
+
+// ─── helpers ─────────────────────────────────────────────────────────────────
+
+function matchCapacity(max: number | undefined | null, selected: string[]): boolean {
+  if (selected.length === 0) return true;
+  if (max == null) return true;
+  return selected.some((v) => {
+    if (v === "0-99")    return max <= 99;
+    if (v === "100-199") return max >= 100 && max <= 199;
+    if (v === "200-299") return max >= 200 && max <= 299;
+    if (v === "300+")    return max >= 300;
+    return true;
+  });
+}
+
+function matchPrice(ppp: number | undefined | null, selected: string[]): boolean {
+  if (selected.length === 0) return true;
+  if (ppp == null) return true;
+  return selected.some((v) => {
+    if (v === "under40") return ppp < 40;
+    if (v === "40-70")   return ppp >= 40 && ppp < 70;
+    if (v === "70-100")  return ppp >= 70 && ppp < 100;
+    if (v === "over100") return ppp >= 100;
+    return true;
+  });
 }
 
 // ─── component ───────────────────────────────────────────────────────────────
@@ -91,8 +130,8 @@ export function SuppliersClientView({
   // ── directory filter state ──
   const [dirSearch,  setDirSearch]  = useState("");
   const [dirSubcats, setDirSubcats] = useState<string[]>([]);
-  const [dirCap,     setDirCap]     = useState("");
-  const [dirPrice,   setDirPrice]   = useState("");
+  const [dirCaps,    setDirCaps]    = useState<string[]>([]);
+  const [dirPrices,  setDirPrices]  = useState<string[]>([]);
 
   // ── my-suppliers filter state ──
   const [mySearch,   setMySearch]   = useState("");
@@ -116,30 +155,9 @@ export function SuppliersClientView({
         return v.name.toLowerCase().includes(q) || (v.notes ?? "").toLowerCase().includes(q);
       })
       .filter((v) => dirSubcats.length === 0 || dirSubcats.includes(v.subcategory))
-      .filter((v) => {
-        if (!dirCap) return true;
-        const max = v.max_capacity ?? v.min_capacity ?? 0;
-        if (!max) return true;
-        switch (dirCap) {
-          case "small":  return max <= 50;
-          case "medium": return max > 50  && max <= 150;
-          case "large":  return max > 150 && max <= 300;
-          case "xlarge": return max > 300;
-          default:       return true;
-        }
-      })
-      .filter((v) => {
-        if (!dirPrice || !v.price_per_person) return true;
-        const p = v.price_per_person;
-        switch (dirPrice) {
-          case "budget":  return p < 70;
-          case "mid":     return p >= 70  && p < 100;
-          case "premium": return p >= 100 && p < 150;
-          case "luxury":  return p >= 150;
-          default:        return true;
-        }
-      });
-  }, [dirSearch, dirSubcats, dirCap, dirPrice]);
+      .filter((v) => matchCapacity(v.max_capacity, dirCaps))
+      .filter((v) => matchPrice(v.price_per_person, dirPrices));
+  }, [dirSearch, dirSubcats, dirCaps, dirPrices]);
 
   const filteredMyVendors = useMemo(() => {
     return allVendors
@@ -152,12 +170,12 @@ export function SuppliersClientView({
       .filter((v) => myStatuses.length === 0 || myStatuses.includes(v.status));
   }, [allVendors, myCategory, mySearch, myStatuses]);
 
-  const usedCategories  = [...new Set(allVendors.map((v) => v.category))];
-  const tabCategories   = ["all", ...usedCategories];
-  const totals          = summariseVendorFinances(allVendors, expenses);
-  const remaining       = Math.max(0, totals.actual - totals.paid);
-  const hasDirFilters   = !!(dirSearch || dirSubcats.length || dirCap || dirPrice);
-  const hasMyFilters    = !!(mySearch || myStatuses.length > 0 || myCategory !== "all");
+  const usedCategories = [...new Set(allVendors.map((v) => v.category))];
+  const tabCategories  = ["all", ...usedCategories];
+  const totals         = summariseVendorFinances(allVendors, expenses);
+  const remaining      = Math.max(0, totals.actual - totals.paid);
+  const hasDirFilters  = !!(dirSearch || dirSubcats.length || dirCaps.length || dirPrices.length);
+  const hasMyFilters   = !!(mySearch || myStatuses.length > 0 || myCategory !== "all");
 
   // ── handlers ──
   async function handleAddFromDirectory(venue: DefaultVenue) {
@@ -166,24 +184,22 @@ export function SuppliersClientView({
     const result = await onAddFromDirectory(venue);
     setPendingAdds((prev) => { const next = new Set(prev); next.delete(venue.name); return next; });
     if (result.ok) {
-      toast.success(`${venue.name} added to My Suppliers`);
+      toast.success(`${venue.name} adicionado aos Meus Fornecedores`);
     } else {
-      toast.error(result.error ?? "Failed to add venue");
+      toast.error(result.error ?? "Falha ao adicionar espaço");
     }
   }
 
   function clearDirFilters() {
-    setDirSearch(""); setDirSubcats([]); setDirCap(""); setDirPrice("");
+    setDirSearch(""); setDirSubcats([]); setDirCaps([]); setDirPrices([]);
   }
   function clearMyFilters() {
     setMySearch(""); setMyStatuses([]); setMyCategory("all");
   }
-  function toggleSubcat(sub: string) {
-    setDirSubcats((prev) => prev.includes(sub) ? prev.filter((s) => s !== sub) : [...prev, sub]);
+  function toggle<T>(arr: T[], item: T): T[] {
+    return arr.includes(item) ? arr.filter((x) => x !== item) : [...arr, item];
   }
-  function toggleStatus(s: VendorStatus) {
-    setMyStatuses((prev) => prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]);
-  }
+  function toggleStatus(s: VendorStatus) { setMyStatuses((p) => toggle(p, s)); }
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
@@ -192,15 +208,15 @@ export function SuppliersClientView({
       {/* Page header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="font-serif text-2xl font-semibold">Suppliers</h1>
+          <h1 className="font-serif text-2xl font-semibold">Fornecedores</h1>
           <p className="text-sm text-muted-foreground">
-            {allVendors.length} in my wedding · {DEFAULT_PORTO_VENUES.length} venues in directory
+            {allVendors.length} no meu casamento · {DEFAULT_PORTO_VENUES.length} espaços no diretório
           </p>
         </div>
         <VendorFormDialog
           weddingId={weddingId}
           onSubmit={onVendorCreate}
-          trigger={<Button size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" />Add Supplier</Button>}
+          trigger={<Button size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" />Adicionar Fornecedor</Button>}
         />
       </div>
 
@@ -221,14 +237,14 @@ export function SuppliersClientView({
             {tab === "browse" ? (
               <span className="flex items-center gap-1.5">
                 <MapPin className="h-3.5 w-3.5" />
-                Browse Venues
+                Pesquisar Espaços
                 <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
                   {DEFAULT_PORTO_VENUES.length}
                 </span>
               </span>
             ) : (
               <span className="flex items-center gap-1.5">
-                My Suppliers
+                Os Meus Fornecedores
                 {allVendors.length > 0 && (
                   <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
                     {allVendors.length}
@@ -242,96 +258,134 @@ export function SuppliersClientView({
 
       {/* ── BROWSE VENUES TAB ─────────────────────────────────────────── */}
       {activeTab === "browse" && (
-        <div className="space-y-4">
-          {/* Directory filter bar */}
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="relative flex-1 min-w-[180px]">
-              <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
+        <div className="flex gap-6 items-start">
+
+          {/* ── Sidebar ── */}
+          <aside className="w-52 shrink-0 space-y-6 sticky top-4">
+
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
               <Input
-                className="h-8 pl-8 text-sm"
-                placeholder="Search venues…"
+                className="pl-8 text-sm"
+                placeholder="Pesquisar espaços…"
                 value={dirSearch}
                 onChange={(e) => setDirSearch(e.target.value)}
               />
             </div>
 
-            {/* Subcategory chips */}
-            <div className="flex flex-wrap gap-1">
-              {VENUE_SUBCATEGORIES.map((sub) => (
-                <button
-                  key={sub.value}
-                  type="button"
-                  onClick={() => toggleSubcat(sub.value)}
-                  className={cn(
-                    "rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors",
-                    dirSubcats.includes(sub.value)
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "border-border hover:border-primary/40",
-                  )}
-                >
-                  {sub.label}
-                </button>
-              ))}
+            {/* Espaços casamentos */}
+            <div>
+              <p className="mb-2.5 text-sm font-semibold">Espaços casamentos</p>
+              <ul className="space-y-2">
+                {VENUE_SUBCATEGORIES.map((sub) => (
+                  <li key={sub.value} className="flex items-center gap-2">
+                    <Checkbox
+                      id={`subcat-${sub.value}`}
+                      checked={dirSubcats.includes(sub.value)}
+                      onCheckedChange={() =>
+                        setDirSubcats((p) => toggle(p, sub.value))
+                      }
+                    />
+                    <label
+                      htmlFor={`subcat-${sub.value}`}
+                      className="cursor-pointer text-sm select-none"
+                    >
+                      {sub.label}
+                    </label>
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            {/* Capacity */}
-            <Select value={dirCap || "__all"} onValueChange={(v) => setDirCap(v === "__all" ? "" : v)}>
-              <SelectTrigger className="h-8 text-xs w-36">
-                <SelectValue placeholder="Capacity" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__all">Any size</SelectItem>
-                <SelectItem value="small">Up to 50 guests</SelectItem>
-                <SelectItem value="medium">51–150 guests</SelectItem>
-                <SelectItem value="large">151–300 guests</SelectItem>
-                <SelectItem value="xlarge">300+ guests</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="border-t" />
 
-            {/* Price/person */}
-            <Select value={dirPrice || "__all"} onValueChange={(v) => setDirPrice(v === "__all" ? "" : v)}>
-              <SelectTrigger className="h-8 text-xs w-40">
-                <SelectValue placeholder="Price/person" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__all">Any price</SelectItem>
-                <SelectItem value="budget">Under €70/person</SelectItem>
-                <SelectItem value="mid">€70–100/person</SelectItem>
-                <SelectItem value="premium">€100–150/person</SelectItem>
-                <SelectItem value="luxury">€150+/person</SelectItem>
-              </SelectContent>
-            </Select>
+            {/* Preço */}
+            <div>
+              <p className="mb-2.5 text-sm font-semibold">Preço por pessoa</p>
+              <ul className="space-y-2">
+                {PRICE_RANGES.map((r) => (
+                  <li key={r.value} className="flex items-center gap-2">
+                    <Checkbox
+                      id={`price-${r.value}`}
+                      checked={dirPrices.includes(r.value)}
+                      onCheckedChange={() =>
+                        setDirPrices((p) => toggle(p, r.value))
+                      }
+                    />
+                    <label
+                      htmlFor={`price-${r.value}`}
+                      className="cursor-pointer text-sm select-none"
+                    >
+                      {r.label}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="border-t" />
+
+            {/* Número de Convidados */}
+            <div>
+              <p className="mb-2.5 text-sm font-semibold">Número de Convidados</p>
+              <ul className="space-y-2">
+                {CAPACITY_RANGES.map((r) => (
+                  <li key={r.value} className="flex items-center gap-2">
+                    <Checkbox
+                      id={`cap-${r.value}`}
+                      checked={dirCaps.includes(r.value)}
+                      onCheckedChange={() =>
+                        setDirCaps((p) => toggle(p, r.value))
+                      }
+                    />
+                    <label
+                      htmlFor={`cap-${r.value}`}
+                      className="cursor-pointer text-sm select-none"
+                    >
+                      {r.label}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
             {hasDirFilters && (
-              <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={clearDirFilters}>
-                <X className="mr-1 h-3.5 w-3.5" />Clear
-              </Button>
+              <>
+                <div className="border-t" />
+                <Button variant="ghost" size="sm" className="w-full text-xs" onClick={clearDirFilters}>
+                  <X className="mr-1.5 h-3.5 w-3.5" />Limpar filtros
+                </Button>
+              </>
+            )}
+          </aside>
+
+          {/* ── Results ── */}
+          <div className="flex-1 min-w-0 space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                {filteredDirectory.length} Resultados
+              </p>
+            </div>
+
+            {filteredDirectory.length === 0 ? (
+              <p className="py-16 text-center text-sm text-muted-foreground">
+                Nenhum espaço corresponde aos filtros.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {filteredDirectory.map((venue) => (
+                  <VenueDirectoryCard
+                    key={venue.name}
+                    venue={venue}
+                    isSaved={savedVenueNames.has(venue.name)}
+                    isAdding={pendingAdds.has(venue.name)}
+                    onAdd={() => handleAddFromDirectory(venue)}
+                  />
+                ))}
+              </div>
             )}
           </div>
-
-          {hasDirFilters && (
-            <p className="text-xs text-muted-foreground">
-              {filteredDirectory.length} of {DEFAULT_PORTO_VENUES.length} venues
-            </p>
-          )}
-
-          {filteredDirectory.length === 0 ? (
-            <p className="py-12 text-center text-sm text-muted-foreground">
-              No venues match your filters.
-            </p>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {filteredDirectory.map((venue) => (
-                <VenueDirectoryCard
-                  key={venue.name}
-                  venue={venue}
-                  isSaved={savedVenueNames.has(venue.name)}
-                  isAdding={pendingAdds.has(venue.name)}
-                  onAdd={() => handleAddFromDirectory(venue)}
-                />
-              ))}
-            </div>
-          )}
         </div>
       )}
 
@@ -343,10 +397,10 @@ export function SuppliersClientView({
           {allVendors.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { label: "Planned",     value: totals.planned, icon: PiggyBank,    color: "text-sky-600" },
-                { label: "Actual",      value: totals.actual,  icon: Wallet,       color: "text-primary" },
-                { label: "Paid",        value: totals.paid,    icon: CheckCircle2, color: "text-emerald-600" },
-                { label: "Outstanding", value: remaining,      icon: Wallet,       color: "text-amber-600" },
+                { label: "Planeado",    value: totals.planned, icon: PiggyBank,    color: "text-sky-600" },
+                { label: "Real",        value: totals.actual,  icon: Wallet,       color: "text-primary" },
+                { label: "Pago",        value: totals.paid,    icon: CheckCircle2, color: "text-emerald-600" },
+                { label: "Em aberto",   value: remaining,      icon: Wallet,       color: "text-amber-600" },
               ].map(({ label, value, icon: Icon, color }) => (
                 <Card key={label}>
                   <CardContent className="flex items-center gap-3 p-4">
@@ -364,17 +418,17 @@ export function SuppliersClientView({
           {allVendors.length === 0 ? (
             <EmptyState
               icon={Store}
-              title="No suppliers yet"
-              description='Browse the venue directory or use "Add Supplier" to track photographers, caterers, and more.'
+              title="Ainda sem fornecedores"
+              description='Explore o diretório de espaços ou clique em "Adicionar Fornecedor" para registar fotógrafos, catering e mais.'
               action={
                 <div className="flex flex-wrap items-center justify-center gap-2">
                   <Button onClick={() => setActiveTab("browse")}>
-                    <MapPin className="mr-1.5 h-4 w-4" />Browse Venues
+                    <MapPin className="mr-1.5 h-4 w-4" />Pesquisar Espaços
                   </Button>
                   <VendorFormDialog
                     weddingId={weddingId}
                     onSubmit={onVendorCreate}
-                    trigger={<Button variant="outline"><Plus className="mr-1.5 h-4 w-4" />Add Supplier</Button>}
+                    trigger={<Button variant="outline"><Plus className="mr-1.5 h-4 w-4" />Adicionar Fornecedor</Button>}
                   />
                 </div>
               }
@@ -383,7 +437,6 @@ export function SuppliersClientView({
             <>
               {/* My suppliers filter bar */}
               <div className="flex flex-wrap items-center gap-2">
-                {/* Category tabs */}
                 <div className="flex flex-wrap gap-1.5 w-full">
                   {tabCategories.map((cat) => (
                     <button
@@ -397,7 +450,7 @@ export function SuppliersClientView({
                           : "border-border hover:border-primary/40",
                       )}
                     >
-                      {cat === "all" ? "All" : capitalize(cat)}
+                      {cat === "all" ? "Todos" : capitalize(cat)}
                     </button>
                   ))}
                 </div>
@@ -406,7 +459,7 @@ export function SuppliersClientView({
                   <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
                   <Input
                     className="h-8 pl-8 text-sm"
-                    placeholder="Search my suppliers…"
+                    placeholder="Pesquisar fornecedores…"
                     value={mySearch}
                     onChange={(e) => setMySearch(e.target.value)}
                   />
@@ -415,7 +468,7 @@ export function SuppliersClientView({
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="h-8 text-xs gap-1">
-                      Status{myStatuses.length > 0 && ` · ${myStatuses.length}`}
+                      Estado{myStatuses.length > 0 && ` · ${myStatuses.length}`}
                       <ChevronDown className="h-3.5 w-3.5" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -434,20 +487,20 @@ export function SuppliersClientView({
 
                 {hasMyFilters && (
                   <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={clearMyFilters}>
-                    <X className="mr-1 h-3.5 w-3.5" />Clear
+                    <X className="mr-1 h-3.5 w-3.5" />Limpar
                   </Button>
                 )}
               </div>
 
               {hasMyFilters && (
                 <p className="text-xs text-muted-foreground">
-                  {filteredMyVendors.length} of {allVendors.length} suppliers
+                  {filteredMyVendors.length} de {allVendors.length} fornecedores
                 </p>
               )}
 
               {filteredMyVendors.length === 0 ? (
                 <p className="py-12 text-center text-sm text-muted-foreground">
-                  No suppliers match your filters.
+                  Nenhum fornecedor corresponde aos filtros.
                 </p>
               ) : (
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
