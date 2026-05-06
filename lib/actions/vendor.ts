@@ -39,6 +39,38 @@ export async function updateVendor(weddingId: string, vendorId: string, data: un
   return { ok: true };
 }
 
+export async function addVenueFromDirectory(weddingId: string, venue: import("@/lib/data/default-porto-venues").DefaultVenue) {
+  await requireWeddingMember(weddingId);
+  const supabase = createClient();
+
+  const { data: existing } = await supabase
+    .from("vendors")
+    .select("id")
+    .eq("wedding_id", weddingId)
+    .eq("name", venue.name)
+    .maybeSingle();
+
+  if (existing) return { ok: true };
+
+  const { error } = await supabase.from("vendors").insert({
+    wedding_id: weddingId,
+    name: venue.name,
+    category: "venue" as const,
+    subcategory: venue.subcategory,
+    status: "researching" as const,
+    price_per_person: venue.price_per_person ?? null,
+    quoted_price: venue.quoted_price ?? null,
+    min_capacity: venue.min_capacity ?? null,
+    max_capacity: venue.max_capacity ?? null,
+    rating: venue.rating ?? null,
+    notes: venue.notes ?? null,
+  });
+
+  if (error) return { ok: false as const, error: error.message };
+  revalidatePath(`/${weddingId}/suppliers`);
+  return { ok: true as const };
+}
+
 export async function seedDefaultVenues(weddingId: string) {
   await requireWeddingMember(weddingId);
   const supabase = createClient();

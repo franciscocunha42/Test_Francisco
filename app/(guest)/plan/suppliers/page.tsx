@@ -7,6 +7,7 @@ import { SuppliersClientView } from "@/components/SuppliersClientView";
 import { useGuestStore } from "@/lib/guest-store/store";
 import type { ExpenseFormValues } from "@/lib/schemas/budget";
 import type { PaymentStatus } from "@/lib/types/database";
+import type { DefaultVenue } from "@/lib/data/default-porto-venues";
 
 export default function GuestSuppliersPage() {
   const router     = useRouter();
@@ -36,6 +37,21 @@ export default function GuestSuppliersPage() {
         categories={categories}
         weddingId="guest"
         currency={wedding.currency}
+        onAddFromDirectory={async (venue: DefaultVenue) => {
+          createVendor({
+            name: venue.name,
+            category: "venue",
+            subcategory: venue.subcategory,
+            status: "researching",
+            price_per_person: venue.price_per_person,
+            quoted_price: venue.quoted_price,
+            min_capacity: venue.min_capacity,
+            max_capacity: venue.max_capacity,
+            rating: venue.rating,
+            notes: venue.notes,
+          });
+          return { ok: true };
+        }}
         onVendorCreate={async (data) => { createVendor(data); return { ok: true }; }}
         onVendorEdit={async (data, existing) => {
           if (existing) updateVendor(existing.id, data);

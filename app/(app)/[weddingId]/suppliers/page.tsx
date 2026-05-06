@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { requireWeddingMember } from "@/lib/auth";
-import { seedDefaultVenues } from "@/lib/actions/vendor";
+import { addVenueFromDirectory } from "@/lib/actions/vendor";
 import type { Vendor, Expense, BudgetCategory } from "@/lib/types/database";
 import { SuppliersClientView } from "@/components/SuppliersClientView";
 
@@ -21,7 +21,7 @@ export default async function SuppliersPage({ params }: { params: { weddingId: s
   const categories = (categoriesRes.data ?? []) as BudgetCategory[];
   const currency   = (weddingRes.data as { currency: string } | null)?.currency ?? "USD";
 
-  const seedVenuesAction = seedDefaultVenues.bind(null, weddingId);
+  const addFromDirectory = addVenueFromDirectory.bind(null, weddingId);
 
   return (
     <SuppliersClientView
@@ -30,7 +30,7 @@ export default async function SuppliersPage({ params }: { params: { weddingId: s
       categories={categories}
       weddingId={weddingId}
       currency={currency}
-      onSeedVenues={seedVenuesAction}
+      onAddFromDirectory={addFromDirectory}
     />
   );
 }

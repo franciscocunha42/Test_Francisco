@@ -3,7 +3,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { generateDefaultTasks } from "@/lib/utils/seed-tasks";
-import { DEFAULT_PORTO_VENUES } from "@/lib/data/default-porto-venues";
 import type {
   Wedding,
   TimelineTask,
@@ -165,28 +164,7 @@ export const useGuestStore = create<StoreState>()(
             actual_amount: 0,
             created_at: nowIso(),
           }));
-          const defaultVendors: GuestVendor[] = DEFAULT_PORTO_VENUES.map((v) => ({
-            id: uuid(),
-            wedding_id: weddingId,
-            name: v.name,
-            category: "venue",
-            contact_name: null,
-            email: null,
-            phone: null,
-            website: null,
-            quoted_price: v.quoted_price ?? null,
-            actual_cost: null,
-            status: "researching",
-            notes: v.notes ?? null,
-            contract_file_url: null,
-            subcategory: v.subcategory,
-            min_capacity: v.min_capacity ?? null,
-            max_capacity: v.max_capacity ?? null,
-            price_per_person: v.price_per_person ?? null,
-            rating: v.rating ?? null,
-            created_at: nowIso(),
-          }));
-          set({ wedding, budgetCategories: defaultCategories, vendors: defaultVendors });
+          set({ wedding, budgetCategories: defaultCategories });
           return wedding;
         },
 
