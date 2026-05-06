@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Search, X, ChevronDown, Plus, Store, PiggyBank, Wallet, CheckCircle2 } from "lucide-react";
+import { useState, useMemo, useTransition } from "react";
+import { toast } from "sonner";
+import { Search, X, ChevronDown, Plus, Store, PiggyBank, Wallet, CheckCircle2, Download } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { capitalize, formatCurrency } from "@/lib/utils/format";
 import { summariseVendorFinances } from "@/lib/utils/vendor-finance";
@@ -52,6 +53,8 @@ export interface SuppliersClientViewProps {
   onUpdateExpense?: (id: string, data: ExpenseFormValues) => Promise<{ ok: boolean; error?: string }>;
   onDeleteExpense?: (id: string) => Promise<{ ok: boolean; error?: string }>;
   onUpdateExpenseStatus?: (id: string, status: PaymentStatus) => Promise<{ ok: boolean; error?: string }>;
+  /** When provided, shows an "Import Porto Venues" button if no venue vendors exist yet. */
+  onSeedVenues?: () => Promise<{ ok: boolean; error?: string; inserted?: number }>;
 }
 
 export function SuppliersClientView({
@@ -67,7 +70,9 @@ export function SuppliersClientView({
   onUpdateExpense,
   onDeleteExpense,
   onUpdateExpenseStatus,
+  onSeedVenues,
 }: SuppliersClientViewProps) {
+  const [isSeeding, startSeed] = useTransition();
   const [search,               setSearch]               = useState("");
   const [activeCategory,       setActiveCategory]       = useState("all");
   const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
@@ -160,6 +165,29 @@ export function SuppliersClientView({
     setPriceFilter("");
   }
 
+  const showSeedButton = onSeedVenues && venueVendors.length === 0;
+
+  function handleSeed() {
+    if (!onSeedVenues) return;
+    startSeed(async () => {
+      const result = await onSeedVenues();
+      if (result.ok) {
+        toast.success(
+          result.inserted ? `Imported ${result.inserted} Porto venues` : "Porto venues already imported",
+        );
+      } else {
+        toast.error(result.error ?? "Failed to import venues");
+      }
+    });
+  }
+
+  const seedButton = showSeedButton && (
+    <Button size="sm" variant="outline" onClick={handleSeed} disabled={isSeeding}>
+      <Download className="mr-1.5 h-3.5 w-3.5" />
+      {isSeeding ? "Importing..." : "Import Porto Venues"}
+    </Button>
+  );
+
   const addButton = (
     <VendorFormDialog
       weddingId={weddingId}
@@ -176,7 +204,10 @@ export function SuppliersClientView({
           <h1 className="font-serif text-2xl font-semibold">Suppliers</h1>
           <p className="text-sm text-muted-foreground">{allVendors.length} vendors tracked</p>
         </div>
-        {addButton}
+        <div className="flex items-center gap-2">
+          {seedButton}
+          {addButton}
+        </div>
       </div>
 
       {/* Summary tiles */}
@@ -207,11 +238,19 @@ export function SuppliersClientView({
           title="No suppliers yet"
           description="Add your vendors — venue, caterer, photographer, and more."
           action={
-            <VendorFormDialog
-              weddingId={weddingId}
-              onSubmit={onVendorCreate}
-              trigger={<Button><Plus className="mr-1.5 h-4 w-4" />Add Supplier</Button>}
-            />
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <VendorFormDialog
+                weddingId={weddingId}
+                onSubmit={onVendorCreate}
+                trigger={<Button><Plus className="mr-1.5 h-4 w-4" />Add Supplier</Button>}
+              />
+              {onSeedVenues && (
+                <Button variant="outline" onClick={handleSeed} disabled={isSeeding}>
+                  <Download className="mr-1.5 h-4 w-4" />
+                  {isSeeding ? "Importing..." : "Import Porto Venues"}
+                </Button>
+              )}
+            </div>
           }
         />
       ) : (
