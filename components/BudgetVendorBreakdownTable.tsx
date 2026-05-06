@@ -1,5 +1,6 @@
 import { capitalize, formatCurrency } from "@/lib/utils/format";
-import { getVendorFinance } from "@/lib/utils/vendor-finance";
+import { getVendorFinance, paymentStatusLabel } from "@/lib/utils/vendor-finance";
+import type { VendorPaymentStatus } from "@/lib/utils/vendor-finance";
 import type { Vendor, Expense } from "@/lib/types/database";
 
 interface BudgetVendorBreakdownTableProps {
@@ -31,7 +32,7 @@ export function BudgetVendorBreakdownTable({
       const paid = f.paidPartial;
       const remaining = budget - paid;
       const progress = budget > 0 ? Math.min(100, Math.round((paid / budget) * 100)) : 0;
-      return { vendor: v, budget, paid, remaining, progress };
+      return { vendor: v, budget, paid, remaining, progress, status: f.status };
     })
     .sort((a, b) => b.budget - a.budget)
     .slice(0, limit);
@@ -46,11 +47,12 @@ export function BudgetVendorBreakdownTable({
             <th className="py-2 px-2 text-right font-medium">Budget</th>
             <th className="py-2 px-2 text-right font-medium">Paid</th>
             <th className="py-2 px-2 text-right font-medium">Remaining</th>
-            <th className="py-2 pl-2 font-medium" style={{ minWidth: 140 }}>Progress</th>
+            <th className="py-2 px-2 font-medium">Status</th>
+            <th className="py-2 pl-2 font-medium" style={{ minWidth: 140 }}>Budget Used</th>
           </tr>
         </thead>
         <tbody>
-          {rows.map(({ vendor, budget, paid, remaining, progress }) => {
+          {rows.map(({ vendor, budget, paid, remaining, progress, status }) => {
             const overBudget = remaining < 0;
             const fullyPaid = progress >= 100 && !overBudget;
             return (
@@ -74,6 +76,9 @@ export function BudgetVendorBreakdownTable({
                 >
                   {formatCurrency(Math.abs(remaining), currency)}
                   {overBudget && <span className="ml-1 text-xs">over</span>}
+                </td>
+                <td className="py-2.5 px-2">
+                  <StatusPill status={status} />
                 </td>
                 <td className="py-2.5 pl-2">
                   <div className="flex items-center gap-2">
@@ -100,5 +105,20 @@ export function BudgetVendorBreakdownTable({
         </tbody>
       </table>
     </div>
+  );
+}
+
+const statusStyles: Record<VendorPaymentStatus, string> = {
+  paid: "bg-emerald-100 text-emerald-700",
+  partial: "bg-amber-100 text-amber-700",
+  unpaid: "bg-slate-100 text-slate-500",
+  no_expenses: "bg-transparent text-muted-foreground border border-border",
+};
+
+function StatusPill({ status }: { status: VendorPaymentStatus }) {
+  return (
+    <span className={`inline-block rounded-full px-2 py-0.5 text-[11px] font-medium ${statusStyles[status]}`}>
+      {paymentStatusLabel[status]}
+    </span>
   );
 }
