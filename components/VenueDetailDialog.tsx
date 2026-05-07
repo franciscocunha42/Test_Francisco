@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import {
   Star, Users, Plus, CheckCircle2, Camera,
-  TreeDeciduous, Building2, Utensils, Sparkles, Waves, MapPin,
+  TreeDeciduous, Building2, Utensils, Sparkles, Waves,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import {
@@ -162,18 +162,14 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
           </section>
 
           {/* Informação */}
-          <section>
-            <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-              Informação
-            </h3>
-            <div className="space-y-2 text-sm leading-relaxed text-muted-foreground">
-              <p className="flex items-center gap-1.5 text-xs">
-                <MapPin className="h-3.5 w-3.5" /> No Casamentos.pt desde 2020
-              </p>
-              <p className="text-xs italic">Última atualização: Abril 2026</p>
-              {venue.notes && <p className="pt-2 text-foreground/90">{venue.notes}</p>}
-            </div>
-          </section>
+          {venue.notes && (
+            <section>
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+                Informação
+              </h3>
+              <p className="text-sm leading-relaxed text-foreground/90">{venue.notes}</p>
+            </section>
+          )}
 
           {/* Photo gallery */}
           {hasPhotos && (
