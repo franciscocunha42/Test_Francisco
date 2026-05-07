@@ -13,6 +13,8 @@ export interface DefaultVenue {
   min_capacity?: number;
   max_capacity?: number;
   notes?: string;
+  /** Explicit district override — bypasses keyword matching when set. */
+  district?: string;
   /** Venue official website URL. */
   website?: string;
   /** Photo URLs (relative to /public, or absolute URLs). */
@@ -1381,11 +1383,12 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Esconhais",
+    district: "Leiria",
     subcategory: "quinta",
     price_per_person: 100,
     min_capacity: 20,
     max_capacity: 250,
-    notes: "Located in Castanheira de Pera, in the heart of the Serra da Lousã, one hour from Leiria and 45 minutes from Coimbra. All the conditions for the happiest and most important day of your lives.",
+    notes: "Located in Castanheira de Pêra, in the heart of the Serra da Lousã, one hour from Leiria and 45 minutes from Coimbra. All the conditions for the happiest and most important day of your lives.",
   },
   {
     name: "Quinta do Vizo",
@@ -3073,6 +3076,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   // ── Leiria & Oeste ─────────────────────────────────────────────────────
   {
     name: "Quinta D. Dinis - Espuma de Hortelã Catering",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 50,
@@ -3082,6 +3086,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Gato Cinzento by Impact Events",
+    district: "Leiria",
     subcategory: "quinta",
     quoted_price: 2500,
     min_capacity: 15,
@@ -3089,15 +3094,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     notes: "Located in Peniche on the coastline, between countryside serenity and the immensity of the Atlantic. Contemporary architecture embraced by ocean scenery, giving each celebration an exclusive character.",
   },
   {
-    name: "Quinta dos Esconhais",
-    subcategory: "quinta",
-    price_per_person: 100,
-    min_capacity: 20,
-    max_capacity: 250,
-    notes: "Located in Castanheira de Pêra, in the heart of the Serra da Lousã, one hour from Leiria and 45 minutes from Coimbra or Pombal. All conditions for the happiest day of your lives.",
-  },
-  {
     name: "Vale Pisco",
+    district: "Leiria",
     subcategory: "quinta",
     quoted_price: 1500,
     min_capacity: 20,
@@ -3106,6 +3104,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Flor do Alecrim",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 55,
@@ -3115,6 +3114,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Paúl",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 78,
@@ -3123,6 +3123,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Valinha",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 75,
@@ -3132,6 +3133,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Evolutee Hotel Royal Óbidos",
+    district: "Leiria",
     subcategory: "hotel",
     rating: 5.0,
     price_per_person: 105,
@@ -3140,6 +3142,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Rio do Prado",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 165,
@@ -3148,6 +3151,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Aldeia - Grupo Quinta dos Lagos",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
     min_capacity: 150,
@@ -3156,6 +3160,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta De Sant'Ana Redinha",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 35,
@@ -3165,6 +3170,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Fonte do Corvo",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 75,
@@ -3174,6 +3180,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante A Gralha",
+    district: "Leiria",
     subcategory: "restaurante",
     rating: 4.6,
     price_per_person: 50,
@@ -3183,6 +3190,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "A Lareira",
+    district: "Leiria",
     subcategory: "salão",
     rating: 4.8,
     price_per_person: 60,
@@ -3192,6 +3200,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Hotel Vila d'Óbidos",
+    district: "Leiria",
     subcategory: "hotel",
     rating: 4.8,
     price_per_person: 79,
@@ -3200,6 +3209,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Boubã",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.8,
     min_capacity: 0,
@@ -3207,6 +3217,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Solar da Tapada",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 92,
@@ -3215,6 +3226,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Jardins do Barão",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 75,
@@ -3224,6 +3236,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Castanheiros - Morgatões",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 80,
@@ -3233,6 +3246,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Do Ti Lucas",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 65,
@@ -3242,6 +3256,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Giesta",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 49,
@@ -3251,6 +3266,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Juncal",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.6,
     price_per_person: 70,
@@ -3260,6 +3276,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Cidral",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
     quoted_price: 2700,
@@ -3268,6 +3285,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Lagos - Grupo Quinta dos Lagos",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 115,
@@ -3277,6 +3295,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Falca",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 115,
@@ -3285,6 +3304,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Acipreste",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
     quoted_price: 500,
@@ -3294,6 +3314,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Canto D'Aire",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
     quoted_price: 500,
@@ -3303,6 +3324,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Júlia dos Ovos",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 80,
@@ -3312,6 +3334,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Cerca do Colégio",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 40,
@@ -3321,6 +3344,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa das Gaeiras",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
     quoted_price: 4000,
@@ -3330,6 +3354,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Concha",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 50,
@@ -3339,6 +3364,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Moinho - Alvados",
+    district: "Leiria",
     subcategory: "quinta",
     price_per_person: 60,
     min_capacity: 50,
@@ -3347,6 +3373,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "S. Sebastião Restaurante",
+    district: "Leiria",
     subcategory: "restaurante",
     price_per_person: 45,
     min_capacity: 20,
@@ -3355,6 +3382,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Cortiça",
+    district: "Leiria",
     subcategory: "quinta",
     quoted_price: 300,
     min_capacity: 50,
@@ -3363,6 +3391,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Lisotel",
+    district: "Leiria",
     subcategory: "hotel",
     rating: 3.0,
     price_per_person: 90,
@@ -3372,6 +3401,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante Marés Vivas",
+    district: "Leiria",
     subcategory: "restaurante",
     price_per_person: 70,
     min_capacity: 40,
@@ -3380,6 +3410,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Monte Real - Hotel, Termas, Spa",
+    district: "Leiria",
     subcategory: "hotel",
     price_per_person: 60,
     min_capacity: 20,
@@ -3388,6 +3419,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Hotel Santa Maria Alcobaça",
+    district: "Leiria",
     subcategory: "hotel",
     rating: 4.2,
     price_per_person: 15,
@@ -3397,6 +3429,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Nature et. al. House",
+    district: "Leiria",
     subcategory: "quinta",
     price_per_person: 100,
     max_capacity: 50,
@@ -3404,6 +3437,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante Dom Abade",
+    district: "Leiria",
     subcategory: "restaurante",
     rating: 4.9,
     price_per_person: 80,
@@ -3413,6 +3447,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Solar da Rainha - Eventos & Alojamentos",
+    district: "Leiria",
     subcategory: "quinta",
     price_per_person: 68,
     min_capacity: 25,
@@ -3421,6 +3456,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta das Oliveiras - Grupo Quinta dos Lagos",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
     min_capacity: 120,
@@ -3429,6 +3465,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta das Palmeiras - Grupo Quinta dos Lagos",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
     min_capacity: 150,
@@ -3437,6 +3474,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta São Francisco",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 25,
@@ -3445,6 +3483,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Silver Coast",
+    district: "Leiria",
     subcategory: "hotel",
     price_per_person: 25,
     max_capacity: 80,
@@ -3452,12 +3491,14 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Bukubaki",
+    district: "Leiria",
     subcategory: "quinta",
     max_capacity: 60,
     notes: "Located in Atouguia da Baleia, Peniche. The right choice for an outdoor wedding with a relaxed touch, filled with beautiful natural elements.",
   },
   {
     name: "Hotel Cristal",
+    district: "Leiria",
     subcategory: "hotel",
     rating: 5.0,
     price_per_person: 50,
@@ -3467,6 +3508,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta das Maçãs",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 40,
@@ -3476,6 +3518,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Challet Fonte Nova",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 90,
@@ -3485,6 +3528,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Vale d'Azenha Hotel Rural & Residences",
+    district: "Leiria",
     subcategory: "hotel",
     price_per_person: 150,
     min_capacity: 30,
@@ -3493,6 +3537,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Haven Nature Hotel & Villas",
+    district: "Leiria",
     subcategory: "hotel",
     price_per_person: 120,
     min_capacity: 30,
@@ -3501,6 +3546,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Rei dos Banquetes",
+    district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 69,
@@ -3510,91 +3556,109 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Lagar Moinho do Porto",
+    district: "Leiria",
     subcategory: "quinta",
     notes: "Located in São Simão de Litém, Pombal. A charming 19th-century estate where the old lagar and mill give it its name, offering a maravilhous and historic setting for a unique wedding day.",
   },
   {
     name: "Hotel D. Alfonso",
+    district: "Leiria",
     subcategory: "hotel",
     notes: "Located in Monte Real, Leiria. Enjoy the peace of the countryside while savouring rich and diverse gastronomy. Essential spaces and services to make your wedding an unforgettable moment.",
   },
   {
     name: "Quinta dos Loridos - Buddha Eden",
+    district: "Leiria",
     subcategory: "quinta",
     notes: "Located in Bombarral, set in the largest oriental garden in Europe, the emblematic Buddha Eden. A dream space combining the beauty of nature and the best of art.",
   },
   {
     name: "Hotel Villa Batalha",
+    district: "Leiria",
     subcategory: "hotel",
     notes: "Located in Batalha. Full of tradition, charm and comfort, ideal for your wedding celebration with a high standard of refinement in a single infrastructure.",
   },
   {
     name: "Hotel Praia",
+    district: "Leiria",
     subcategory: "hotel",
     notes: "Located in Nazaré. Perfect for couples dreaming of a beach wedding with feet in the sand and ocean breeze while celebrating with family and friends.",
   },
   {
     name: "Salão Millénio",
+    district: "Leiria",
     subcategory: "salão",
     notes: "Located in Caldas da Rainha. A space prepared to welcome dozens of guests for a wedding where affection and celebration are the order of the day.",
   },
   {
     name: "Albergaria Josefa d'Óbidos Hotel",
+    district: "Leiria",
     subcategory: "hotel",
     notes: "Located in Óbidos. Spend pleasant moments in a setting marked by historical heritage and the charm of a medieval village, surrounded by pure air and nature.",
   },
   {
     name: "Hotel Lis Batalha",
+    district: "Leiria",
     subcategory: "hotel",
     notes: "Located in Batalha city centre with a panoramic view of the Monastery as a backdrop. Excellent infrastructure for a wedding event.",
   },
   {
     name: "Miramar Hotels",
+    district: "Leiria",
     subcategory: "hotel",
     notes: "Located in Nazaré. The perfect place to celebrate your wedding in grand style while enjoying a truly pleasurable experience deserving of your special day.",
   },
   {
     name: "Casa da Nora",
+    district: "Leiria",
     subcategory: "quinta",
     notes: "Located in Cortes, Leiria, on the banks of the Rio Liz. The perfect place for your wedding with natural tranquility, an exclusive event and fantastic cuisine with attentive service.",
   },
   {
     name: "Quinta da Coutada",
+    district: "Leiria",
     subcategory: "quinta",
     notes: "Located in Peniche. A rural setting providing complete tranquility of an intimate and family environment in full contact with nature, with regional architecture.",
   },
   {
     name: "Casa Adega do Mosteiro",
+    district: "Leiria",
     subcategory: "quinta",
     notes: "Located in Caldas da Rainha. A competent team ensures your wedding or any celebration is in the best hands, offering personalised service for weddings, baptisms and family dinners.",
   },
   {
     name: "Quinta dos Birreiros",
+    district: "Leiria",
     subcategory: "quinta",
     notes: "Located in Alvorge, Ansião. Integrated services in a welcoming and pleasant environment, transforming your wedding idea into a real and enjoyable event.",
   },
   {
     name: "Praia D'El Rey Marriott Golf & Beach Resort",
+    district: "Leiria",
     subcategory: "hotel",
     notes: "Located in Amoreira, Óbidos. The most important day of your lives will certainly be unique and exclusive at this resort. Tranquil and sophisticated atmosphere where nature is always present.",
   },
   {
     name: "Quinta do Pinheiro - Grupo Quinta dos Lagos",
+    district: "Leiria",
     subcategory: "quinta",
     notes: "Located in Valado dos Frades, Nazaré. Where the traditional and the modern merge in perfect harmony with nature, an incomparably beautiful backdrop for your unique wedding day.",
   },
   {
     name: "Quinta da Padeira",
+    district: "Leiria",
     subcategory: "quinta",
     notes: "Located in Santiago da Guarda, Ansião. Named after the first baker of the parish, this rural venue with a welcoming environment is a special place to celebrate life and love.",
   },
   {
     name: "Real Abadia Congress & Spa Hotel",
+    district: "Leiria",
     subcategory: "hotel",
     notes: "Located near Alcobaça. A fantastic hotel with spaces of excellence to welcome your guests on the happiest day of your lives, with a rich history and modern amenities.",
   },
   {
     name: "Iguarias do Tempo",
+    district: "Leiria",
     subcategory: "restaurante",
     notes: "Located in Leiria. A true gem for a successful wedding, with all the infrastructure necessary to make your special day an unforgettable experience.",
   },
@@ -3679,6 +3743,7 @@ const DISTRICT_KEYWORDS: { district: string; keywords: string[] }[] = [
 ];
 
 export function getVenueDistrict(venue: DefaultVenue): string | null {
+  if (venue.district) return venue.district;
   const text = `${venue.name} ${venue.notes ?? ""}`;
   for (const { district, keywords } of DISTRICT_KEYWORDS) {
     if (keywords.some((k) => text.includes(k))) return district;
