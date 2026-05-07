@@ -6,6 +6,37 @@ import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/auth";
 import { weddingSchema } from "@/lib/schemas/wedding";
 
+export async function setDefaultWedding(weddingId: string): Promise<{ ok: boolean; error?: string }> {
+  const user = await requireUser();
+  const supabase = createClient();
+
+  // Verify membership
+  const { data: membership } = await supabase
+    .from("wedding_members")
+    .select("id")
+    .eq("wedding_id", weddingId)
+    .eq("user_id", user.id)
+    .single();
+
+  if (!membership) return { ok: false, error: "Not a member of this wedding." };
+
+  // Clear existing defaults for this user, then set the new one
+  await supabase
+    .from("wedding_members")
+    .update({ is_default: false })
+    .eq("user_id", user.id);
+
+  const { error } = await supabase
+    .from("wedding_members")
+    .update({ is_default: true })
+    .eq("wedding_id", weddingId)
+    .eq("user_id", user.id);
+
+  if (error) return { ok: false, error: error.message };
+  revalidatePath(`/${weddingId}/dashboard`);
+  return { ok: true };
+}
+
 const DEFAULT_BUDGET_CATEGORIES = [
   { name: "Venue & Rentals",        planned_amount: 10500 },
   { name: "Catering & Cake",        planned_amount:  8500 },

@@ -8,14 +8,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Heart } from "lucide-react";
+import { WeddingSwitcher } from "@/components/WeddingSwitcher";
+import type { WeddingEntry } from "@/components/WeddingSwitcher";
 import type { Profile } from "@/lib/types/database";
 
 interface TopBarProps {
   profile: Profile | null;
-  weddingName: string;
+  currentWeddingId: string;
+  allWeddings: WeddingEntry[];
 }
 
-export function TopBar({ profile, weddingName }: TopBarProps) {
+export function TopBar({ profile, currentWeddingId, allWeddings }: TopBarProps) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -39,26 +42,36 @@ export function TopBar({ profile, weddingName }: TopBarProps) {
         <span className="font-serif text-base font-semibold text-primary">VowPlan</span>
       </div>
 
-      <p className="hidden md:block text-sm text-muted-foreground truncate max-w-xs">{weddingName}</p>
+      {/* Desktop: wedding switcher */}
+      <div className="hidden md:flex">
+        <WeddingSwitcher currentWeddingId={currentWeddingId} weddings={allWeddings} />
+      </div>
 
-      <DropdownMenu>
-        <DropdownMenuTrigger className="focus:outline-none">
-          <Avatar className="h-8 w-8 cursor-pointer">
-            <AvatarImage src={profile?.avatar_url ?? undefined} />
-            <AvatarFallback className="bg-primary/20 text-primary text-xs">{initials}</AvatarFallback>
-          </Avatar>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48">
-          <DropdownMenuLabel className="font-normal">
-            <p className="text-sm font-medium">{profile?.full_name ?? "Account"}</p>
-            <p className="text-xs text-muted-foreground truncate">{profile?.email}</p>
-          </DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={signOut} className="text-destructive cursor-pointer">
-            Sign out
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <div className="flex items-center gap-2">
+        {/* Mobile: wedding switcher */}
+        <div className="flex md:hidden">
+          <WeddingSwitcher currentWeddingId={currentWeddingId} weddings={allWeddings} />
+        </div>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger className="focus:outline-none">
+            <Avatar className="h-8 w-8 cursor-pointer">
+              <AvatarImage src={profile?.avatar_url ?? undefined} />
+              <AvatarFallback className="bg-primary/20 text-primary text-xs">{initials}</AvatarFallback>
+            </Avatar>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuLabel className="font-normal">
+              <p className="text-sm font-medium">{profile?.full_name ?? "Account"}</p>
+              <p className="text-xs text-muted-foreground truncate">{profile?.email}</p>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={signOut} className="text-destructive cursor-pointer">
+              Sign out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </header>
   );
 }

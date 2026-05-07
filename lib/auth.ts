@@ -34,7 +34,7 @@ export async function getUserWeddings() {
 
   const { data } = await supabase
     .from("wedding_members")
-    .select("role, weddings(*)")
+    .select("role, is_default, weddings(*)")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
@@ -46,6 +46,18 @@ export async function getLatestWeddingId(): Promise<string | null> {
   if (!user) return null;
   const supabase = createClient();
 
+  // Prefer the wedding the user explicitly set as default
+  const { data: defaultMembership } = await supabase
+    .from("wedding_members")
+    .select("wedding_id")
+    .eq("user_id", user.id)
+    .eq("is_default", true)
+    .limit(1)
+    .single();
+
+  if (defaultMembership?.wedding_id) return defaultMembership.wedding_id;
+
+  // Fall back to the most recently joined wedding
   const { data } = await supabase
     .from("wedding_members")
     .select("wedding_id")

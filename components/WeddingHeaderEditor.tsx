@@ -7,7 +7,6 @@ import { Calendar, MapPin, Heart, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { WeddingDetailsDialog } from "@/components/WeddingDetailsDialog";
 import type { WeddingDetailsInput } from "@/components/WeddingDetailsDialog";
-import { WeddingSwitcher } from "@/components/WeddingSwitcher";
 import { formatDate } from "@/lib/utils/format";
 import { patchWeddingInline } from "@/lib/actions/wedding";
 import type { Wedding } from "@/lib/types/database";
@@ -15,10 +14,9 @@ import type { Wedding } from "@/lib/types/database";
 interface WeddingHeaderEditorProps {
   wedding: Wedding;
   weddingId: string;
-  allWeddings: Pick<Wedding, "id" | "name" | "wedding_date">[];
 }
 
-export function WeddingHeaderEditor({ wedding, weddingId, allWeddings }: WeddingHeaderEditorProps) {
+export function WeddingHeaderEditor({ wedding, weddingId }: WeddingHeaderEditorProps) {
   const router = useRouter();
   const [editOpen, setEditOpen] = useState(false);
 
@@ -63,12 +61,9 @@ export function WeddingHeaderEditor({ wedding, weddingId, allWeddings }: Wedding
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <WeddingSwitcher currentWeddingId={weddingId} weddings={allWeddings} />
-        <Button variant="outline" size="sm" asChild>
-          <Link href={`/${weddingId}/settings`}>Settings</Link>
-        </Button>
-      </div>
+      <Button variant="outline" size="sm" asChild>
+        <Link href={`/${weddingId}/settings`}>Settings</Link>
+      </Button>
 
       <WeddingDetailsDialog
         open={editOpen}
