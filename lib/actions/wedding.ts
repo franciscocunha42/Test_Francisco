@@ -33,7 +33,7 @@ export async function setDefaultWedding(weddingId: string): Promise<{ ok: boolea
     .eq("user_id", user.id);
 
   if (error) return { ok: false, error: error.message };
-  revalidatePath(`/${weddingId}/dashboard`);
+  revalidatePath("/", "layout");
   return { ok: true };
 }
 

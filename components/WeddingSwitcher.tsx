@@ -2,6 +2,7 @@
 
 import { startTransition, useOptimistic } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { toast } from "sonner";
 import { ChevronsUpDown, Plus, Heart, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -46,7 +47,10 @@ export function WeddingSwitcher({ currentWeddingId, weddings }: WeddingSwitcherP
     e.preventDefault();
     startTransition(async () => {
       setOptimisticDefault(weddingId);
-      await setDefaultWedding(weddingId);
+      const result = await setDefaultWedding(weddingId);
+      if (!result.ok) {
+        toast.error(result.error ?? "Failed to save default wedding");
+      }
       router.refresh();
     });
   }
