@@ -659,7 +659,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     website: "https://www.quintadesegade.com",
     notes: "Set on a hilltop in Bustelo, Penafiel — 30 minutes from Porto — Quinta de Segade blends rustic charm with sophisticated service. The property spans vast landscaped gardens, an ancient woodland, a traditional threshing floor (eira) with a sheltered pergola, and a cosy barn. Accommodation on-site means the celebration can continue long after the last dance. Rua da Vila Irene 85, Penafiel.",
     photos: [
-      "/venues/quinta-segade-1.jpg",
+      "/venues/segade_1.png",
     ],
     features: [
       "Landscaped gardens",
