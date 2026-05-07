@@ -13,6 +13,8 @@ export interface DefaultVenue {
   min_capacity?: number;
   max_capacity?: number;
   notes?: string;
+  /** Venue official website URL. */
+  website?: string;
   /** Photo URLs (relative to /public, or absolute URLs). */
   photos?: string[];
   /** Quick highlight tags shown in the detail view. */
@@ -57,7 +59,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     max_capacity: 180,
     notes: "Modern and elegant construction in a tranquil environment with natural charm. Responds within 24 hours.",
     photos: ["/venues/quinta-loureiro-1.jpg"],
-    features: ["Na cidade", "Zona ajardinada", "Espaço para cerimónia civil", "Tem estacionamento"],
+    features: ["City location", "Landscaped gardens", "Civil ceremony space", "Ample parking"],
   },
   {
     name: "Quinta das Carpas",
@@ -654,20 +656,21 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     price_per_person: 130,
     min_capacity: 80,
     max_capacity: 200,
+    website: "https://www.quintadesegade.com",
     notes: "Set on a hilltop in Bustelo, Penafiel — 30 minutes from Porto — Quinta de Segade blends rustic charm with sophisticated service. The property spans vast landscaped gardens, an ancient woodland, a traditional threshing floor (eira) with a sheltered pergola, and a cosy barn. Accommodation on-site means the celebration can continue long after the last dance. Rua da Vila Irene 85, Penafiel.",
     photos: [
-      "https://static.wixstatic.com/media/quinta-de-segade-hero.jpg",
+      "/venues/quinta-segade-1.jpg",
     ],
     features: [
-      "Zona ajardinada",
-      "Bosque privado",
-      "Eira com alpendre",
-      "Pergola para 200 convidados",
-      "Alojamento disponível",
-      "Espaço para cerimónia civil",
-      "Tem estacionamento",
-      "Catering de autor incluso",
-      "Decoração personalizada",
+      "Landscaped gardens",
+      "Private woodland",
+      "Threshing floor with shelter",
+      "Pergola for up to 200 guests",
+      "On-site accommodation",
+      "Civil ceremony space",
+      "Ample parking",
+      "Signature catering included",
+      "Custom decoration",
     ],
   },
   {
@@ -1109,7 +1112,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     rating: 5.0,
     notes: "Luxurious and enchanting place in Vila do Conde, built in 1866 and extensively restored. Exquisite fusion of contemporary and traditional Portuguese architecture.",
     photos: ["/venues/quinta-alferes-1.jpg"],
-    features: ["Vista panorâmica", "Zona ajardinada", "Espaço para cerimónia civil", "Tem estacionamento"],
+    features: ["Panoramic views", "Landscaped gardens", "Civil ceremony space", "Ample parking"],
   },
 
   // ── Greater Porto quintas (Vila Nova de Gaia, Matosinhos, Maia) ──────────

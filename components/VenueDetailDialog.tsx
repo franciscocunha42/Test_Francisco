@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import {
-  Star, Users, Plus, CheckCircle2, Camera,
+  Star, Users, Plus, CheckCircle2, Camera, Globe,
   TreeDeciduous, Building2, Utensils, Sparkles, Waves,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
@@ -18,11 +18,11 @@ const SUBCAT_CONFIG: Record<string, {
   gradient: string;
   Icon: React.ElementType;
 }> = {
-  quinta:      { label: "Quinta",      gradient: "from-emerald-500 to-green-700",  Icon: TreeDeciduous },
-  hotel:       { label: "Hotel",       gradient: "from-indigo-500 to-blue-700",    Icon: Building2 },
-  restaurante: { label: "Restaurante", gradient: "from-orange-400 to-amber-600",   Icon: Utensils },
-  "salão":     { label: "Salão",       gradient: "from-purple-500 to-violet-700",  Icon: Sparkles },
-  praia:       { label: "Praia",       gradient: "from-cyan-400 to-sky-600",       Icon: Waves },
+  quinta:      { label: "Quinta",       gradient: "from-emerald-500 to-green-700",  Icon: TreeDeciduous },
+  hotel:       { label: "Hotel",        gradient: "from-indigo-500 to-blue-700",    Icon: Building2 },
+  restaurante: { label: "Restaurant",   gradient: "from-orange-400 to-amber-600",   Icon: Utensils },
+  "salão":     { label: "Ballroom",     gradient: "from-purple-500 to-violet-700",  Icon: Sparkles },
+  praia:       { label: "Beach",        gradient: "from-cyan-400 to-sky-600",       Icon: Waves },
 };
 
 interface VenueDetailDialogProps {
@@ -89,7 +89,7 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div>
               <h2 className="font-serif text-2xl font-semibold leading-tight">{venue.name}</h2>
-              <p className="mt-1 text-sm text-muted-foreground">{cfg.label} principal</p>
+              <p className="mt-1 text-sm text-muted-foreground">{cfg.label}</p>
               <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
                 {venue.rating != null && (
                   <span className="flex items-center gap-1 text-amber-600">
@@ -97,31 +97,44 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
                     {venue.rating.toFixed(1)}
                   </span>
                 )}
-                <span className="flex items-center gap-1 text-muted-foreground">
-                  <Camera className="h-3.5 w-3.5" />
-                  Ver Fotos · {venue.photos?.length ?? 0}
-                </span>
+                {(venue.photos?.length ?? 0) > 0 && (
+                  <span className="flex items-center gap-1 text-muted-foreground">
+                    <Camera className="h-3.5 w-3.5" />
+                    Photos · {venue.photos!.length}
+                  </span>
+                )}
+                {venue.website && (
+                  <a
+                    href={venue.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
+                  >
+                    <Globe className="h-3.5 w-3.5" />
+                    Website
+                  </a>
+                )}
               </div>
             </div>
 
             {isSaved ? (
               <Button variant="outline" disabled className="border-emerald-300 text-emerald-600">
                 <CheckCircle2 className="mr-1.5 h-4 w-4" />
-                Adicionado
+                Added
               </Button>
             ) : (
               <Button onClick={handleAdd} disabled={isAdding}>
                 <Plus className="mr-1.5 h-4 w-4" />
-                {isAdding ? "A adicionar…" : "Adicionar ao meu casamento"}
+                {isAdding ? "Adding…" : "Add to my wedding"}
               </Button>
             )}
           </div>
 
-          {/* Dados de interesse */}
+          {/* Highlights */}
           {features.length > 0 && (
             <section>
               <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                Dados de interesse
+                Highlights
               </h3>
               <ul className="grid gap-2 sm:grid-cols-2">
                 {features.map((f) => (
@@ -138,34 +151,34 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
           <section className="grid gap-3 sm:grid-cols-2">
             {(venue.min_capacity != null || venue.max_capacity != null) && (
               <div className="rounded-lg border p-3">
-                <p className="text-xs uppercase text-muted-foreground">Capacidade</p>
+                <p className="text-xs uppercase text-muted-foreground">Capacity</p>
                 <p className="mt-0.5 flex items-center gap-1.5 text-sm font-medium">
                   <Users className="h-4 w-4" />
                   {venue.min_capacity != null && venue.max_capacity != null
-                    ? `${venue.min_capacity} a ${venue.max_capacity} convidados`
+                    ? `${venue.min_capacity}–${venue.max_capacity} guests`
                     : venue.max_capacity != null
-                    ? `Até ${venue.max_capacity} convidados`
-                    : `A partir de ${venue.min_capacity} convidados`}
+                    ? `Up to ${venue.max_capacity} guests`
+                    : `From ${venue.min_capacity} guests`}
                 </p>
               </div>
             )}
             {(venue.price_per_person != null || venue.quoted_price != null) && (
               <div className="rounded-lg border p-3">
-                <p className="text-xs uppercase text-muted-foreground">Preço</p>
+                <p className="text-xs uppercase text-muted-foreground">Price</p>
                 <p className="mt-0.5 text-sm font-medium">
                   {venue.price_per_person != null
-                    ? `A partir de €${venue.price_per_person}/pessoa`
-                    : `A partir de €${venue.quoted_price!.toLocaleString()}`}
+                    ? `From €${venue.price_per_person}/person`
+                    : `From €${venue.quoted_price!.toLocaleString()}`}
                 </p>
               </div>
             )}
           </section>
 
-          {/* Informação */}
+          {/* About */}
           {venue.notes && (
             <section>
               <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                Informação
+                About
               </h3>
               <p className="text-sm leading-relaxed text-foreground/90">{venue.notes}</p>
             </section>
@@ -175,14 +188,14 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
           {hasPhotos && (
             <section>
               <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                Galeria
+                Gallery
               </h3>
               <div className="grid gap-2 sm:grid-cols-2">
                 {venue.photos!.map((src, i) => (
                   <div key={src} className="relative aspect-[4/3] overflow-hidden rounded-lg bg-muted">
                     <Image
                       src={src}
-                      alt={`${venue.name} foto ${i + 1}`}
+                      alt={`${venue.name} photo ${i + 1}`}
                       fill
                       sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover"

@@ -15,11 +15,11 @@ const SUBCAT_CONFIG: Record<string, {
   gradient: string;
   Icon: React.ElementType;
 }> = {
-  quinta:      { label: "Quinta",       gradient: "from-emerald-500 to-green-700",  Icon: TreeDeciduous },
-  hotel:       { label: "Hotel",        gradient: "from-indigo-500 to-blue-700",    Icon: Building2 },
-  restaurante: { label: "Restaurante",  gradient: "from-orange-400 to-amber-600",   Icon: Utensils },
-  "salão":     { label: "Salão",        gradient: "from-purple-500 to-violet-700",  Icon: Sparkles },
-  praia:       { label: "Praia",        gradient: "from-cyan-400 to-sky-600",       Icon: Waves },
+  quinta:      { label: "Quinta",      gradient: "from-emerald-500 to-green-700",  Icon: TreeDeciduous },
+  hotel:       { label: "Hotel",       gradient: "from-indigo-500 to-blue-700",    Icon: Building2 },
+  restaurante: { label: "Restaurant",  gradient: "from-orange-400 to-amber-600",   Icon: Utensils },
+  "salão":     { label: "Ballroom",    gradient: "from-purple-500 to-violet-700",  Icon: Sparkles },
+  praia:       { label: "Beach",       gradient: "from-cyan-400 to-sky-600",       Icon: Waves },
 };
 
 interface VenueDirectoryCardProps {
@@ -56,7 +56,7 @@ export function VenueDirectoryCard({ venue, isSaved, isAdding, onAdd }: VenueDir
           <button
             type="button"
             className="hidden sm:block relative w-44 shrink-0 cursor-pointer overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            aria-label={`Ver detalhes de ${venue.name}`}
+            aria-label={`View details for ${venue.name}`}
           >
             {heroPhoto ? (
               <Image
@@ -82,7 +82,7 @@ export function VenueDirectoryCard({ venue, isSaved, isAdding, onAdd }: VenueDir
             {photoCount > 0 && (
               <span className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[11px] font-medium text-white">
                 <Camera className="h-3 w-3" />
-                Ver Fotos · {photoCount}
+                Photos · {photoCount}
               </span>
             )}
           </button>
@@ -124,12 +124,12 @@ export function VenueDirectoryCard({ venue, isSaved, isAdding, onAdd }: VenueDir
               className="shrink-0 border-emerald-300 text-emerald-600 hover:text-emerald-600"
             >
               <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" />
-              Adicionado
+              Added
             </Button>
           ) : (
             <Button size="sm" className="shrink-0" onClick={onAdd} disabled={isAdding}>
               <Plus className="mr-1.5 h-3.5 w-3.5" />
-              {isAdding ? "A adicionar…" : "Adicionar"}
+              {isAdding ? "Adding…" : "Add"}
             </Button>
           )}
         </div>
@@ -145,19 +145,19 @@ export function VenueDirectoryCard({ venue, isSaved, isAdding, onAdd }: VenueDir
             <span className="flex items-center gap-1.5">
               <span className="text-base">⛺</span>
               {venue.price_per_person != null
-                ? `A partir de €${venue.price_per_person}/pessoa`
-                : `A partir de €${venue.quoted_price!.toLocaleString()}`}
+                ? `From €${venue.price_per_person}/person`
+                : `From €${venue.quoted_price!.toLocaleString()}`}
             </span>
           )}
           {(venue.min_capacity != null || venue.max_capacity != null) && (
             <span className="flex items-center gap-1.5">
               <Users className="h-4 w-4" />
               {venue.min_capacity != null && venue.max_capacity != null
-                ? `${venue.min_capacity} a ${venue.max_capacity}`
+                ? `${venue.min_capacity}–${venue.max_capacity}`
                 : venue.max_capacity != null
-                ? `Até ${venue.max_capacity}`
-                : `A partir de ${venue.min_capacity}`}{" "}
-              Convidados
+                ? `Up to ${venue.max_capacity}`
+                : `From ${venue.min_capacity}`}{" "}
+              guests
             </span>
           )}
         </div>
