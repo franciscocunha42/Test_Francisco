@@ -30,12 +30,18 @@ interface VendorFormDialogProps {
 
 export function VendorFormDialog({ weddingId, vendor, trigger, onSubmit: onSubmitProp }: VendorFormDialogProps) {
   const [open, setOpen] = useState(false);
-  const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<VendorFormValues>({
+  const [photosText, setPhotosText] = useState((vendor?.photos ?? []).join("\n"));
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<VendorFormValues>({
     resolver: zodResolver(vendorSchema),
-    defaultValues: vendor ?? { category: "other", status: "researching" },
+    defaultValues: vendor ?? { category: "other", status: "researching", photos: [] },
   });
+  const selectedCategory = watch("category");
 
   async function onSubmit(data: VendorFormValues) {
+    data.photos = photosText
+      .split(/\r?\n/)
+      .map((s) => s.trim())
+      .filter(Boolean);
     const result = onSubmitProp
       ? await onSubmitProp(data, vendor)
       : vendor
@@ -108,9 +114,60 @@ export function VendorFormDialog({ weddingId, vendor, trigger, onSubmit: onSubmi
               <Input type="number" step="0.01" {...register("actual_cost")} placeholder="0.00" />
             </div>
           </div>
+          {selectedCategory === "venue" && (
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Venue Details</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1 col-span-2">
+                  <Label>Venue Type</Label>
+                  <Select
+                    defaultValue={vendor?.subcategory ?? ""}
+                    onValueChange={(v) => setValue("subcategory", v || null)}
+                  >
+                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="quinta">Quinta</SelectItem>
+                      <SelectItem value="hotel">Hotel</SelectItem>
+                      <SelectItem value="restaurante">Restaurante</SelectItem>
+                      <SelectItem value="salão">Salão</SelectItem>
+                      <SelectItem value="praia">Praia</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label>Min Guests</Label>
+                  <Input type="number" {...register("min_capacity")} placeholder="e.g. 50" />
+                </div>
+                <div className="space-y-1">
+                  <Label>Max Guests</Label>
+                  <Input type="number" {...register("max_capacity")} placeholder="e.g. 300" />
+                </div>
+                <div className="space-y-1">
+                  <Label>Price / Person (€)</Label>
+                  <Input type="number" step="0.01" {...register("price_per_person")} placeholder="e.g. 120" />
+                </div>
+                <div className="space-y-1">
+                  <Label>Rating (0–5)</Label>
+                  <Input type="number" step="0.1" min="0" max="5" {...register("rating")} placeholder="e.g. 4.8" />
+                </div>
+              </div>
+            </div>
+          )}
           <div className="space-y-1">
             <Label>Notes</Label>
             <Textarea {...register("notes")} rows={2} placeholder="Any additional notes..." />
+          </div>
+          <div className="space-y-1">
+            <Label>Photo URLs</Label>
+            <Textarea
+              rows={3}
+              value={photosText}
+              onChange={(e) => setPhotosText(e.target.value)}
+              placeholder="One image URL per line, e.g.\n/venues/my-venue.jpg\nhttps://example.com/photo.jpg"
+            />
+            <p className="text-xs text-muted-foreground">
+              One URL per line. Use absolute URLs or paths to files in <code>public/</code>.
+            </p>
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>

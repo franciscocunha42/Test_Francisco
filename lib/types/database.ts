@@ -73,6 +73,12 @@ export interface Vendor {
   status: VendorStatus;
   notes: string | null;
   contract_file_url: string | null;
+  subcategory: string | null;
+  min_capacity: number | null;
+  max_capacity: number | null;
+  price_per_person: number | null;
+  rating: number | null;
+  photos: string[];
   created_at: string;
 }
 

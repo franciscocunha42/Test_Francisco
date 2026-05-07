@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, Trash2, Globe, Phone, Mail, Receipt, Plus, ChevronDown } from "lucide-react";
+import { Pencil, Trash2, Globe, Phone, Mail, Receipt, Plus, ChevronDown, Star, Users } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils/cn";
 import { formatCurrency } from "@/lib/utils/format";
@@ -120,8 +120,24 @@ export function VendorCard({
     };
   }
 
+  const photos = vendor.photos ?? [];
   return (
     <Card className="overflow-hidden">
+      {photos.length > 0 && (
+        <div className="relative aspect-[16/9] w-full bg-muted">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={photos[0]}
+            alt={vendor.name}
+            className="h-full w-full object-cover"
+          />
+          {photos.length > 1 && (
+            <span className="absolute bottom-2 right-2 rounded-full bg-black/60 px-2 py-0.5 text-[11px] font-medium text-white">
+              +{photos.length - 1}
+            </span>
+          )}
+        </div>
+      )}
       <CardContent className="p-4 space-y-3">
         {/* Header */}
         <div className="flex items-start justify-between gap-2">
@@ -151,6 +167,33 @@ export function VendorCard({
         </div>
 
         {vendor.contact_name && <p className="text-sm text-muted-foreground">{vendor.contact_name}</p>}
+
+        {/* Venue-specific metadata */}
+        {vendor.category === "venue" && (vendor.rating != null || vendor.max_capacity != null || vendor.price_per_person != null) && (
+          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+            {vendor.rating != null && (
+              <span className="flex items-center gap-1">
+                <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                {vendor.rating.toFixed(1)}
+              </span>
+            )}
+            {(vendor.min_capacity != null || vendor.max_capacity != null) && (
+              <span className="flex items-center gap-1">
+                <Users className="h-3 w-3" />
+                {vendor.min_capacity != null && vendor.max_capacity != null
+                  ? `${vendor.min_capacity}–${vendor.max_capacity} guests`
+                  : vendor.max_capacity != null
+                    ? `Up to ${vendor.max_capacity} guests`
+                    : `From ${vendor.min_capacity} guests`}
+              </span>
+            )}
+            {vendor.price_per_person != null && (
+              <span className="flex items-center gap-1">
+                From {formatCurrency(vendor.price_per_person, currency)}/person
+              </span>
+            )}
+          </div>
+        )}
 
         <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
           {vendor.email && (

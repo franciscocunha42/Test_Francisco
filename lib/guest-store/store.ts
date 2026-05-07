@@ -238,6 +238,12 @@ export const useGuestStore = create<StoreState>()(
             status: data.status ?? "researching",
             notes: data.notes ?? null,
             contract_file_url: data.contract_file_url ?? null,
+            subcategory: data.subcategory ?? null,
+            min_capacity: data.min_capacity ?? null,
+            max_capacity: data.max_capacity ?? null,
+            price_per_person: data.price_per_person ?? null,
+            rating: data.rating ?? null,
+            photos: data.photos ?? [],
             created_at: nowIso(),
           };
           set({ vendors: [...get().vendors, v] });

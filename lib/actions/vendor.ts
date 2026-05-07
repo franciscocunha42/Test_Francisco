@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireWeddingMember } from "@/lib/auth";
 import { vendorSchema } from "@/lib/schemas/vendor";
+import { DEFAULT_PORTO_VENUES } from "@/lib/data/default-porto-venues";
 
 export async function createVendor(weddingId: string, data: unknown) {
   await requireWeddingMember(weddingId);
@@ -36,6 +37,94 @@ export async function updateVendor(weddingId: string, vendorId: string, data: un
   if (error) return { ok: false, error: error.message };
   revalidatePath(`/${weddingId}/suppliers`);
   return { ok: true };
+}
+
+export async function addVenueFromDirectory(weddingId: string, venue: import("@/lib/data/default-porto-venues").DefaultVenue) {
+  await requireWeddingMember(weddingId);
+  const supabase = createClient();
+
+  const { data: existing } = await supabase
+    .from("vendors")
+    .select("id")
+    .eq("wedding_id", weddingId)
+    .eq("name", venue.name)
+    .maybeSingle();
+
+  if (existing) return { ok: true };
+
+  const { error } = await supabase.from("vendors").insert({
+    wedding_id: weddingId,
+    name: venue.name,
+    category: "venue" as const,
+    subcategory: venue.subcategory,
+    status: "researching" as const,
+    price_per_person: venue.price_per_person ?? null,
+    quoted_price: venue.quoted_price ?? null,
+    min_capacity: venue.min_capacity ?? null,
+    max_capacity: venue.max_capacity ?? null,
+    rating: venue.rating ?? null,
+    notes: venue.notes ?? null,
+    website: venue.website ?? null,
+    photos: venue.photos ?? [],
+  });
+
+  if (error) {
+    // Migration 0005 may not have been applied yet — fall back to basic insert
+    if (error.message.includes("schema cache") || error.message.includes("column")) {
+      const { error: fallback } = await supabase.from("vendors").insert({
+        wedding_id: weddingId,
+        name: venue.name,
+        category: "venue" as const,
+        status: "researching" as const,
+        notes: venue.notes ?? null,
+      });
+      if (fallback) return { ok: false as const, error: fallback.message };
+      revalidatePath(`/${weddingId}/suppliers`);
+      revalidatePath(`/${weddingId}/dashboard`);
+      return { ok: true as const };
+    }
+    return { ok: false as const, error: error.message };
+  }
+  revalidatePath(`/${weddingId}/suppliers`);
+  return { ok: true as const };
+}
+
+export async function seedDefaultVenues(weddingId: string) {
+  await requireWeddingMember(weddingId);
+  const supabase = createClient();
+
+  // Skip venues that already exist for this wedding (idempotent).
+  const { data: existing } = await supabase
+    .from("vendors")
+    .select("name")
+    .eq("wedding_id", weddingId)
+    .eq("category", "venue");
+  const existingNames = new Set((existing ?? []).map((r) => (r as { name: string }).name));
+
+  const rows = DEFAULT_PORTO_VENUES
+    .filter((v) => !existingNames.has(v.name))
+    .map((v) => ({
+      wedding_id: weddingId,
+      name: v.name,
+      category: "venue" as const,
+      subcategory: v.subcategory,
+      status: "researching" as const,
+      quoted_price: v.quoted_price ?? null,
+      price_per_person: v.price_per_person ?? null,
+      min_capacity: v.min_capacity ?? null,
+      max_capacity: v.max_capacity ?? null,
+      rating: v.rating ?? null,
+      notes: v.notes ?? null,
+    }));
+
+  if (rows.length === 0) return { ok: true, inserted: 0 };
+
+  const { error } = await supabase.from("vendors").insert(rows);
+  if (error) return { ok: false, error: error.message };
+
+  revalidatePath(`/${weddingId}/suppliers`);
+  revalidatePath(`/${weddingId}/dashboard`);
+  return { ok: true, inserted: rows.length };
 }
 
 export async function deleteVendor(weddingId: string, vendorId: string) {
