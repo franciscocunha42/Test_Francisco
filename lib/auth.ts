@@ -32,13 +32,23 @@ export async function getUserWeddings() {
   const user = await requireUser();
   const supabase = createClient();
 
-  const { data } = await supabase
+  // Try with is_default first (requires migration 0007). Fall back if the
+  // column doesn't exist yet so the switcher still works.
+  const withDefault = await supabase
     .from("wedding_members")
     .select("role, is_default, weddings(*)")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
-  return data ?? [];
+  if (!withDefault.error) return withDefault.data ?? [];
+
+  const fallback = await supabase
+    .from("wedding_members")
+    .select("role, weddings(*)")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  return (fallback.data ?? []).map((m) => ({ ...m, is_default: false }));
 }
 
 export async function getLatestWeddingId(): Promise<string | null> {
@@ -46,16 +56,18 @@ export async function getLatestWeddingId(): Promise<string | null> {
   if (!user) return null;
   const supabase = createClient();
 
-  // Prefer the wedding the user explicitly set as default
-  const { data: defaultMembership } = await supabase
+  // Prefer the wedding the user explicitly set as default (requires migration 0007)
+  const defaultRes = await supabase
     .from("wedding_members")
     .select("wedding_id")
     .eq("user_id", user.id)
     .eq("is_default", true)
     .limit(1)
-    .single();
+    .maybeSingle();
 
-  if (defaultMembership?.wedding_id) return defaultMembership.wedding_id;
+  if (!defaultRes.error && defaultRes.data?.wedding_id) {
+    return defaultRes.data.wedding_id;
+  }
 
   // Fall back to the most recently joined wedding
   const { data } = await supabase
