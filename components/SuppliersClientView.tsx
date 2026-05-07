@@ -9,7 +9,7 @@ import {
 import { cn } from "@/lib/utils/cn";
 import { capitalize, formatCurrency } from "@/lib/utils/format";
 import { summariseVendorFinances } from "@/lib/utils/vendor-finance";
-import { DEFAULT_PORTO_VENUES } from "@/lib/data/default-porto-venues";
+import { DEFAULT_PORTO_VENUES, ALL_DISTRICTS, getVenueDistrict } from "@/lib/data/default-porto-venues";
 import { VenueDirectoryCard } from "@/components/VenueDirectoryCard";
 import { VendorCard } from "@/components/VendorCard";
 import { VendorFormDialog } from "@/components/VendorFormDialog";
@@ -128,10 +128,11 @@ export function SuppliersClientView({
   const [activeTab, setActiveTab] = useState<"browse" | "my-suppliers">("browse");
 
   // ── directory filter state ──
-  const [dirSearch,  setDirSearch]  = useState("");
-  const [dirSubcats, setDirSubcats] = useState<string[]>([]);
-  const [dirCaps,    setDirCaps]    = useState<string[]>([]);
-  const [dirPrices,  setDirPrices]  = useState<string[]>([]);
+  const [dirSearch,    setDirSearch]    = useState("");
+  const [dirSubcats,   setDirSubcats]   = useState<string[]>([]);
+  const [dirCaps,      setDirCaps]      = useState<string[]>([]);
+  const [dirPrices,    setDirPrices]    = useState<string[]>([]);
+  const [dirDistricts, setDirDistricts] = useState<string[]>([]);
 
   // ── my-suppliers filter state ──
   const [mySearch,   setMySearch]   = useState("");
@@ -156,8 +157,13 @@ export function SuppliersClientView({
       })
       .filter((v) => dirSubcats.length === 0 || dirSubcats.includes(v.subcategory))
       .filter((v) => matchCapacity(v.max_capacity, dirCaps))
-      .filter((v) => matchPrice(v.price_per_person, dirPrices));
-  }, [dirSearch, dirSubcats, dirCaps, dirPrices]);
+      .filter((v) => matchPrice(v.price_per_person, dirPrices))
+      .filter((v) => {
+        if (dirDistricts.length === 0) return true;
+        const d = getVenueDistrict(v);
+        return d != null && dirDistricts.includes(d);
+      });
+  }, [dirSearch, dirSubcats, dirCaps, dirPrices, dirDistricts]);
 
   const filteredMyVendors = useMemo(() => {
     return allVendors
@@ -174,7 +180,7 @@ export function SuppliersClientView({
   const tabCategories  = ["all", ...usedCategories];
   const totals         = summariseVendorFinances(allVendors, expenses);
   const remaining      = Math.max(0, totals.actual - totals.paid);
-  const hasDirFilters  = !!(dirSearch || dirSubcats.length || dirCaps.length || dirPrices.length);
+  const hasDirFilters  = !!(dirSearch || dirSubcats.length || dirCaps.length || dirPrices.length || dirDistricts.length);
   const hasMyFilters   = !!(mySearch || myStatuses.length > 0 || myCategory !== "all");
 
   // ── handlers ──
@@ -191,7 +197,7 @@ export function SuppliersClientView({
   }
 
   function clearDirFilters() {
-    setDirSearch(""); setDirSubcats([]); setDirCaps([]); setDirPrices([]);
+    setDirSearch(""); setDirSubcats([]); setDirCaps([]); setDirPrices([]); setDirDistricts([]);
   }
   function clearMyFilters() {
     setMySearch(""); setMyStatuses([]); setMyCategory("all");
@@ -261,7 +267,7 @@ export function SuppliersClientView({
         <div className="flex gap-6 items-start">
 
           {/* ── Sidebar ── */}
-          <aside className="w-52 shrink-0 space-y-6 sticky top-4">
+          <aside className="w-52 shrink-0 space-y-6 sticky top-4 max-h-[calc(100vh-2rem)] overflow-y-auto pr-2 pb-4">
 
             {/* Search */}
             <div className="relative">
@@ -273,6 +279,32 @@ export function SuppliersClientView({
                 onChange={(e) => setDirSearch(e.target.value)}
               />
             </div>
+
+            {/* District */}
+            <div>
+              <p className="mb-2.5 text-sm font-semibold">District</p>
+              <ul className="space-y-2">
+                {ALL_DISTRICTS.map((d) => (
+                  <li key={d} className="flex items-center gap-2">
+                    <Checkbox
+                      id={`district-${d}`}
+                      checked={dirDistricts.includes(d)}
+                      onCheckedChange={() =>
+                        setDirDistricts((p) => toggle(p, d))
+                      }
+                    />
+                    <label
+                      htmlFor={`district-${d}`}
+                      className="cursor-pointer text-sm select-none"
+                    >
+                      {d}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="border-t" />
 
             {/* Venue types */}
             <div>

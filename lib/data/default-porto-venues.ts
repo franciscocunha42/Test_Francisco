@@ -1656,4 +1656,192 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     subcategory: "hotel",
     notes: "Full infrastructure and facilities for an efficient and pleasant stay in Coimbra. A complete hotel experience allowing couples and guests to feel right at home during the wedding celebrations.",
   },
+  {
+    name: "Quintinha das Carreirinhas",
+    subcategory: "quinta",
+    rating: 5.0,
+    price_per_person: 75,
+    min_capacity: 50,
+    max_capacity: 250,
+    notes: "A wonderful space in Lavos, Figueira da Foz that adapts perfectly to your event needs, with a magnificent team. The main goal is for you and your guests to enjoy every moment with all the love.",
+  },
+  {
+    name: "Restaurante Olea",
+    subcategory: "restaurante",
+    rating: 5.0,
+    price_per_person: 45,
+    min_capacity: 30,
+    max_capacity: 150,
+    notes: "Located inside the Olive Oil Museum in Bobadela, Oliveira do Hospital — a space with beautiful natural light and privileged views over the Serra da Estrela. Modern décor and equipment for the great celebration of your love.",
+  },
+  {
+    name: "Quinta da Hortinha",
+    subcategory: "quinta",
+    rating: 5.0,
+    price_per_person: 55,
+    min_capacity: 50,
+    max_capacity: 350,
+    notes: "Professionalism and competence in Tábua to make the greatest dream of your lives come true. Everything you need so your wedding celebration is forever marked in everyone's memory as a magical and enchanting event.",
+  },
+  {
+    name: "Eurostars Oásis Plaza",
+    subcategory: "hotel",
+    rating: 4.9,
+    price_per_person: 40,
+    min_capacity: 50,
+    max_capacity: 300,
+    notes: "One of the most prominent hotel establishments in Figueira da Foz. Offers the chance of finding something bigger and better than what you dreamed of for your wedding celebration.",
+  },
+  {
+    name: "Hotel Rural Quinta da Conchada",
+    subcategory: "hotel",
+    rating: 4.9,
+    price_per_person: 78,
+    min_capacity: 20,
+    max_capacity: 60,
+    notes: "Stunning surroundings and luxurious facilities in Travanca do Mondego, Penacova. Surrounded by unprecedented nature with magnificent views over the River Mondego — the perfect space for an intimate wedding day.",
+  },
+  {
+    name: "Quinta de São Pedro da Pousada",
+    subcategory: "quinta",
+    rating: 4.8,
+    price_per_person: 40,
+    min_capacity: 75,
+    max_capacity: 500,
+    notes: "Located in Cernache, Coimbra — a unique venue of refinement and good taste combining a 19th-century manor with an imposing event hall. Caters to all kinds of events with primary attention to detail.",
+  },
+  {
+    name: "Caves de Coimbra",
+    subcategory: "salão",
+    rating: 5.0,
+    price_per_person: 50,
+    min_capacity: 50,
+    max_capacity: 1000,
+    notes: "On a mission to create dream events in Coimbra. The wedding celebration is a special and memorable moment — a specialised team is available to guide and accompany the couple in living this day with intensity.",
+  },
+  {
+    name: "Terraço da Alta",
+    subcategory: "restaurante",
+    price_per_person: 25,
+    min_capacity: 40,
+    max_capacity: 75,
+    notes: "A new venue in the upper district of Coimbra, more than ready to host your wedding celebration. An experienced, dedicated, and very talented team will help you plan every detail of your party.",
+  },
+  {
+    name: "Essences Lousã",
+    subcategory: "restaurante",
+    price_per_person: 50,
+    min_capacity: 4,
+    max_capacity: 200,
+    notes: "Add more flavour, joy, and refinement to your wedding day with Essences Lousã. Talented and dedicated professionals offer a spacious, high-quality space that promises to surprise all your guests.",
+  },
+  {
+    name: "Quinta do Hospício",
+    subcategory: "quinta",
+    rating: 5.0,
+    price_per_person: 60,
+    min_capacity: 30,
+    max_capacity: 200,
+    notes: "The newest and most exclusive venue in the Lousã district to welcome friends and family for an unforgettable celebration. Set in a landscape of lush nature, the property offers all conditions for a wide variety of events.",
+  },
+  {
+    name: "Convento do Desagravo Flag Hotel",
+    subcategory: "hotel",
+    rating: 3.4,
+    price_per_person: 49,
+    min_capacity: 35,
+    max_capacity: 200,
+    notes: "A magical place in Vila Pouca da Beira, Oliveira do Hospital, full of history and ideal for the great celebration of your love. A beautiful and extensive property surrounded by gardens, vineyards, and olive groves.",
+  },
+  {
+    name: "Palácio São Silvestre",
+    subcategory: "quinta",
+    min_capacity: 25,
+    max_capacity: 100,
+    notes: "Helping couples in São Silvestre, Coimbra create the wedding party they always dreamed of. An experienced and dedicated team will exceed your expectations — beauty, refinement, and an absolutely memorable experience.",
+  },
+  {
+    name: "Passaporte Coimbra",
+    subcategory: "restaurante",
+    price_per_person: 35,
+    min_capacity: 2,
+    max_capacity: 100,
+    notes: "If your dream wedding calls for a unique, emblematic venue with views over the River Mondego in Coimbra. An experienced and dedicated team will help you plan and prepare the happiest and most important day of your lives.",
+  },
+  {
+    name: "Miravillas Hotel",
+    subcategory: "hotel",
+    notes: "Combining sophistication with tranquillity in Praia de Mira, Mira — a complete infrastructure for the perfect wedding celebration. A space that harmoniously integrates nature with contemporary architecture.",
+  },
+  {
+    name: "Sweet Residence & Gardens Hotel",
+    subcategory: "hotel",
+    notes: "A charming hotel in Figueira da Foz with modern design and architecture, offering all the comfort and discretion needed for a unique and special day. Celebrate your wedding party with guests and family.",
+  },
+  {
+    name: "Quinta do Taipal Eventos",
+    subcategory: "quinta",
+    notes: "A space dedicated to making dreams come true in Montemor-o-Velho. The team is fully available to collaborate on the success of your wedding party, making it memorable. Surrounded by beautiful natural landscapes.",
+  },
+  {
+    name: "Restaurante Cristina",
+    subcategory: "restaurante",
+    notes: "A fabulous space in the beautiful region of Oliveira do Hospital that will help you have the wedding reception you always dreamed of. Spacious, well-equipped rooms with a very experienced and dedicated team.",
+  },
 ];
+
+// ── District derivation ────────────────────────────────────────────────────
+// Maps location keywords found in the venue name or notes to a Portuguese
+// district. Used by the Browse Venues filter sidebar.
+const DISTRICT_KEYWORDS: { district: string; keywords: string[] }[] = [
+  {
+    district: "Porto",
+    keywords: [
+      "Porto", "Penafiel", "Vila Nova de Gaia", "V. N. de Gaia", "Maia",
+      "Matosinhos", "Vila do Conde", "Trofa", "Paços de Ferreira", "Lousada",
+      "Marco de Canaveses", "Felgueiras", "Amarante", "Paredes", "Santo Tirso",
+      "Valongo", "Gondomar", "Baião", "Freamunde", "Bustelo", "Soalhães",
+      "Aveleda", "Póvoa de Varzim",
+    ],
+  },
+  {
+    district: "Coimbra",
+    keywords: [
+      "Coimbra", "Cantanhede", "Figueira da Foz", "Lousã", "Penacova",
+      "Montemor-o-Velho", "Condeixa", "Soure", "Penela", "Oliveira do Hospital",
+      "Tábua", "Mira", "Miranda do Corvo", "Tentúgal", "Cernache",
+      "Almalaguês", "Lorvão", "Cadima", "Paião", "Bobadela",
+      "Travanca do Mondego", "Vila Pouca da Beira", "São Silvestre",
+      "São Martinho de Árvore", "Maiorca", "Lavos", "Castanheira de Pera",
+      "Arazede",
+    ],
+  },
+  {
+    district: "Aveiro",
+    keywords: [
+      "Aveiro", "Águeda", "Anadia", "Espinho", "Estarreja", "Ovar", "Ílhavo",
+      "Mealhada", "Murtosa", "Sever do Vouga", "Vagos",
+    ],
+  },
+  {
+    district: "Braga",
+    keywords: [
+      "Braga", "Guimarães", "Vila Verde", "Barcelos", "Famalicão", "Fafe",
+      "Cabeceiras de Basto", "Vieira do Minho", "Esposende", "Póvoa de Lanhoso",
+    ],
+  },
+  {
+    district: "Viana do Castelo",
+    keywords: ["Viana do Castelo", "Ponte de Lima", "Caminha", "Arcos de Valdevez", "Monção"],
+  },
+];
+
+export function getVenueDistrict(venue: DefaultVenue): string | null {
+  const text = `${venue.name} ${venue.notes ?? ""}`;
+  for (const { district, keywords } of DISTRICT_KEYWORDS) {
+    if (keywords.some((k) => text.includes(k))) return district;
+  }
+  return null;
+}
+
+export const ALL_DISTRICTS = DISTRICT_KEYWORDS.map((d) => d.district);

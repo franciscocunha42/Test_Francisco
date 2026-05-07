@@ -142,7 +142,19 @@ export function VendorCard({
         {/* Header */}
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <p className="font-semibold truncate">{vendor.name}</p>
+            {vendor.website ? (
+              <a
+                href={vendor.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block font-semibold truncate hover:underline focus:underline focus:outline-none"
+                title={vendor.website}
+              >
+                {vendor.name}
+              </a>
+            ) : (
+              <p className="font-semibold truncate">{vendor.name}</p>
+            )}
             <div className="mt-1 flex flex-wrap items-center gap-1.5">
               <Badge variant={statusColors[vendor.status]} className="text-xs">{capitalize(vendor.status)}</Badge>
               <Badge variant={paymentStatusVariant[finance.status]} className="text-xs">
