@@ -216,7 +216,7 @@ export function SuppliersClientView({
         <div>
           <h1 className="font-serif text-2xl font-semibold">Suppliers</h1>
           <p className="text-sm text-muted-foreground">
-            {allVendors.length} in my wedding · {DEFAULT_PORTO_VENUES.length} venues in the directory
+            {allVendors.length} {allVendors.length === 1 ? "supplier" : "suppliers"} added
           </p>
         </div>
         <VendorFormDialog
