@@ -15,6 +15,8 @@ export interface DefaultVenue {
   notes?: string;
   /** Explicit district override — bypasses keyword matching when set. */
   district?: string;
+  /** Short human-readable location (e.g. "Braga", "Vila do Conde, Porto"). */
+  location?: string;
   /** Venue official website URL. */
   website?: string;
   /** Photo URLs (relative to /public, or absolute URLs). */
@@ -35,24 +37,6 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     notes: "Events by the sea. A refuge where luxury is discreet, the horizon is infinite, and exclusivity is absolute. Porto.",
   },
   {
-    name: "Torre da Naia",
-    subcategory: "quinta",
-    rating: 4.9,
-    price_per_person: 140,
-    min_capacity: 50,
-    max_capacity: 300,
-    notes: "Symbol of union between modern and traditional, surrounded by centuries-old walls and pine forests with stunning views.",
-  },
-  {
-    name: "Quinta da Pia",
-    subcategory: "quinta",
-    rating: 5.0,
-    price_per_person: 125,
-    min_capacity: 70,
-    max_capacity: 450,
-    notes: "Splendid quinta surrounded by lush vegetation. Managed by Banquetes António Duarte, renowned for high-quality service.",
-  },
-  {
     name: "Quinta Loureiro Eventos",
     subcategory: "quinta",
     rating: 4.9,
@@ -62,15 +46,6 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     notes: "Modern and elegant construction in a tranquil environment with natural charm. Responds within 24 hours.",
     photos: ["/venues/quinta-loureiro-1.jpg"],
     features: ["City location", "Landscaped gardens", "Civil ceremony space", "Ample parking"],
-  },
-  {
-    name: "Quinta das Carpas",
-    subcategory: "quinta",
-    rating: 4.9,
-    price_per_person: 85,
-    min_capacity: 60,
-    max_capacity: 250,
-    notes: "Surrounded by abundant nature, offering serenity and elegance with unique decorations. Responds within 24 hours.",
   },
   {
     name: "Quinta do Palácio Rauliana",
@@ -89,15 +64,6 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     min_capacity: 80,
     max_capacity: 250,
     notes: "Imposing architecture with custom decoration service. Sophistication and elegance in the heart of Porto. Responds within 24 hours.",
-  },
-  {
-    name: "Colina do Romão",
-    subcategory: "quinta",
-    rating: 5.0,
-    price_per_person: 88,
-    min_capacity: 50,
-    max_capacity: 250,
-    notes: "Between Minho and Douro — a unique space for couples who love green landscapes. Feel like royalty in a fairy-tale setting.",
   },
   {
     name: "Quinta do Outeiro",
@@ -134,15 +100,6 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     notes: "Idyllic former monastery, classified national monument since 1977. Singular and distinctive venue in Porto.",
   },
   {
-    name: "Quinta Vila Verde",
-    subcategory: "quinta",
-    rating: 4.9,
-    price_per_person: 90,
-    min_capacity: 60,
-    max_capacity: 300,
-    notes: "Tradition and modernity united across three different spaces, ideal for receiving your event.",
-  },
-  {
     name: "Escondidinho Terrace",
     subcategory: "restaurante",
     rating: 5.0,
@@ -166,15 +123,6 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     price_per_person: 100,
     max_capacity: 250,
     notes: "A place where the day becomes a narrative to feel and smile through. Beautiful gardens and cosy detail.",
-  },
-  {
-    name: "Quinta Del Rei - Wedding Signature",
-    subcategory: "quinta",
-    rating: 5.0,
-    price_per_person: 100,
-    min_capacity: 80,
-    max_capacity: 430,
-    notes: "Where nature meets history. A refuge of excellence with absolute privacy and an unforgettable journey. Responds within 24 hours.",
   },
   {
     name: "Quinta do Vieira",
@@ -202,15 +150,6 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     min_capacity: 20,
     max_capacity: 50,
     notes: "Early-20th-century castle with incomparable architecture and beauty. Surrounded by gardens and unique tiled walls.",
-  },
-  {
-    name: "Quinta das Tulipas",
-    subcategory: "quinta",
-    rating: 5.0,
-    price_per_person: 75,
-    min_capacity: 50,
-    max_capacity: 350,
-    notes: "Reference event space where sophistication and refinement harmonise with the surrounding landscape.",
   },
   {
     name: "Penafiel Park Hotel",
@@ -393,6 +332,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Set Lounge Beach Weddings",
+    district: "Porto",
+    location: "Vila do Conde",
     subcategory: "praia",
     rating: 5.0,
     price_per_person: 80,
@@ -564,6 +505,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Dom Nunes",
+    district: "Porto",
+    location: "Aveleda, Lousada",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 80,
@@ -814,6 +757,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Paço Eventos",
+    district: "Porto",
+    location: "Santo Tirso",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 75,
@@ -1030,6 +975,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Lage - Solar do Burguês",
+    district: "Porto",
+    location: "Santo Tirso",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 75,
@@ -1056,6 +1003,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Cardeal",
+    district: "Porto",
+    location: "Fajozes, Vila do Conde",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 95,
@@ -1138,6 +1087,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "O Campo",
+    district: "Porto",
+    location: "Freamunde, Paços de Ferreira",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 69.5,
@@ -1191,6 +1142,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Jasmins",
+    district: "Porto",
+    location: "Ferreira, Paços de Ferreira",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 90,
@@ -1297,6 +1250,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Esporão",
+    district: "Porto",
+    location: "Sendim, Felgueiras",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 60,
@@ -1306,6 +1261,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta D'Ávila",
+    district: "Porto",
+    location: "Póvoa de Varzim",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 55,
@@ -1341,6 +1298,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Glicínia Wedding House",
+    district: "Porto",
+    location: "Freamunde, Paços de Ferreira",
     subcategory: "quinta",
     rating: 5.0,
     notes: "Unites the elegance of natural beauty with fountains, water mirrors, and green scenery in Freamunde, Paços de Ferreira.",
@@ -1613,7 +1572,9 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     notes: "A legendary hotel in Coimbra — the setting of the ill-fated love of Pedro and Inês de Castro, once host to kings and emperors. Preserves its art of fine living, charm, sophistication, and centuries of history.",
   },
   {
-    name: "Quinta da Concha",
+    name: "Quinta da Concha - Coimbra",
+    district: "Coimbra",
+    location: "Coimbra",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 50,
@@ -2404,6 +2365,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta das Carpas",
+    district: "Braga",
+    location: "Brito, Guimarães",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 85,
@@ -2469,6 +2432,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Torre da Naia",
+    district: "Braga",
+    location: "Braga",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 140,
@@ -2558,21 +2523,14 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Pia",
+    district: "Braga",
+    location: "Carapeços, Barcelos",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 125,
     min_capacity: 70,
     max_capacity: 450,
     notes: "Located in Carapeços, Barcelos. A splendid space surrounded by lush vegetation in perfect harmony for your wedding, offering high-quality services and a welcoming, refined atmosphere.",
-  },
-  {
-    name: "Quinta dos Jasmins",
-    subcategory: "quinta",
-    rating: 5.0,
-    price_per_person: 90,
-    min_capacity: 100,
-    max_capacity: 500,
-    notes: "Located in the Braga municipality. The beauty and simplicity of the property are undeniable. The privileged location and elegant corners make every moment of your big day an unforgettable memory.",
   },
   {
     name: "Palacete da Quinta do Egipto",
@@ -2582,24 +2540,6 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     min_capacity: 2,
     max_capacity: 200,
     notes: "Located in Barcelinhos, Barcelos. An impressive 19th-century architecture with river views and approximately 2,100 square metres. Combines first-class catering with architectural elegance.",
-  },
-  {
-    name: "Quinta D'Ávila",
-    subcategory: "quinta",
-    rating: 5.0,
-    price_per_person: 55,
-    min_capacity: 50,
-    max_capacity: 250,
-    notes: "Located in Barcelos. A welcoming, structured and efficient quinta with all the characteristics to make any social event perfect for a special and memorable wedding celebration.",
-  },
-  {
-    name: "Quinta do Esporão",
-    subcategory: "quinta",
-    rating: 5.0,
-    price_per_person: 60,
-    min_capacity: 50,
-    max_capacity: 250,
-    notes: "Located in the Braga municipality, Quinta do Esporão adds refinement and sophistication to your wedding. Every square metre of its 13,000 m² is well utilised for a grand celebration.",
   },
   {
     name: "Casa da Portela",
@@ -2655,14 +2595,6 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     notes: "Located in Cervães, Vila Verde. Blessed by nature, this beautiful herdade features green spaces, lakes, rustic buildings and a river running through the property — a truly magical setting.",
   },
   {
-    name: "O Campo",
-    subcategory: "quinta",
-    rating: 4.8,
-    price_per_person: 69.5,
-    max_capacity: 350,
-    notes: "Located in the Braga municipality, Quinta O Campo provides all the infrastructure needed to make your wedding a reality in a magnificent space that serves as the perfect backdrop.",
-  },
-  {
     name: "Quinta Vila Marita",
     subcategory: "quinta",
     rating: 4.9,
@@ -2670,15 +2602,6 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     min_capacity: 100,
     max_capacity: 350,
     notes: "Located in Guimarães, between Guimarães and Braga. Specialist in wedding organisation with experienced hospitality professionals — classic in perfect symbiosis with the modern, in the heart of Minho.",
-  },
-  {
-    name: "Set Lounge Beach Weddings",
-    subcategory: "quinta",
-    rating: 5.0,
-    price_per_person: 80,
-    min_capacity: 2,
-    max_capacity: 300,
-    notes: "Located in the Braga municipality, this venue makes your dream of a beach wedding with sand underfoot a reality. A tranquil and modern idyllic setting for authentic memories.",
   },
   {
     name: "Lameiras Eventos",
@@ -2706,21 +2629,14 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Colina do Romão",
+    district: "Braga",
+    location: "Nine, Vila Nova de Famalicão",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 88,
     min_capacity: 50,
     max_capacity: 250,
     notes: "Located in Nine, Vila Nova de Famalicão. A unique and special space in the northern region between the Minho and Douro rivers — perfect for couples who love green surroundings and fairytale settings.",
-  },
-  {
-    name: "Glicínia Wedding House",
-    subcategory: "quinta",
-    rating: 5.0,
-    price_per_person: 95,
-    min_capacity: 2,
-    max_capacity: 300,
-    notes: "Located in the Braga municipality. Unites the elegance of natural beauty — impressive fountains, water mirrors and vibrant greenery — with the tranquillity and comfort of stunning interior and exterior spaces.",
   },
   {
     name: "Quinta Vinha do Cabo",
@@ -2803,6 +2719,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Vila Verde",
+    district: "Braga",
+    location: "Bairro, Vila Nova de Famalicão",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 90,
@@ -2817,15 +2735,6 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     price_per_person: 87,
     max_capacity: 300,
     notes: "Located in Braga. A centennial house with typical Portuguese architecture, reconstructed and refurbished into a restaurant with unique architecture and tasteful interior décor — elegant and modern.",
-  },
-  {
-    name: "Quinta Dom Nunes",
-    subcategory: "quinta",
-    rating: 4.9,
-    price_per_person: 80,
-    min_capacity: 50,
-    max_capacity: 350,
-    notes: "Located in Guimarães. A true oasis of elegance and magic with 25 years of experience turning couples' dreams into reality. Enchanting scenery surrounded by breathtaking landscapes.",
   },
   {
     name: "Quinta de Salvador",
@@ -2846,6 +2755,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Del Rei - Wedding Signature",
+    district: "Braga",
+    location: "Vizela",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 100,
@@ -2872,40 +2783,15 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     notes: "Located in Nine, Vila Nova de Famalicão. An enchanting and inspiring space for intimate weddings set in a picturesque rural scene, providing a unique and romantic atmosphere for lasting memories.",
   },
   {
-    name: "Quinta Paço Eventos",
-    subcategory: "quinta",
-    rating: 4.9,
-    price_per_person: 75,
-    min_capacity: 90,
-    max_capacity: 350,
-    notes: "Located in the Braga municipality. Fall in love with every corner and discover the magic of this space — the perfect place for an unforgettable celebration amid nature and tranquillity.",
-  },
-  {
-    name: "Quinta da Lage - Solar do Burguês",
-    subcategory: "quinta",
-    rating: 4.9,
-    price_per_person: 75,
-    min_capacity: 80,
-    max_capacity: 300,
-    notes: "Located in the Braga municipality. A complete and excellent structure reinforced by a verdant natural environment — the beautiful regional flora creates an atmosphere superior to any decorative style.",
-  },
-  {
     name: "Quinta das Tulipas",
+    district: "Braga",
+    location: "Silveiros, Barcelos",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 75,
     min_capacity: 50,
     max_capacity: 350,
     notes: "Located in Silveiros, Barcelos. A reference space for events where sophistication and refinement are in perfect harmony with the stunning surrounding landscape — natural, traditional and modern.",
-  },
-  {
-    name: "Quinta Cardeal",
-    subcategory: "quinta",
-    rating: 4.9,
-    price_per_person: 95,
-    min_capacity: 60,
-    max_capacity: 220,
-    notes: "Located in the Braga municipality. A rustic, elegant and sophisticated centennial quinta from the historic heritage of Vila Conde — tradition and glamour in perfect harmony for a unique wedding.",
   },
   {
     name: "MD Eventos & Turismo",
@@ -3353,7 +3239,8 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
     notes: "Located in Gaeiras, Óbidos. A unique and absolutely enchanting 17th-century space, with several buildings in perfect harmony with surrounding nature, creating dream environments.",
   },
   {
-    name: "Quinta da Concha",
+    name: "Quinta da Concha - Pombal",
+    location: "Santiago de Litém, Pombal",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
