@@ -31,6 +31,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   // ── Porto city & surroundings ────────────────────────────────────────────
   {
     name: "Indulgent",
+    location: "Porto",
     subcategory: "praia",
     rating: 4.8,
     price_per_person: 105,
@@ -40,6 +41,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Loureiro Eventos",
+    location: "Porto",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 58,
@@ -51,6 +53,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Palácio Rauliana",
+    location: "Porto",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 80,
@@ -62,6 +65,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa dos Arcos Boavista",
+    location: "Porto",
     subcategory: "salão",
     rating: 5.0,
     price_per_person: 130,
@@ -71,6 +75,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Outeiro",
+    location: "Porto",
     subcategory: "quinta",
     rating: 5.0,
     quoted_price: 5500,
@@ -79,6 +84,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante Casa da Música",
+    location: "Porto",
     subcategory: "restaurante",
     price_per_person: 35,
     min_capacity: 15,
@@ -87,6 +93,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Infante Sagres",
+    location: "Porto",
     subcategory: "hotel",
     rating: 5.0,
     price_per_person: 75,
@@ -98,6 +105,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Mosteiro São Bento da Vitória",
+    location: "Porto",
     subcategory: "salão",
     rating: 4.5,
     price_per_person: 140,
@@ -107,6 +115,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Escondidinho Terrace",
+    location: "Porto",
     subcategory: "restaurante",
     rating: 5.0,
     price_per_person: 85,
@@ -116,6 +125,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Maria",
+    location: "Porto",
     subcategory: "quinta",
     price_per_person: 70,
     min_capacity: 60,
@@ -124,6 +134,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Largo da Vila",
+    location: "Porto",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 100,
@@ -132,6 +143,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Vieira",
+    location: "Porto",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 95,
@@ -141,6 +153,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Praia Da Luz",
+    location: "Porto",
     subcategory: "praia",
     rating: 4.9,
     price_per_person: 100,
@@ -150,6 +163,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Castelo Santa Catarina",
+    location: "Porto",
     subcategory: "hotel",
     rating: 4.6,
     price_per_person: 50,
@@ -161,6 +175,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Penafiel Park Hotel",
+    location: "Penafiel",
     subcategory: "hotel",
     rating: 5.0,
     price_per_person: 50,
@@ -170,6 +185,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante Caetano",
+    location: "Porto",
     subcategory: "restaurante",
     price_per_person: 40,
     min_capacity: 1,
@@ -178,6 +194,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "The Space by BOA",
+    location: "Porto",
     subcategory: "salão",
     price_per_person: 615,
     min_capacity: 1,
@@ -186,6 +203,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Renaissance Porto Lapa Hotel",
+    location: "Porto",
     subcategory: "hotel",
     price_per_person: 156,
     min_capacity: 20,
@@ -194,6 +212,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante da Fundação",
+    location: "Mira",
     subcategory: "restaurante",
     rating: 5.0,
     price_per_person: 70,
@@ -203,6 +222,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Cacau Wine Terrace",
+    location: "Porto",
     subcategory: "restaurante",
     price_per_person: 50,
     min_capacity: 15,
@@ -211,6 +231,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Sheraton Porto Hotel & Spa",
+    location: "Porto",
     subcategory: "hotel",
     rating: 5.0,
     price_per_person: 77.5,
@@ -220,6 +241,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Afonsos",
+    location: "Porto",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 75,
@@ -229,6 +251,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Vincci Porto",
+    location: "Porto",
     subcategory: "hotel",
     rating: 5.0,
     price_per_person: 30,
@@ -237,6 +260,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Crowne Plaza Porto",
+    location: "Porto",
     subcategory: "hotel",
     rating: 5.0,
     price_per_person: 73.5,
@@ -245,6 +269,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Jardins do Porto",
+    location: "Porto",
     subcategory: "hotel",
     price_per_person: 70,
     min_capacity: 10,
@@ -253,6 +278,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Palácio Ateneu Comercial - Lowe",
+    location: "Porto",
     subcategory: "salão",
     price_per_person: 50,
     min_capacity: 60,
@@ -261,6 +287,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "O Comercial",
+    location: "Porto",
     subcategory: "restaurante",
     rating: 5.0,
     price_per_person: 30,
@@ -270,6 +297,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Hotel Carris Porto Ribeira",
+    location: "Porto",
     subcategory: "hotel",
     rating: 5.0,
     price_per_person: 35,
@@ -279,6 +307,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "BH",
+    location: "Porto",
     subcategory: "restaurante",
     notes: "Reference event venue on Avenida do Brasil, Foz do Porto. Stunning sea views in a 1945 modernist building by architect Amoroso Lopes.",
   },
@@ -286,6 +315,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   // ── Restaurants & urban venues ───────────────────────────────────────────
   {
     name: "Soundwich",
+    location: "Porto",
     subcategory: "restaurante",
     rating: 4.9,
     price_per_person: 35,
@@ -295,6 +325,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Jangal Gastro Bar",
+    location: "Porto",
     subcategory: "restaurante",
     price_per_person: 40,
     min_capacity: 20,
@@ -303,6 +334,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Élebê",
+    location: "Porto",
     subcategory: "restaurante",
     rating: 5.0,
     price_per_person: 27.9,
@@ -314,26 +346,31 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   // ── River cruises / waterfront ────────────────────────────────────────────
   {
     name: "Tomaz do Douro",
+    location: "Porto",
     subcategory: "praia",
     notes: "Founded in 1994, offers Douro river cruises for a unique and special wedding day enjoying the natural splendour of the river.",
   },
   {
     name: "Neya Porto Hotel",
+    location: "Porto",
     subcategory: "hotel",
     notes: "In the riverside area, recovering the ruins of the ancient Convento Madre Deus de Monchique. Magnificent views over the Douro river.",
   },
   {
     name: "Cruzeiros Douro",
+    location: "Porto",
     subcategory: "praia",
     notes: "Competent and friendly team provides your wedding celebration in a stunning setting on the Douro river.",
   },
   {
     name: "Douro Acima",
+    location: "Porto",
     subcategory: "praia",
     notes: "Organises original events aboard Rabelo boats with surprising sophistication and elegance on the Douro river.",
   },
   {
     name: "Armazém do Sushi - Lavra",
+    location: "Matosinhos",
     subcategory: "praia",
     max_capacity: 80,
     notes: "By the sea in Lavra, Matosinhos. Beautiful personalised wedding with an oriental touch and experienced welcoming team.",
@@ -354,16 +391,19 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   // ── Porto-area quintas ────────────────────────────────────────────────────
   {
     name: "Quinta de Santo Antonio",
+    location: "Porto",
     subcategory: "quinta",
     notes: "Century-old quinta in Porto where city couples can celebrate with a rustic and bucolic touch. Maria Cruz Eventos team.",
   },
   {
     name: "Casa da Granja",
+    location: "Porto",
     subcategory: "salão",
     notes: "Noble and aristocratic residence, a fabulous mansion with inviting exteriors and charming interior spaces for your grand celebration.",
   },
   {
     name: "Quinta da Eira",
+    location: "Penafiel",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 130,
@@ -374,6 +414,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta das Oliveiras",
+    location: "Penafiel",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 85,
@@ -383,6 +424,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Alvre",
+    location: "Gondomar",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 100,
@@ -393,6 +435,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta LR Gardens",
+    location: "Santo Tirso",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 74,
@@ -403,6 +446,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Barão",
+    location: "Paredes",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 88,
@@ -412,6 +456,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Azenha de Baixo",
+    location: "Gondomar",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 75,
@@ -421,6 +466,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Senhora do Penedo Wellness Gardens",
+    location: "Vila Nova de Gaia",
     subcategory: "quinta",
     price_per_person: 170,
     min_capacity: 70,
@@ -429,6 +475,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Ripolins",
+    location: "Vila Nova de Gaia",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 69.5,
@@ -438,6 +485,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Pinheiro",
+    location: "Paços de Ferreira",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 95,
@@ -447,6 +495,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Bandeirinha",
+    location: "Gondomar",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 90,
@@ -456,6 +505,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Penedo Village",
+    location: "Marco de Canaveses",
     subcategory: "quinta",
     price_per_person: 75,
     min_capacity: 20,
@@ -464,6 +514,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Gatão",
+    location: "Penafiel",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 130,
@@ -473,6 +524,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa da Orta",
+    location: "Vila do Conde",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 135,
@@ -482,6 +534,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa Maçães",
+    location: "Póvoa de Varzim",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 68,
@@ -491,6 +544,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Tamaca Nature",
+    location: "Marco de Canaveses",
     subcategory: "quinta",
     price_per_person: 60,
     min_capacity: 20,
@@ -499,6 +553,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Burguês - Solar do Burguês",
+    location: "Santo Tirso",
     website: "https://solardoburgues.com",
     subcategory: "quinta",
     rating: 4.9,
@@ -509,6 +564,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Santo Adrião",
+    location: "Póvoa de Varzim",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 95,
@@ -530,6 +586,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Eventos Alto do Crasto",
+    location: "Paredes",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 95,
@@ -539,6 +596,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Padrão - RGI",
+    location: "Vila Nova de Gaia",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 60,
@@ -548,6 +606,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Bambus",
+    location: "Paredes",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 95,
@@ -558,6 +617,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa Maiato",
+    location: "Maia",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 65,
@@ -567,6 +627,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Sol",
+    location: "Paredes",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 65,
@@ -576,6 +637,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Corredoura",
+    location: "Porto",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 85,
@@ -585,6 +647,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Casal",
+    location: "Vila do Conde",
     subcategory: "quinta",
     rating: 4.6,
     price_per_person: 90,
@@ -594,6 +657,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Gestal by Quintas & Catering",
+    location: "Porto",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 80,
@@ -603,6 +667,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Geraldino",
+    location: "Maia",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 85,
@@ -612,6 +677,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Segade",
+    location: "Penafiel",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 130,
@@ -637,12 +703,14 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Vale da Corga - Eventos",
+    location: "Trofa",
     subcategory: "quinta",
     rating: 4.9,
     notes: "Unique space of enchanting beauty in Trofa that will surprise all your guests. Wonderful quinta prepared for your wedding reception.",
   },
   {
     name: "Quinta Salgueirinhos",
+    location: "Vila Nova de Gaia",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 41,
@@ -651,6 +719,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Espírito Santo",
+    location: "Vila Nova de Gaia",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 85,
@@ -660,6 +729,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta das Lages",
+    location: "Paredes",
     subcategory: "quinta",
     rating: 4.3,
     price_per_person: 65,
@@ -669,6 +739,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta das Silveiras",
+    location: "Vila do Conde",
     subcategory: "quinta",
     rating: 4.7,
     price_per_person: 45,
@@ -678,6 +749,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Souzas",
+    location: "Penafiel",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 58,
@@ -687,6 +759,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Avó",
+    location: "Trofa",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 80,
@@ -696,6 +769,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Mota",
+    location: "Vila do Conde",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 85,
@@ -705,6 +779,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Cepêda",
+    location: "Penafiel",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 80,
@@ -714,6 +789,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Casa Grande",
+    location: "Gondomar",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 90,
@@ -723,6 +799,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa das Tílias",
+    location: "Maia",
     subcategory: "quinta",
     rating: 5.0,
     max_capacity: 300,
@@ -730,6 +807,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa de Montezelo",
+    location: "Gondomar",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 120,
@@ -739,6 +817,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta D. José",
+    location: "Gondomar",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 70,
@@ -747,6 +826,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Jordão",
+    location: "Vila Nova de Gaia",
     subcategory: "quinta",
     rating: 4.9,
     quoted_price: 2500,
@@ -756,6 +836,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Casa do Pinheiro",
+    location: "Penafiel",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 60,
@@ -765,6 +846,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Soutelo",
+    location: "Maia",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 70,
@@ -785,12 +867,14 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Pinhal Eventos",
+    location: "Gondomar",
     subcategory: "quinta",
     rating: 4.8,
     notes: "Traditional architecture combined with contemporary elements in Jovim, Gondomar. Professional team for personalised, quality services.",
   },
   {
     name: "Quinta A. Souto",
+    location: "Vila do Conde",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 87,
@@ -800,6 +884,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "The Astoria - Histórias com Alma",
+    location: "Vila Nova de Gaia",
     subcategory: "salão",
     rating: 4.8,
     price_per_person: 120,
@@ -809,6 +894,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa de Sam Thiago",
+    location: "Matosinhos",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 45,
@@ -818,6 +904,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Pérola do Rio",
+    location: "Vila Nova de Gaia",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 75,
@@ -827,6 +914,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Vilarinho de Avioso",
+    location: "Maia",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 60,
@@ -836,6 +924,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa dos Cisnes",
+    location: "Paços de Ferreira",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 60,
@@ -845,6 +934,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta São Miguel de Arcos",
+    location: "Vila do Conde",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 90,
@@ -854,6 +944,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Morgadinha",
+    location: "Gondomar",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 80,
@@ -862,6 +953,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Felicidade - Locus Amoenus",
+    location: "Paredes",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 85,
@@ -871,6 +963,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Arco",
+    location: "Trofa",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 75,
@@ -880,6 +973,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Castelo by Quintas & Catering",
+    location: "Maia",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 72,
@@ -889,6 +983,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Pedra Salgada",
+    location: "Vila Nova de Gaia",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 150,
@@ -898,6 +993,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa Dos Maias - Maia",
+    location: "Maia",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 60,
@@ -907,6 +1003,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa de Quintã",
+    location: "Marco de Canaveses",
     subcategory: "quinta",
     rating: 3.9,
     price_per_person: 140,
@@ -916,6 +1013,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Villa Sonhos - Wedding & Events",
+    location: "Porto",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 65,
@@ -925,12 +1023,14 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Colégio",
+    location: "Vila do Conde",
     subcategory: "quinta",
     rating: 4.8,
     notes: "Former nuns' college in Canidelo, Vila do Conde — a centuries-old house for events and special dates with glamour and history.",
   },
   {
     name: "Quinta da Igreja",
+    location: "Gondomar",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 100,
@@ -940,6 +1040,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Ferreirinha - Solar do Burguês",
+    location: "Santo Tirso",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 65,
@@ -949,6 +1050,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa Salgueiro",
+    location: "Vila do Conde",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 60,
@@ -957,6 +1059,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Solar de Sabariz",
+    location: "Vila do Conde",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 130,
@@ -966,6 +1069,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa de Recarem",
+    location: "Matosinhos",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 50,
@@ -975,6 +1079,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Prata",
+    location: "Maia",
     subcategory: "quinta",
     rating: 4.9,
     min_capacity: 50,
@@ -983,6 +1088,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Pinheirais",
+    location: "Amarante",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 60,
@@ -1003,6 +1109,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa de Vila Verde",
+    location: "Vila Verde",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 115,
@@ -1011,6 +1118,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Bosque Eventos",
+    location: "Vila do Conde",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 120,
@@ -1031,6 +1139,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Bruval Eventos",
+    location: "Vila Nova de Gaia",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 60,
@@ -1040,6 +1149,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Pauliana",
+    location: "Póvoa de Varzim",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 100,
@@ -1049,6 +1159,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa de Anciães",
+    location: "Felgueiras",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 75,
@@ -1058,6 +1169,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Redolho de Cima",
+    location: "Lousada",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 75,
@@ -1067,6 +1179,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Amores",
+    location: "Paredes",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 90,
@@ -1076,6 +1189,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Alferes de Crasto",
+    location: "Vila do Conde",
     subcategory: "quinta",
     rating: 5.0,
     notes: "Luxurious and enchanting place in Vila do Conde, built in 1866 and extensively restored. Exquisite fusion of contemporary and traditional Portuguese architecture.",
@@ -1086,6 +1200,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   // ── Greater Porto quintas (Vila Nova de Gaia, Matosinhos, Maia) ──────────
   {
     name: "Casa do Ribeirinho",
+    location: "Matosinhos",
     subcategory: "salão",
     rating: 5.0,
     price_per_person: 85,
@@ -1095,6 +1210,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Choupos - Choupal dos Melros",
+    location: "Gondomar",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 80,
@@ -1114,6 +1230,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Costa",
+    location: "Vila Nova de Gaia",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 100,
@@ -1124,6 +1241,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   // ── Amarante / Douro / further north ─────────────────────────────────────
   {
     name: "Casa do Souto",
+    location: "Paços de Ferreira",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 68,
@@ -1133,6 +1251,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Devesa",
+    location: "Vila Nova de Gaia",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 130,
@@ -1142,6 +1261,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Amadeus",
+    location: "Paços de Ferreira",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 76,
@@ -1151,6 +1271,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quintinha da Salete by Special Events",
+    location: "Póvoa de Varzim",
     subcategory: "quinta",
     price_per_person: 55,
     min_capacity: 50,
@@ -1170,6 +1291,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Azenha",
+    location: "Trofa",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 105,
@@ -1179,6 +1301,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Montebello Wedding Events",
+    location: "Penafiel",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 85,
@@ -1188,6 +1311,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Paredes",
+    location: "Paços de Ferreira",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 79.5,
@@ -1197,6 +1321,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Serra",
+    location: "Porto",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 60,
@@ -1206,6 +1331,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Palacete Dona Maria",
+    location: "Amarante",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 75,
@@ -1215,6 +1341,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Santo António Country House & Villas",
+    location: "Marco de Canaveses",
     subcategory: "quinta",
     rating: 4.5,
     price_per_person: 40,
@@ -1224,6 +1351,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Avesso",
+    location: "Vila do Conde",
     subcategory: "quinta",
     rating: 5.0,
     min_capacity: 50,
@@ -1232,6 +1360,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta das Susandas",
+    location: "Baião",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 70,
@@ -1241,6 +1370,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Palmazões",
+    location: "Amarante",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 70,
@@ -1250,6 +1380,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa da Calçada",
+    location: "Amarante",
     subcategory: "hotel",
     price_per_person: 150,
     min_capacity: 75,
@@ -1258,6 +1389,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Cerrado da Portela",
+    location: "Penafiel",
     subcategory: "quinta",
     rating: 4.6,
     price_per_person: 75,
@@ -1289,6 +1421,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "São Félix Hotel Hillside & Nature",
+    location: "Póvoa de Varzim",
     subcategory: "hotel",
     rating: 4.9,
     quoted_price: 5000,
@@ -1297,6 +1430,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Hotel Quinta Royal",
+    location: "Lousada",
     subcategory: "hotel",
     rating: 5.0,
     price_per_person: 65,
@@ -1306,6 +1440,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Boeira Garden Hotel",
+    location: "Vila Nova de Gaia",
     subcategory: "hotel",
     rating: 4.7,
     price_per_person: 125,
@@ -1325,6 +1460,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   // ── Coimbra / Centro ────────────────────────────────────────────────────────
   {
     name: "Sítio Amores Perfeitos",
+    location: "Cantanhede",
     subcategory: "quinta",
     price_per_person: 50,
     min_capacity: 60,
@@ -1333,6 +1469,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Sítio dos Oliveiras",
+    location: "Cantanhede",
     subcategory: "quinta",
     rating: 4.7,
     price_per_person: 50,
@@ -1342,6 +1479,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta d'Anta - Hotel Rural",
+    location: "Figueira da Foz",
     subcategory: "hotel",
     rating: 5.0,
     price_per_person: 80,
@@ -1351,6 +1489,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Salmanha",
+    location: "Figueira da Foz",
     subcategory: "quinta",
     rating: 4.3,
     price_per_person: 50,
@@ -1359,6 +1498,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Esconhais",
+    location: "Coimbra",
     district: "Leiria",
     subcategory: "quinta",
     price_per_person: 100,
@@ -1368,6 +1508,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Vizo",
+    location: "Figueira da Foz",
     subcategory: "quinta",
     rating: 5.0,
     quoted_price: 450,
@@ -1377,6 +1518,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Campo",
+    location: "Miranda do Corvo",
     subcategory: "quinta",
     rating: 5.0,
     quoted_price: 2500,
@@ -1386,6 +1528,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "La Maison Regina",
+    location: "Figueira da Foz",
     subcategory: "quinta",
     rating: 4.7,
     price_per_person: 80,
@@ -1395,6 +1538,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Conímbriga Hotel do Paço",
+    location: "Condeixa-a-Nova",
     subcategory: "hotel",
     rating: 5.0,
     price_per_person: 125,
@@ -1404,6 +1548,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta das Abertas",
+    location: "Condeixa-a-Nova",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 60,
@@ -1413,6 +1558,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Nora",
+    location: "Coimbra",
     subcategory: "quinta",
     rating: 4.4,
     price_per_person: 13,
@@ -1422,6 +1568,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Mourão",
+    location: "Coimbra",
     subcategory: "quinta",
     price_per_person: 65,
     min_capacity: 50,
@@ -1430,6 +1577,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante Tertúlia D'Eventos",
+    location: "Coimbra",
     subcategory: "restaurante",
     price_per_person: 70,
     min_capacity: 30,
@@ -1438,6 +1586,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Brijal",
+    location: "Cantanhede",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 50,
@@ -1447,6 +1596,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Torre de Bera",
+    location: "Coimbra",
     subcategory: "quinta",
     rating: 4.9,
     quoted_price: 1500,
@@ -1456,6 +1606,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Valle de Canas",
+    location: "Coimbra",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 82,
@@ -1465,6 +1616,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Vale Pousado",
+    location: "Penacova",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 38,
@@ -1474,6 +1626,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Palácio da Lousã Boutique Hotel",
+    location: "Lousã",
     subcategory: "hotel",
     rating: 4.9,
     price_per_person: 100,
@@ -1483,6 +1636,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Real Eventos",
+    location: "Coimbra",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 50,
@@ -1492,6 +1646,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Dona Maria",
+    location: "Soure",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 65,
@@ -1501,6 +1656,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Pintoura",
+    location: "Cantanhede",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 95,
@@ -1510,6 +1666,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa da Praia",
+    location: "Figueira da Foz",
     subcategory: "praia",
     rating: 4.9,
     price_per_person: 100,
@@ -1519,6 +1676,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Oliveira",
+    location: "Coimbra",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 97,
@@ -1528,6 +1686,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Sobreiro",
+    location: "Coimbra",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 85,
@@ -1537,6 +1696,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Couceira",
+    location: "Cantanhede",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 55,
@@ -1546,6 +1706,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Monte Redondo",
+    location: "Coimbra",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 65,
@@ -1555,6 +1716,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Convento de Sandelgas",
+    location: "Coimbra",
     subcategory: "quinta",
     rating: 4.9,
     min_capacity: 2,
@@ -1563,6 +1725,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Palácio Quinta da Portela",
+    location: "Coimbra",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 60,
@@ -1572,6 +1735,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta das Janelas",
+    location: "Coimbra",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 60,
@@ -1581,6 +1745,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Hotel Quinta das Lágrimas",
+    location: "Coimbra",
     subcategory: "hotel",
     rating: 4.9,
     price_per_person: 90,
@@ -1601,6 +1766,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de São José",
+    location: "Coimbra",
     subcategory: "quinta",
     rating: 4.9,
     quoted_price: 450,
@@ -1610,6 +1776,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Duecitania Design Hotel",
+    location: "Penela",
     subcategory: "hotel",
     rating: 5.0,
     price_per_person: 49,
@@ -1619,6 +1786,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Santo Amaro",
+    location: "Cantanhede",
     subcategory: "quinta",
     quoted_price: 5000,
     max_capacity: 350,
@@ -1626,6 +1794,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Aqua Village Health Resort & SPA",
+    location: "Oliveira do Hospital",
     subcategory: "hotel",
     rating: 5.0,
     price_per_person: 80,
@@ -1634,11 +1803,13 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Hotel Coimbra Affiliated by Meliá",
+    location: "Coimbra",
     subcategory: "hotel",
     notes: "Full infrastructure and facilities for an efficient and pleasant stay in Coimbra. A complete hotel experience allowing couples and guests to feel right at home during the wedding celebrations.",
   },
   {
     name: "Quintinha das Carreirinhas",
+    location: "Figueira da Foz",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 75,
@@ -1648,6 +1819,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante Olea",
+    location: "Oliveira do Hospital",
     subcategory: "restaurante",
     rating: 5.0,
     price_per_person: 45,
@@ -1657,6 +1829,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Hortinha",
+    location: "Tábua",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 55,
@@ -1666,6 +1839,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Eurostars Oásis Plaza",
+    location: "Figueira da Foz",
     subcategory: "hotel",
     rating: 4.9,
     price_per_person: 40,
@@ -1675,6 +1849,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Hotel Rural Quinta da Conchada",
+    location: "Penacova",
     subcategory: "hotel",
     rating: 4.9,
     price_per_person: 78,
@@ -1684,6 +1859,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de São Pedro da Pousada",
+    location: "Coimbra",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 40,
@@ -1693,6 +1869,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Caves de Coimbra",
+    location: "Coimbra",
     subcategory: "salão",
     rating: 5.0,
     price_per_person: 50,
@@ -1702,6 +1879,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Terraço da Alta",
+    location: "Coimbra",
     subcategory: "restaurante",
     price_per_person: 25,
     min_capacity: 40,
@@ -1710,6 +1888,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Essences Lousã",
+    location: "Lousã",
     subcategory: "restaurante",
     price_per_person: 50,
     min_capacity: 4,
@@ -1718,6 +1897,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Hospício",
+    location: "Lousã",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 60,
@@ -1727,6 +1907,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Convento do Desagravo Flag Hotel",
+    location: "Oliveira do Hospital",
     subcategory: "hotel",
     rating: 3.4,
     price_per_person: 49,
@@ -1736,6 +1917,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Palácio São Silvestre",
+    location: "Coimbra",
     subcategory: "quinta",
     min_capacity: 25,
     max_capacity: 100,
@@ -1743,6 +1925,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Passaporte Coimbra",
+    location: "Coimbra",
     subcategory: "restaurante",
     price_per_person: 35,
     min_capacity: 2,
@@ -1751,27 +1934,32 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Miravillas Hotel",
+    location: "Mira",
     subcategory: "hotel",
     notes: "Combining sophistication with tranquillity in Praia de Mira, Mira — a complete infrastructure for the perfect wedding celebration. A space that harmoniously integrates nature with contemporary architecture.",
   },
   {
     name: "Sweet Residence & Gardens Hotel",
+    location: "Figueira da Foz",
     subcategory: "hotel",
     notes: "A charming hotel in Figueira da Foz with modern design and architecture, offering all the comfort and discretion needed for a unique and special day. Celebrate your wedding party with guests and family.",
   },
   {
     name: "Quinta do Taipal Eventos",
+    location: "Coimbra",
     subcategory: "quinta",
     notes: "A space dedicated to making dreams come true in Montemor-o-Velho. The team is fully available to collaborate on the success of your wedding party, making it memorable. Surrounded by beautiful natural landscapes.",
   },
   {
     name: "Restaurante Cristina",
+    location: "Oliveira do Hospital",
     subcategory: "restaurante",
     notes: "A fabulous space in the beautiful region of Oliveira do Hospital that will help you have the wedding reception you always dreamed of. Spacious, well-equipped rooms with a very experienced and dedicated team.",
   },
   // ── Aveiro & surrounding region ─────────────────────────────────────────
   {
     name: "Quinta do Monte",
+    location: "Aveiro",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 85,
@@ -1781,6 +1969,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta das Azenhas do Boco",
+    location: "Vagos",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 75,
@@ -1790,6 +1979,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa do Lago",
+    location: "Aveiro",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 83,
@@ -1799,6 +1989,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Palhal",
+    location: "Albergaria-a-Velha",
     subcategory: "quinta",
     price_per_person: 50,
     min_capacity: 25,
@@ -1807,6 +1998,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Pousio Eventos",
+    location: "Vagos",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 100,
@@ -1816,6 +2008,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Outeiro da Branca",
+    location: "Albergaria-a-Velha",
     subcategory: "quinta",
     rating: 4.9,
     max_capacity: 300,
@@ -1823,6 +2016,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Caima",
+    location: "Oliveira de Azeméis",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 100,
@@ -1832,6 +2026,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Progresso",
+    location: "Aveiro",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 80,
@@ -1841,6 +2036,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Sobreiro Real & Quinta Outeiro",
+    location: "Águeda",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 55,
@@ -1850,6 +2046,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Fontoura",
+    location: "Albergaria-a-Velha",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 105,
@@ -1859,6 +2056,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta D'Além da Ponte",
+    location: "Arouca",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 87.5,
@@ -1867,6 +2065,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa dos Maias - Águeda",
+    location: "Maia",
     subcategory: "quinta",
     rating: 4.7,
     price_per_person: 40,
@@ -1876,6 +2075,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Teixeiras - Grupo LAGO",
+    location: "São João da Madeira",
     subcategory: "quinta",
     min_capacity: 50,
     max_capacity: 450,
@@ -1883,6 +2083,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Vale da Silva Villas",
+    location: "Albergaria-a-Velha",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 75,
@@ -1892,6 +2093,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Bellos",
+    location: "São João da Madeira",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 100,
@@ -1901,6 +2103,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Feira Tasting Life",
+    location: "Santa Maria da Feira",
     subcategory: "restaurante",
     rating: 5.0,
     price_per_person: 85,
@@ -1910,6 +2113,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Sol Nascente",
+    location: "Ovar",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 40,
@@ -1919,6 +2123,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Louredo",
+    location: "Águeda",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 80,
@@ -1928,6 +2133,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Carvalhos - Grupo LAGO",
+    location: "Oliveira de Azeméis",
     subcategory: "quinta",
     rating: 5.0,
     min_capacity: 50,
@@ -1936,6 +2142,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta D'Arcos",
+    location: "Santa Maria da Feira",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 70,
@@ -1945,6 +2152,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Vale do Cruz",
+    location: "Águeda",
     subcategory: "quinta",
     rating: 4.8,
     min_capacity: 50,
@@ -1953,6 +2161,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Boavista",
+    location: "Santa Maria da Feira",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 80,
@@ -1962,6 +2171,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Cheiro d'Alecrim & Varanda da Serra Catering",
+    location: "Águeda",
     subcategory: "quinta",
     rating: 5.0,
     max_capacity: 390,
@@ -1969,6 +2179,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Vieira",
+    location: "Santa Maria da Feira",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 80,
@@ -1978,6 +2189,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Angellus",
+    location: "Santa Maria da Feira",
     subcategory: "restaurante",
     rating: 5.0,
     price_per_person: 60,
@@ -1987,6 +2199,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quintinha de Seitela",
+    location: "Santa Maria da Feira",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 90,
@@ -1996,6 +2209,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Éden",
+    location: "Vagos",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 130,
@@ -2005,6 +2219,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Dona Aurora",
+    location: "Santa Maria da Feira",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 65,
@@ -2014,12 +2229,14 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Palácio da Borralha",
+    location: "Águeda",
     subcategory: "quinta",
     rating: 4.9,
     notes: "An enchanting venue in Borralha, Águeda with all the conditions necessary for a dream day. Imposing façade and ample, green-filled gardens are characteristics of this space.",
   },
   {
     name: "Quinta da Quintã",
+    location: "Santa Maria da Feira",
     subcategory: "quinta",
     rating: 5.0,
     min_capacity: 70,
@@ -2028,6 +2245,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Green House Events",
+    location: "Aveiro",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 90,
@@ -2037,6 +2255,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Salpoente",
+    location: "Aveiro",
     subcategory: "restaurante",
     rating: 5.0,
     price_per_person: 40,
@@ -2046,12 +2265,14 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Fundação Mata do Bussaco",
+    location: "Mealhada",
     subcategory: "quinta",
     price_per_person: 150,
     notes: "In Luso, Mealhada, couples have access to 105 hectares of forest where guests can breathe fresh air and be enchanted by wonderful viewpoints and centuries-old buildings — a fairytale setting.",
   },
   {
     name: "Solar do Alambique",
+    location: "Albergaria-a-Velha",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 80,
@@ -2061,11 +2282,13 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Hotel Afonso V",
+    location: "Aveiro",
     subcategory: "hotel",
     notes: "Situated in one of the most prestigious areas of Aveiro, Hotel Afonso V is a recently refurbished space that offers well-decorated and equipped indoor and outdoor areas — perfect for your wedding celebration.",
   },
   {
     name: "Hotel S. Pedro",
+    location: "Arouca",
     subcategory: "hotel",
     rating: 4.9,
     price_per_person: 50,
@@ -2075,16 +2298,19 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Hotel Meliã S. João da Madeira",
+    location: "São João da Madeira",
     subcategory: "hotel",
     notes: "Located in the emblematic Palacete Conde Dias Garcia, a late-19th-century architectural jewel in São João da Madeira. Combines historic charm with modern comfort to create the perfect wedding setting.",
   },
   {
     name: "Termas S. Vicente",
+    location: "Albergaria-a-Velha",
     subcategory: "hotel",
     notes: "In Pinheiro, Albergaria-a-Velha, within the beautiful and elegant Termas S. Vicente complex. All indoor and outdoor spaces are decorated and equipped with the comfort and refinement you deserve.",
   },
   {
     name: "Hotel de Ílhavo",
+    location: "Aveiro",
     subcategory: "hotel",
     rating: 4.9,
     price_per_person: 90,
@@ -2094,6 +2320,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Avistada",
+    location: "Arouca",
     subcategory: "quinta",
     rating: 4.5,
     price_per_person: 45,
@@ -2103,6 +2330,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Meliá Ria - Hotel & Spa",
+    location: "Aveiro",
     subcategory: "hotel",
     rating: 4.6,
     price_per_person: 60,
@@ -2112,6 +2340,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Tulip Inn Estarreja Hotel & Spa",
+    location: "Estarreja",
     subcategory: "hotel",
     rating: 4.6,
     price_per_person: 35,
@@ -2121,11 +2350,13 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante Barriga Cheia",
+    location: "Águeda",
     subcategory: "restaurante",
     notes: "A renowned establishment in Barrô, Águeda with a competent, responsible and professional team committed to making your dream wedding party a reality.",
   },
   {
     name: "Quinta da Fogueira",
+    location: "Anadia",
     subcategory: "quinta",
     quoted_price: 500,
     min_capacity: 50,
@@ -2134,6 +2365,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "O Carlos - Quinta do Moinho",
+    location: "Aveiro",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 56,
@@ -2143,6 +2375,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "MS Collection Arouca",
+    location: "Arouca",
     subcategory: "hotel",
     quoted_price: 350,
     min_capacity: 10,
@@ -2151,6 +2384,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Encontro",
+    location: "Anadia",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 120,
@@ -2160,6 +2394,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Hotel Exe Praia Golfe",
+    location: "Espinho",
     subcategory: "hotel",
     price_per_person: 95,
     min_capacity: 35,
@@ -2168,6 +2403,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa Noronha Lima - Historic Stay",
+    location: "Arouca",
     subcategory: "quinta",
     price_per_person: 45,
     min_capacity: 30,
@@ -2176,6 +2412,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante Manuel Julio",
+    location: "Mealhada",
     subcategory: "restaurante",
     rating: 4.9,
     price_per_person: 65,
@@ -2185,6 +2422,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante Ipiranga",
+    location: "Aveiro",
     subcategory: "restaurante",
     price_per_person: 25,
     min_capacity: 25,
@@ -2193,6 +2431,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Grimpa",
+    location: "Anadia",
     subcategory: "quinta",
     quoted_price: 600,
     min_capacity: 1,
@@ -2201,6 +2440,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Palacete Rosa",
+    location: "Oliveira de Azeméis",
     subcategory: "quinta",
     quoted_price: 1500,
     min_capacity: 50,
@@ -2209,6 +2449,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Riabela Eventos",
+    location: "Aveiro",
     subcategory: "hotel",
     rating: 4.7,
     price_per_person: 35,
@@ -2218,6 +2459,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa de Fornos",
+    location: "Santa Maria da Feira",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 50,
@@ -2227,6 +2469,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Vale do Rio Hotel Rural",
+    location: "Oliveira de Azeméis",
     subcategory: "hotel",
     rating: 5.0,
     price_per_person: 80,
@@ -2236,6 +2479,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Vales",
+    location: "Águeda",
     subcategory: "quinta",
     rating: 4.4,
     price_per_person: 40,
@@ -2245,6 +2489,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa da Regueira",
+    location: "Anadia",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 50,
@@ -2254,18 +2499,21 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Espinho Vintage",
+    location: "Espinho",
     subcategory: "salão",
     max_capacity: 120,
     notes: "A charming venue in Espinho installed in one of the most emblematic buildings in the municipality. This 1950s mansion was adapted to host weddings and other special celebrations.",
   },
   {
     name: "Quinta Paris",
+    location: "Ovar",
     subcategory: "quinta",
     rating: 5.0,
     notes: "Located in Ovar. With ample, well-maintained spaces, this wonderful wedding venue meets all the conditions to bring your friends and family together for the happiest day of your life.",
   },
   {
     name: "Encosta dos Túneis",
+    location: "Sever do Vouga",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 96,
@@ -2275,6 +2523,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Costeira",
+    location: "Oliveira de Azeméis",
     subcategory: "quinta",
     rating: 4.5,
     price_per_person: 100,
@@ -2284,6 +2533,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante do Capador",
+    location: "Aveiro",
     subcategory: "restaurante",
     rating: 5.0,
     price_per_person: 45,
@@ -2293,6 +2543,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Zip Zip Ilha Rest Caffe",
+    location: "Santa Maria da Feira",
     subcategory: "restaurante",
     rating: 5.0,
     price_per_person: 60,
@@ -2302,11 +2553,13 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Teamevents",
+    location: "Oliveira de Azeméis",
     subcategory: "quinta",
     notes: "A historic venue in Ul, Oliveira de Azeméis. This former Vouga line railway station has been completely restored, offering all the comfort and convenience your wedding requires.",
   },
   {
     name: "Curia Palace",
+    location: "Anadia",
     subcategory: "hotel",
     rating: 4.3,
     price_per_person: 70,
@@ -2316,6 +2569,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Homenagem",
+    location: "São João da Madeira",
     subcategory: "restaurante",
     rating: 5.0,
     price_per_person: 55,
@@ -2324,6 +2578,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante Cruzeiro de Fiães",
+    location: "Santa Maria da Feira",
     subcategory: "restaurante",
     rating: 5.0,
     price_per_person: 10,
@@ -2333,6 +2588,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Palace Hotel do Buçaco",
+    location: "Mealhada",
     subcategory: "hotel",
     rating: 4.5,
     price_per_person: 100,
@@ -2341,6 +2597,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Relva",
+    location: "Aveiro",
     subcategory: "quinta",
     rating: 4.1,
     price_per_person: 40,
@@ -2350,6 +2607,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Dom Rogério Oiã",
+    location: "Aveiro",
     subcategory: "restaurante",
     rating: 4.9,
     price_per_person: 40,
@@ -2359,6 +2617,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Grupo LAGO",
+    location: "Santa Maria da Feira",
     subcategory: "salão",
     rating: 5.0,
     min_capacity: 35,
@@ -2367,6 +2626,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Lano",
+    location: "Santa Maria da Feira",
     subcategory: "quinta",
     rating: 4.8,
     notes: "An enchanting space in Mosteiró, Santa Maria da Feira — fully refurbished while keeping its traditional quinta characteristics. A rustic and country atmosphere for guests to enjoy.",
@@ -2374,6 +2634,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   // ── Braga & surrounding region ───────────────────────────────────────────
   {
     name: "Quinta da Fontinha",
+    location: "Celorico de Basto",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 95,
@@ -2393,6 +2654,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Esquilo",
+    location: "Amares",
     subcategory: "quinta",
     price_per_person: 90,
     min_capacity: 60,
@@ -2401,11 +2663,13 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Encosta Dourada",
+    location: "Vila Nova de Famalicão",
     subcategory: "salão",
     notes: "An elegant event space in Vila Nova de Famalicão, designed to host the most special moments in life. In a welcoming and sophisticated atmosphere, each celebration gains a unique feel.",
   },
   {
     name: "Quinta da Fonte Amares",
+    location: "Amares",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 125,
@@ -2414,6 +2678,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Maria da Fonte",
+    location: "Póvoa de Lanhoso",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 80,
@@ -2423,6 +2688,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Paço da Comenda - Premium Events",
+    location: "Vila Verde",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 100,
@@ -2432,6 +2698,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa de Lobos",
+    location: "Cabeceiras de Basto",
     subcategory: "quinta",
     quoted_price: 500,
     min_capacity: 30,
@@ -2440,6 +2707,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Gondramaz",
+    location: "Vila Verde",
     subcategory: "quinta",
     rating: 4.6,
     price_per_person: 69,
@@ -2460,6 +2728,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Aldeia Eventos",
+    location: "Vila Verde",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 110,
@@ -2469,6 +2738,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Roque",
+    location: "Barcelos",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 47.5,
@@ -2478,6 +2748,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Oboé by Lu Marinho",
+    location: "Braga",
     subcategory: "restaurante",
     rating: 5.0,
     price_per_person: 65,
@@ -2488,6 +2759,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Caslopo",
+    location: "Barcelos",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 98,
@@ -2499,6 +2771,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Grillo",
+    location: "Barcelos",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 75,
@@ -2508,6 +2781,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Eira do Sol",
+    location: "Guimarães",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 175,
@@ -2516,6 +2790,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa do Gandião",
+    location: "Fafe",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 100,
@@ -2525,6 +2800,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Devesa - Cabeceiras de Basto",
+    location: "Cabeceiras de Basto",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 60,
@@ -2534,6 +2810,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Ribeiro",
+    location: "Barcelos",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 80,
@@ -2554,6 +2831,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Palacete da Quinta do Egipto",
+    location: "Barcelos",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 80,
@@ -2563,6 +2841,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa da Portela",
+    location: "Guimarães",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 85,
@@ -2572,6 +2851,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Casais",
+    location: "Vila Nova de Famalicão",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 110,
@@ -2581,6 +2861,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Bica da Cruz",
+    location: "Vila Verde",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 80,
@@ -2590,6 +2871,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Castelães",
+    location: "Guimarães",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 110,
@@ -2599,6 +2881,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Coelho",
+    location: "Barcelos",
     subcategory: "quinta",
     rating: 4.7,
     price_per_person: 65,
@@ -2607,6 +2890,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Herdade do Porisso",
+    location: "Vila Verde",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 98,
@@ -2616,6 +2900,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Vila Marita",
+    location: "Guimarães",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 115,
@@ -2625,6 +2910,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Lameiras Eventos",
+    location: "Barcelos",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 115,
@@ -2634,6 +2920,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Santo André",
+    location: "Barcelos",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 80,
@@ -2643,6 +2930,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta das Lamas",
+    location: "Fafe",
     subcategory: "quinta",
     rating: 4.9,
     notes: "Located in Fafe. Combining tranquillity and good taste, Quinta das Lamas offers the ideal atmosphere for a unique and exclusive wedding — romanticism in a peaceful environment where nature reigns.",
@@ -2660,6 +2948,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Vinha do Cabo",
+    location: "Guimarães",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 90,
@@ -2671,6 +2960,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Hotéis do Bom Jesus",
+    location: "Braga",
     subcategory: "hotel",
     rating: 4.8,
     price_per_person: 44,
@@ -2682,6 +2972,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Resela",
+    location: "Vila Verde",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 110,
@@ -2692,6 +2983,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Brasão",
+    location: "Guimarães",
     subcategory: "quinta",
     price_per_person: 85,
     min_capacity: 50,
@@ -2700,6 +2992,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Colunata Eventos",
+    location: "Braga",
     subcategory: "quinta",
     rating: 4.8,
     price_per_person: 154,
@@ -2709,6 +3002,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Granja - Guimarães",
+    location: "Guimarães",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 90,
@@ -2718,6 +3012,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Pinha Eventos",
+    location: "Braga",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 100,
@@ -2727,6 +3022,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Cascata Cristalina Eventos",
+    location: "Vila Nova de Famalicão",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 85,
@@ -2736,6 +3032,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Primeira Dinastia - Eventos",
+    location: "Guimarães",
     subcategory: "quinta",
     price_per_person: 60,
     min_capacity: 50,
@@ -2755,6 +3052,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Solar do Paço",
+    location: "Braga",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 87,
@@ -2763,6 +3061,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Salvador",
+    location: "Vila Nova de Famalicão",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 75,
@@ -2772,6 +3071,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa da Guia",
+    location: "Vila Nova de Famalicão",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 70,
@@ -2791,6 +3091,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Entre Vinhas",
+    location: "Guimarães",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 75,
@@ -2800,6 +3101,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Avô Moleiro - Country House",
+    location: "Vila Nova de Famalicão",
     subcategory: "quinta",
     rating: 4.9,
     price_per_person: 45,
@@ -2820,11 +3122,13 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "MD Eventos & Turismo",
+    location: "Guimarães",
     subcategory: "quinta",
     notes: "Located in Guimarães atop a mountain with stunning natural surroundings and a privileged view. Combines the rustic and the modern in a unique environment where tradition and comfort meet.",
   },
   {
     name: "Quinta de Labaçoso",
+    location: "Fafe",
     subcategory: "quinta",
     price_per_person: 65,
     min_capacity: 50,
@@ -2833,6 +3137,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante Angelorum",
+    location: "Vieira do Minho",
     subcategory: "restaurante",
     price_per_person: 45,
     max_capacity: 60,
@@ -2840,12 +3145,14 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante Velagula",
+    location: "Vila Verde",
     subcategory: "restaurante",
     max_capacity: 80,
     notes: "Located in Soutelo, Vila Verde. Stands out for its elegance, comfort and welcoming atmosphere — the ideal space for wedding celebrations, with a perfect balance between modern charm and an intimate feel.",
   },
   {
     name: "Hotel S. Bento",
+    location: "Terras de Bouro",
     subcategory: "hotel",
     price_per_person: 60,
     min_capacity: 10,
@@ -2854,6 +3161,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa de Cerqueda Eventos",
+    location: "Celorico de Basto",
     subcategory: "quinta",
     rating: 4.6,
     price_per_person: 80,
@@ -2862,6 +3170,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Axis Ofir Beach Resort Hotel",
+    location: "Esposende",
     subcategory: "hotel",
     rating: 4.9,
     price_per_person: 50,
@@ -2871,6 +3180,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Lugar do Marachão",
+    location: "Esposende",
     subcategory: "quinta",
     quoted_price: 1200,
     min_capacity: 100,
@@ -2879,6 +3189,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Mouriz - Eventos",
+    location: "Vila Verde",
     subcategory: "quinta",
     rating: 5.0,
     max_capacity: 275,
@@ -2886,6 +3197,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Bem Cozinhado",
+    location: "Terras de Bouro",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 50,
@@ -2895,6 +3207,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Santa Comba",
+    location: "Fafe",
     subcategory: "quinta",
     rating: 4.3,
     price_per_person: 55,
@@ -2904,6 +3217,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Rei do Leitão",
+    location: "Amares",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 50,
@@ -2912,12 +3226,14 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Solar do Lagar",
+    location: "Barcelos",
     subcategory: "quinta",
     rating: 5.0,
     notes: "Located in Fragoso, Barcelos. A pleasant and rustic venue that organises and hosts weddings and special events with a young, professional and dynamic team that will make your celebration a dream come true.",
   },
   {
     name: "Sameiro Eventos",
+    location: "Braga",
     subcategory: "salão",
     rating: 4.9,
     price_per_person: 90,
@@ -2927,6 +3243,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Botas",
+    location: "Cabeceiras de Basto",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 70,
@@ -2935,6 +3252,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Corredoura Hotel Rural",
+    location: "Guimarães",
     subcategory: "hotel",
     rating: 5.0,
     price_per_person: 100,
@@ -2944,6 +3262,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta de Lamoso",
+    location: "Amares",
     subcategory: "quinta",
     quoted_price: 3000,
     min_capacity: 20,
@@ -2952,6 +3271,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Bairro",
+    location: "Vieira do Minho",
     subcategory: "quinta",
     quoted_price: 750,
     min_capacity: 6,
@@ -2960,6 +3280,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Encosta do Sossego",
+    location: "Cabeceiras de Basto",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 75,
@@ -2969,6 +3290,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Granja - Barcelos",
+    location: "Barcelos",
     subcategory: "quinta",
     rating: 5.0,
     price_per_person: 105,
@@ -2978,6 +3300,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Pousadela Village",
+    location: "Vieira do Minho",
     subcategory: "hotel",
     price_per_person: 100,
     min_capacity: 70,
@@ -2987,6 +3310,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   // ── Leiria & Oeste ─────────────────────────────────────────────────────
   {
     name: "Quinta D. Dinis - Espuma de Hortelã Catering",
+    location: "Pombal",
     district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
@@ -2997,6 +3321,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Gato Cinzento by Impact Events",
+    location: "Peniche",
     district: "Leiria",
     subcategory: "quinta",
     quoted_price: 2500,
@@ -3006,6 +3331,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Vale Pisco",
+    location: "Bombarral",
     district: "Leiria",
     subcategory: "quinta",
     quoted_price: 1500,
@@ -3015,6 +3341,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Flor do Alecrim",
+    location: "Porto de Mós",
     district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
@@ -3025,6 +3352,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Paúl",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.8,
@@ -3034,6 +3362,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Valinha",
+    location: "Alcobaça",
     district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
@@ -3044,6 +3373,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Evolutee Hotel Royal Óbidos",
+    location: "Óbidos",
     district: "Leiria",
     subcategory: "hotel",
     rating: 5.0,
@@ -3053,6 +3383,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Rio do Prado",
+    location: "Óbidos",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.8,
@@ -3062,6 +3393,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Aldeia - Grupo Quinta dos Lagos",
+    location: "Porto de Mós",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
@@ -3071,6 +3403,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta De Sant'Ana Redinha",
+    location: "Pombal",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.8,
@@ -3081,6 +3414,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Fonte do Corvo",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
@@ -3091,6 +3425,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante A Gralha",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "restaurante",
     rating: 4.6,
@@ -3101,6 +3436,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "A Lareira",
+    location: "Caldas da Rainha",
     district: "Leiria",
     subcategory: "salão",
     rating: 4.8,
@@ -3111,6 +3447,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Hotel Vila d'Óbidos",
+    location: "Óbidos",
     district: "Leiria",
     subcategory: "hotel",
     rating: 4.8,
@@ -3120,6 +3457,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Boubã",
+    location: "Alcobaça",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.8,
@@ -3128,6 +3466,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Solar da Tapada",
+    location: "Nazaré",
     district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
@@ -3137,6 +3476,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Jardins do Barão",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
@@ -3147,6 +3487,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Castanheiros - Morgatões",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
@@ -3157,6 +3498,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Do Ti Lucas",
+    location: "Pombal",
     district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
@@ -3167,6 +3509,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Giesta",
+    location: "Caldas da Rainha",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.8,
@@ -3177,6 +3520,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Juncal",
+    location: "Peniche",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.6,
@@ -3187,6 +3531,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Cidral",
+    location: "Alcobaça",
     district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
@@ -3196,6 +3541,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta dos Lagos - Grupo Quinta dos Lagos",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
@@ -3206,6 +3552,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Falca",
+    location: "Nazaré",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.8,
@@ -3215,6 +3562,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Acipreste",
+    location: "Alcobaça",
     district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
@@ -3225,6 +3573,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Canto D'Aire",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
@@ -3235,6 +3584,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Júlia dos Ovos",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
@@ -3245,6 +3595,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Cerca do Colégio",
+    location: "Alcobaça",
     district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
@@ -3255,6 +3606,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Casa das Gaeiras",
+    location: "Óbidos",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
@@ -3276,6 +3628,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Moinho - Alvados",
+    location: "Porto de Mós",
     district: "Leiria",
     subcategory: "quinta",
     price_per_person: 60,
@@ -3285,6 +3638,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "S. Sebastião Restaurante",
+    location: "Pombal",
     district: "Leiria",
     subcategory: "restaurante",
     price_per_person: 45,
@@ -3294,6 +3648,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta da Cortiça",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "quinta",
     quoted_price: 300,
@@ -3303,6 +3658,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Lisotel",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "hotel",
     rating: 3.0,
@@ -3313,6 +3669,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante Marés Vivas",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "restaurante",
     price_per_person: 70,
@@ -3322,6 +3679,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Monte Real - Hotel, Termas, Spa",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "hotel",
     price_per_person: 60,
@@ -3331,6 +3689,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Hotel Santa Maria Alcobaça",
+    location: "Alcobaça",
     district: "Leiria",
     subcategory: "hotel",
     rating: 4.2,
@@ -3341,6 +3700,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Nature et. al. House",
+    location: "Batalha",
     district: "Leiria",
     subcategory: "quinta",
     price_per_person: 100,
@@ -3349,6 +3709,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Restaurante Dom Abade",
+    location: "Porto de Mós",
     district: "Leiria",
     subcategory: "restaurante",
     rating: 4.9,
@@ -3359,6 +3720,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Solar da Rainha - Eventos & Alojamentos",
+    location: "Coimbra",
     district: "Leiria",
     subcategory: "quinta",
     price_per_person: 68,
@@ -3368,6 +3730,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta das Oliveiras - Grupo Quinta dos Lagos",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
@@ -3377,6 +3740,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta das Palmeiras - Grupo Quinta dos Lagos",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
@@ -3386,6 +3750,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta São Francisco",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "quinta",
     rating: 5.0,
@@ -3395,6 +3760,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Silver Coast",
+    location: "Caldas da Rainha",
     district: "Leiria",
     subcategory: "hotel",
     price_per_person: 25,
@@ -3403,6 +3769,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Bukubaki",
+    location: "Peniche",
     district: "Leiria",
     subcategory: "quinta",
     max_capacity: 60,
@@ -3410,6 +3777,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Hotel Cristal",
+    location: "Marinha Grande",
     district: "Leiria",
     subcategory: "hotel",
     rating: 5.0,
@@ -3420,6 +3788,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta das Maçãs",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.8,
@@ -3430,6 +3799,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Challet Fonte Nova",
+    location: "Alcobaça",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
@@ -3440,6 +3810,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Vale d'Azenha Hotel Rural & Residences",
+    location: "Alcobaça",
     district: "Leiria",
     subcategory: "hotel",
     price_per_person: 150,
@@ -3449,6 +3820,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Haven Nature Hotel & Villas",
+    location: "Batalha",
     district: "Leiria",
     subcategory: "hotel",
     price_per_person: 120,
@@ -3458,6 +3830,7 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta Rei dos Banquetes",
+    location: "Alcobaça",
     district: "Leiria",
     subcategory: "quinta",
     rating: 4.9,
@@ -3468,108 +3841,126 @@ export const DEFAULT_PORTO_VENUES: DefaultVenue[] = [
   },
   {
     name: "Quinta do Lagar Moinho do Porto",
+    location: "Pombal",
     district: "Leiria",
     subcategory: "quinta",
     notes: "Located in São Simão de Litém, Pombal. A charming 19th-century estate where the old lagar and mill give it its name, offering a maravilhous and historic setting for a unique wedding day.",
   },
   {
     name: "Hotel D. Alfonso",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "hotel",
     notes: "Located in Monte Real, Leiria. Enjoy the peace of the countryside while savouring rich and diverse gastronomy. Essential spaces and services to make your wedding an unforgettable moment.",
   },
   {
     name: "Quinta dos Loridos - Buddha Eden",
+    location: "Bombarral",
     district: "Leiria",
     subcategory: "quinta",
     notes: "Located in Bombarral, set in the largest oriental garden in Europe, the emblematic Buddha Eden. A dream space combining the beauty of nature and the best of art.",
   },
   {
     name: "Hotel Villa Batalha",
+    location: "Batalha",
     district: "Leiria",
     subcategory: "hotel",
     notes: "Located in Batalha. Full of tradition, charm and comfort, ideal for your wedding celebration with a high standard of refinement in a single infrastructure.",
   },
   {
     name: "Hotel Praia",
+    location: "Nazaré",
     district: "Leiria",
     subcategory: "hotel",
     notes: "Located in Nazaré. Perfect for couples dreaming of a beach wedding with feet in the sand and ocean breeze while celebrating with family and friends.",
   },
   {
     name: "Salão Millénio",
+    location: "Caldas da Rainha",
     district: "Leiria",
     subcategory: "salão",
     notes: "Located in Caldas da Rainha. A space prepared to welcome dozens of guests for a wedding where affection and celebration are the order of the day.",
   },
   {
     name: "Albergaria Josefa d'Óbidos Hotel",
+    location: "Óbidos",
     district: "Leiria",
     subcategory: "hotel",
     notes: "Located in Óbidos. Spend pleasant moments in a setting marked by historical heritage and the charm of a medieval village, surrounded by pure air and nature.",
   },
   {
     name: "Hotel Lis Batalha",
+    location: "Batalha",
     district: "Leiria",
     subcategory: "hotel",
     notes: "Located in Batalha city centre with a panoramic view of the Monastery as a backdrop. Excellent infrastructure for a wedding event.",
   },
   {
     name: "Miramar Hotels",
+    location: "Mira",
     district: "Leiria",
     subcategory: "hotel",
     notes: "Located in Nazaré. The perfect place to celebrate your wedding in grand style while enjoying a truly pleasurable experience deserving of your special day.",
   },
   {
     name: "Casa da Nora",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "quinta",
     notes: "Located in Cortes, Leiria, on the banks of the Rio Liz. The perfect place for your wedding with natural tranquility, an exclusive event and fantastic cuisine with attentive service.",
   },
   {
     name: "Quinta da Coutada",
+    location: "Peniche",
     district: "Leiria",
     subcategory: "quinta",
     notes: "Located in Peniche. A rural setting providing complete tranquility of an intimate and family environment in full contact with nature, with regional architecture.",
   },
   {
     name: "Casa Adega do Mosteiro",
+    location: "Caldas da Rainha",
     district: "Leiria",
     subcategory: "quinta",
     notes: "Located in Caldas da Rainha. A competent team ensures your wedding or any celebration is in the best hands, offering personalised service for weddings, baptisms and family dinners.",
   },
   {
     name: "Quinta dos Birreiros",
+    location: "Ansião",
     district: "Leiria",
     subcategory: "quinta",
     notes: "Located in Alvorge, Ansião. Integrated services in a welcoming and pleasant environment, transforming your wedding idea into a real and enjoyable event.",
   },
   {
     name: "Praia D'El Rey Marriott Golf & Beach Resort",
+    location: "Óbidos",
     district: "Leiria",
     subcategory: "hotel",
     notes: "Located in Amoreira, Óbidos. The most important day of your lives will certainly be unique and exclusive at this resort. Tranquil and sophisticated atmosphere where nature is always present.",
   },
   {
     name: "Quinta do Pinheiro - Grupo Quinta dos Lagos",
+    location: "Nazaré",
     district: "Leiria",
     subcategory: "quinta",
     notes: "Located in Valado dos Frades, Nazaré. Where the traditional and the modern merge in perfect harmony with nature, an incomparably beautiful backdrop for your unique wedding day.",
   },
   {
     name: "Quinta da Padeira",
+    location: "Ansião",
     district: "Leiria",
     subcategory: "quinta",
     notes: "Located in Santiago da Guarda, Ansião. Named after the first baker of the parish, this rural venue with a welcoming environment is a special place to celebrate life and love.",
   },
   {
     name: "Real Abadia Congress & Spa Hotel",
+    location: "Alcobaça",
     district: "Leiria",
     subcategory: "hotel",
     notes: "Located near Alcobaça. A fantastic hotel with spaces of excellence to welcome your guests on the happiest day of your lives, with a rich history and modern amenities.",
   },
   {
     name: "Iguarias do Tempo",
+    location: "Leiria",
     district: "Leiria",
     subcategory: "restaurante",
     notes: "Located in Leiria. A true gem for a successful wedding, with all the infrastructure necessary to make your special day an unforgettable experience.",
