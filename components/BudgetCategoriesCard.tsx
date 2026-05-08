@@ -54,6 +54,10 @@ interface Props {
     existing?: BudgetCategory,
   ) => Promise<{ ok: boolean; error?: string }>;
   onDeleteCategory?: (id: string) => void;
+  /** When set, the matching category is highlighted; others are dimmed. */
+  selectedCategoryId?: string | null;
+  /** Called when the user clicks a category row to toggle the filter. */
+  onCategoryClick?: (id: string) => void;
 }
 
 export function BudgetCategoriesCard({
@@ -65,6 +69,8 @@ export function BudgetCategoriesCard({
   colorMap,
   onSubmitCategory,
   onDeleteCategory,
+  selectedCategoryId,
+  onCategoryClick,
 }: Props) {
   return (
     <Card>
@@ -103,8 +109,20 @@ export function BudgetCategoriesCard({
           const over = cat.actual_amount > cat.planned_amount;
           const rgb = colorMap?.get(cat.id);
 
+          const isSelected = selectedCategoryId === cat.id;
+          const isDimmed = selectedCategoryId != null && !isSelected;
+
           return (
-            <div key={cat.id} className="space-y-1.5">
+            <div
+              key={cat.id}
+              className={cn(
+                "space-y-1.5 rounded-md transition-opacity",
+                onCategoryClick && "-mx-2 px-2 py-1 cursor-pointer hover:bg-muted/40",
+                isSelected && "bg-muted/60 ring-1 ring-primary/40",
+                isDimmed && "opacity-50",
+              )}
+              onClick={onCategoryClick ? () => onCategoryClick(cat.id) : undefined}
+            >
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2 min-w-0">
                   {rgb && (
@@ -116,7 +134,10 @@ export function BudgetCategoriesCard({
                   <span className="shrink-0">{getCategoryEmoji(cat.name)}</span>
                   <span className="font-medium truncate">{cat.name}</span>
                 </div>
-                <div className="flex items-center gap-2 shrink-0 ml-2">
+                <div
+                  className="flex items-center gap-2 shrink-0 ml-2"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <span className={cn("text-xs", over && "text-destructive")}>
                     {formatCurrency(cat.actual_amount, currency)} /{" "}
                     {formatCurrency(cat.planned_amount, currency)}

@@ -15,11 +15,15 @@ interface BudgetChartProps {
   currency?: string;
   /** Stable color map: category id → [r, g, b]. Built by BudgetSortableSection. */
   colorMap?: Map<string, [number, number, number]>;
+  /** When set, bars not matching this id are dimmed. */
+  selectedCategoryId?: string | null;
+  /** Click handler invoked when a bar is clicked, passing the category id. */
+  onBarClick?: (categoryId: string) => void;
 }
 
 const FALLBACK_RGB: [number, number, number] = [140, 140, 140];
 
-export function BudgetChart({ categories, currency = "USD", colorMap }: BudgetChartProps) {
+export function BudgetChart({ categories, currency = "USD", colorMap, selectedCategoryId, onBarClick }: BudgetChartProps) {
   const data = categories.map((c) => {
     const emoji = getCategoryEmoji(c.name);
     const truncated = c.name.length > 12 ? c.name.slice(0, 12) + "…" : c.name;
@@ -54,19 +58,32 @@ export function BudgetChart({ categories, currency = "USD", colorMap }: BudgetCh
             contentStyle={{ fontSize: 12, borderRadius: 6, border: "1px solid hsl(var(--border))" }}
           />
           {/* Planned bars — faded category color */}
-          <Bar dataKey="Planned" radius={[3, 3, 0, 0]}>
+          <Bar
+            dataKey="Planned"
+            radius={[3, 3, 0, 0]}
+            onClick={(e: { id?: string }) => e?.id && onBarClick?.(e.id)}
+            style={{ cursor: onBarClick ? "pointer" : undefined }}
+          >
             {data.map((entry, i) => {
               const rgb = colorMap?.get(entry.id) ?? FALLBACK_RGB;
-              return <Cell key={i} fill={toRgba(rgb, 0.38)} />;
+              const dimmed = selectedCategoryId != null && selectedCategoryId !== entry.id;
+              return <Cell key={i} fill={toRgba(rgb, dimmed ? 0.12 : 0.38)} />;
             })}
           </Bar>
           {/* Actual bars — full category color, red if over budget */}
-          <Bar dataKey="Actual" radius={[3, 3, 0, 0]}>
+          <Bar
+            dataKey="Actual"
+            radius={[3, 3, 0, 0]}
+            onClick={(e: { id?: string }) => e?.id && onBarClick?.(e.id)}
+            style={{ cursor: onBarClick ? "pointer" : undefined }}
+          >
             {data.map((entry, i) => {
               const rgb = colorMap?.get(entry.id) ?? FALLBACK_RGB;
-              const fill = entry.overBudget
+              const dimmed = selectedCategoryId != null && selectedCategoryId !== entry.id;
+              const baseFill = entry.overBudget
                 ? "hsl(var(--destructive))"
                 : toRgba(rgb, 1);
+              const fill = dimmed ? toRgba(rgb, 0.3) : baseFill;
               return <Cell key={i} fill={fill} />;
             })}
           </Bar>

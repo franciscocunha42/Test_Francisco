@@ -17,6 +17,8 @@ interface Props {
     existing?: BudgetCategory,
   ) => Promise<{ ok: boolean; error?: string }>;
   onDeleteCategory?: (id: string) => void;
+  selectedCategoryId?: string | null;
+  onCategoryToggle?: (id: string) => void;
 }
 
 export function BudgetSortableSection({
@@ -25,6 +27,8 @@ export function BudgetSortableSection({
   weddingId,
   onSubmitCategory,
   onDeleteCategory,
+  selectedCategoryId,
+  onCategoryToggle,
 }: Props) {
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
 
@@ -48,7 +52,13 @@ export function BudgetSortableSection({
           <CardTitle className="text-base">Planned vs Actual</CardTitle>
         </CardHeader>
         <CardContent>
-          <BudgetChart categories={sorted} currency={currency} colorMap={colorMap} />
+          <BudgetChart
+            categories={sorted}
+            currency={currency}
+            colorMap={colorMap}
+            selectedCategoryId={selectedCategoryId}
+            onBarClick={onCategoryToggle}
+          />
         </CardContent>
       </Card>
       <BudgetCategoriesCard
@@ -60,6 +70,8 @@ export function BudgetSortableSection({
         colorMap={colorMap}
         onSubmitCategory={onSubmitCategory}
         onDeleteCategory={onDeleteCategory}
+        selectedCategoryId={selectedCategoryId}
+        onCategoryClick={onCategoryToggle}
       />
     </div>
   );
