@@ -1,5 +1,28 @@
 import Papa from "papaparse";
 
+/**
+ * Decode an uploaded CSV blob, tolerating Excel exports that use
+ * Windows-1252 / Latin-1 instead of UTF-8 (which is what causes
+ * accented characters like ã, ç, é to become � when read as UTF-8).
+ */
+export function decodeCsvFile(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error);
+    reader.onload = () => {
+      const buffer = reader.result as ArrayBuffer;
+      // Try strict UTF-8 first — throws on any invalid byte sequence
+      try {
+        resolve(new TextDecoder("utf-8", { fatal: true }).decode(buffer));
+      } catch {
+        // Fall back to Windows-1252 (superset of ISO-8859-1, Excel's default)
+        resolve(new TextDecoder("windows-1252").decode(buffer));
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+
 export interface GuestCsvRow {
   first_name: string;
   last_name: string;

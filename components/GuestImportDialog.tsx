@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { Upload, Download } from "lucide-react";
-import { parseGuestCsv, downloadGuestCsvTemplate } from "@/lib/utils/csv";
+import { parseGuestCsv, downloadGuestCsvTemplate, decodeCsvFile } from "@/lib/utils/csv";
 import { bulkImportGuests } from "@/lib/actions/guest";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -20,13 +20,9 @@ export function GuestImportDialog({ weddingId, trigger, onImport }: GuestImportD
   const [importing, setImporting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  function handleFile(file: File) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const text = e.target?.result as string;
-      setPreview(parseGuestCsv(text));
-    };
-    reader.readAsText(file);
+  async function handleFile(file: File) {
+    const text = await decodeCsvFile(file);
+    setPreview(parseGuestCsv(text));
   }
 
   async function handleImport() {

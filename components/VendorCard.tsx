@@ -1,7 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, Trash2, Globe, Phone, Mail, Receipt, Plus, ChevronDown, Star, Users } from "lucide-react";
+import {
+  Pencil, Trash2, Globe, Phone, Mail, Receipt, Plus, ChevronDown, Star, Users,
+  Camera, Music, Building2, TreeDeciduous, Utensils, Sparkles, Car,
+} from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils/cn";
 import { formatCurrency } from "@/lib/utils/format";
@@ -10,7 +13,6 @@ import { deleteVendor } from "@/lib/actions/vendor";
 import { deleteExpense, patchExpenseStatus } from "@/lib/actions/budget";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { VendorFormDialog } from "@/components/VendorFormDialog";
 import { ExpenseFormDialog } from "@/components/ExpenseFormDialog";
@@ -38,6 +40,23 @@ const PAYMENT_STATUSES: { value: PaymentStatus; label: string }[] = [
   { value: "partially_paid", label: "Partially Paid" },
   { value: "paid", label: "Paid" },
 ];
+
+const CATEGORY_CONFIG: Record<string, { label: string; gradient: string; Icon: React.ElementType }> = {
+  venue:       { label: "Venue",       gradient: "from-emerald-500 to-green-700",  Icon: TreeDeciduous },
+  catering:    { label: "Catering",    gradient: "from-orange-400 to-amber-600",   Icon: Utensils },
+  dj:          { label: "DJ",          gradient: "from-purple-500 to-violet-700",  Icon: Music },
+  music:       { label: "Music",       gradient: "from-indigo-500 to-blue-700",    Icon: Music },
+  photography: { label: "Photography", gradient: "from-pink-400 to-rose-600",      Icon: Camera },
+  videography: { label: "Videography", gradient: "from-red-400 to-rose-700",       Icon: Camera },
+  flowers:     { label: "Flowers",     gradient: "from-pink-300 to-fuchsia-500",   Icon: Sparkles },
+  cake:        { label: "Cake",        gradient: "from-yellow-400 to-amber-500",   Icon: Sparkles },
+  transport:   { label: "Transport",   gradient: "from-cyan-400 to-sky-600",       Icon: Car },
+  makeup:      { label: "Makeup",      gradient: "from-fuchsia-400 to-purple-600", Icon: Sparkles },
+  dress:       { label: "Dress",       gradient: "from-violet-400 to-purple-600",  Icon: Sparkles },
+  suit:        { label: "Suit",        gradient: "from-slate-500 to-gray-700",     Icon: Building2 },
+  stationery:  { label: "Stationery",  gradient: "from-amber-400 to-yellow-600",   Icon: Building2 },
+  other:       { label: "Other",       gradient: "from-gray-400 to-gray-600",      Icon: Building2 },
+};
 
 interface VendorCardProps {
   vendor: Vendor;
@@ -79,6 +98,11 @@ export function VendorCard({
   const linkedExpenses = expenses.filter((e) => e.vendor_id === vendor.id);
   const finance = getVendorFinance(vendor, expenses);
 
+  const cfg = CATEGORY_CONFIG[vendor.category ?? "other"] ?? CATEGORY_CONFIG.other;
+  const { Icon } = cfg;
+  const photos = vendor.photos ?? [];
+  const heroPhoto = photos[0];
+
   async function handleVendorDelete() {
     const result = onDelete
       ? await onDelete(vendor.id)
@@ -102,7 +126,6 @@ export function VendorCard({
     if (result?.ok === false) toast.error(result.error ?? "Failed to update status");
   }
 
-  // Single handler for ExpenseFormDialog — covers both create and edit
   function makeExpenseSubmitHandler(existing?: Expense) {
     return async (data: ExpenseFormValues) => {
       if (existing) {
@@ -120,29 +143,56 @@ export function VendorCard({
     };
   }
 
-  const photos = vendor.photos ?? [];
   return (
-    <Card className="overflow-hidden">
-      {photos.length > 0 && (
-        <div className="relative aspect-[16/9] w-full bg-muted">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
+    <div className="flex rounded-xl border bg-card overflow-hidden transition-shadow hover:shadow-md">
+      {/* Left: photo or gradient placeholder */}
+      <div className="hidden sm:block relative w-44 shrink-0 overflow-hidden">
+        {heroPhoto ? (
+          // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={photos[0]}
+            src={heroPhoto}
             alt={vendor.name}
             className="h-full w-full object-cover"
           />
-          {photos.length > 1 && (
-            <span className="absolute bottom-2 right-2 rounded-full bg-black/60 px-2 py-0.5 text-[11px] font-medium text-white">
-              +{photos.length - 1}
+        ) : (
+          <div
+            className={cn(
+              "flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br",
+              cfg.gradient,
+            )}
+          >
+            <Icon className="h-10 w-10 text-white/70" />
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-white/80">
+              {cfg.label}
             </span>
-          )}
-        </div>
-      )}
-      <CardContent className="p-4 space-y-3">
-        {/* Header */}
+          </div>
+        )}
+        {photos.length > 1 && (
+          <span className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[11px] font-medium text-white">
+            <Camera className="h-3 w-3" />
+            {photos.length}
+          </span>
+        )}
+      </div>
+
+      {/* Right: content */}
+      <div className="flex flex-1 flex-col gap-2 p-4 min-w-0">
+        {/* Name + actions */}
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
-            <p className="font-semibold truncate">{vendor.name}</p>
+            {vendor.website ? (
+              <a
+                href={vendor.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block font-semibold text-base leading-snug truncate hover:underline focus:underline focus:outline-none"
+                title={vendor.website}
+              >
+                {vendor.name}
+              </a>
+            ) : (
+              <p className="font-semibold text-base leading-snug truncate">{vendor.name}</p>
+            )}
             <div className="mt-1 flex flex-wrap items-center gap-1.5">
               <Badge variant={statusColors[vendor.status]} className="text-xs">{capitalize(vendor.status)}</Badge>
               <Badge variant={paymentStatusVariant[finance.status]} className="text-xs">
@@ -188,32 +238,33 @@ export function VendorCard({
               </span>
             )}
             {vendor.price_per_person != null && (
-              <span className="flex items-center gap-1">
-                From {formatCurrency(vendor.price_per_person, currency)}/person
-              </span>
+              <span>From {formatCurrency(vendor.price_per_person, currency)}/person</span>
             )}
           </div>
         )}
 
-        <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
-          {vendor.email && (
-            <a href={`mailto:${vendor.email}`} className="flex items-center gap-1 hover:text-foreground">
-              <Mail className="h-3 w-3" />{vendor.email}
-            </a>
-          )}
-          {vendor.phone && (
-            <a href={`tel:${vendor.phone}`} className="flex items-center gap-1 hover:text-foreground">
-              <Phone className="h-3 w-3" />{vendor.phone}
-            </a>
-          )}
-          {vendor.website && (
-            <a href={vendor.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-foreground">
-              <Globe className="h-3 w-3" />Website
-            </a>
-          )}
-        </div>
+        {/* Contact links */}
+        {(vendor.email || vendor.phone || vendor.website) && (
+          <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+            {vendor.email && (
+              <a href={`mailto:${vendor.email}`} className="flex items-center gap-1 hover:text-foreground">
+                <Mail className="h-3 w-3" />{vendor.email}
+              </a>
+            )}
+            {vendor.phone && (
+              <a href={`tel:${vendor.phone}`} className="flex items-center gap-1 hover:text-foreground">
+                <Phone className="h-3 w-3" />{vendor.phone}
+              </a>
+            )}
+            {vendor.website && (
+              <a href={vendor.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-foreground">
+                <Globe className="h-3 w-3" />Website
+              </a>
+            )}
+          </div>
+        )}
 
-        {/* Finance summary grid */}
+        {/* Finance summary */}
         <div className="grid grid-cols-2 gap-2 rounded-md bg-muted/50 p-2 text-sm">
           <div>
             <p className="text-xs text-muted-foreground">Planned</p>
@@ -318,7 +369,7 @@ export function VendorCard({
         </div>
 
         {vendor.notes && <p className="text-xs text-muted-foreground line-clamp-2 border-t pt-2">{vendor.notes}</p>}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { Upload, Download } from "lucide-react";
-import { parseSeatingCsv, downloadSeatingCsvTemplate } from "@/lib/utils/csv";
+import { parseSeatingCsv, downloadSeatingCsvTemplate, decodeCsvFile } from "@/lib/utils/csv";
 import { bulkImportSeating } from "@/lib/actions/seating";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -29,13 +29,9 @@ export function SeatingImportDialog({ weddingId, trigger, onImport }: SeatingImp
   const [importing, setImporting] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  function handleFile(file: File) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const text = e.target?.result as string;
-      setPreview(parseSeatingCsv(text));
-    };
-    reader.readAsText(file);
+  async function handleFile(file: File) {
+    const text = await decodeCsvFile(file);
+    setPreview(parseSeatingCsv(text));
   }
 
   async function handleImport() {

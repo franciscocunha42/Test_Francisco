@@ -1,7 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { ChevronsUpDown, Plus, Heart } from "lucide-react";
+import { startTransition, useOptimistic } from "react";
+import { useRouter, usePathname } from "next/navigation";
+import { toast } from "sonner";
+import { ChevronsUpDown, Plus, Heart, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,18 +13,49 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { formatDate } from "@/lib/utils/format";
-import type { Wedding } from "@/lib/types/database";
+import { setDefaultWedding } from "@/lib/actions/wedding";
+
+export interface WeddingEntry {
+  id: string;
+  name: string | null;
+  wedding_date: string | null;
+  is_default: boolean;
+}
 
 interface WeddingSwitcherProps {
   currentWeddingId: string;
-  weddings: Pick<Wedding, "id" | "name" | "wedding_date">[];
+  weddings: WeddingEntry[];
 }
 
 export function WeddingSwitcher({ currentWeddingId, weddings }: WeddingSwitcherProps) {
   const router = useRouter();
+  const pathname = usePathname();
   const current = weddings.find((w) => w.id === currentWeddingId);
 
-  if (weddings.length <= 1 && !current) return null;
+  const [optimisticDefault, setOptimisticDefault] = useOptimistic<string | null>(
+    weddings.find((w) => w.is_default)?.id ?? null
+  );
+
+  function navigateTo(targetId: string) {
+    // Stay on the same section (budget, guests, etc.) when switching weddings
+    const newPath = pathname.replace(currentWeddingId, targetId);
+    router.push(newPath);
+  }
+
+  function handleSetDefault(e: React.MouseEvent, weddingId: string) {
+    e.stopPropagation();
+    e.preventDefault();
+    startTransition(async () => {
+      setOptimisticDefault(weddingId);
+      const result = await setDefaultWedding(weddingId);
+      if (!result.ok) {
+        toast.error(result.error ?? "Failed to save default wedding");
+      }
+      router.refresh();
+    });
+  }
+
+  const hasMultiple = weddings.length > 1;
 
   return (
     <DropdownMenu>
@@ -33,23 +66,42 @@ export function WeddingSwitcher({ currentWeddingId, weddings }: WeddingSwitcherP
           <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        {weddings.map((w) => (
-          <DropdownMenuItem
-            key={w.id}
-            onClick={() => router.push(`/${w.id}/dashboard`)}
-            className="flex flex-col items-start gap-0.5 py-2"
-          >
-            <span className={`text-sm font-medium ${w.id === currentWeddingId ? "text-primary" : ""}`}>
-              {w.name}
-            </span>
-            {w.wedding_date && (
-              <span className="text-xs text-muted-foreground">{formatDate(w.wedding_date)}</span>
-            )}
-          </DropdownMenuItem>
-        ))}
+      <DropdownMenuContent align="end" className="w-64">
+        {weddings.map((w) => {
+          const isDefault = (optimisticDefault ?? weddings.find((x) => x.is_default)?.id) === w.id;
+          return (
+            <DropdownMenuItem
+              key={w.id}
+              onClick={() => navigateTo(w.id)}
+              className="flex items-center justify-between gap-2 py-2 cursor-pointer"
+            >
+              <div className="flex flex-col items-start gap-0.5 min-w-0">
+                <span className={`text-sm font-medium truncate ${w.id === currentWeddingId ? "text-primary" : ""}`}>
+                  {w.name}
+                </span>
+                {w.wedding_date && (
+                  <span className="text-xs text-muted-foreground">{formatDate(w.wedding_date)}</span>
+                )}
+              </div>
+              {hasMultiple && (
+                <button
+                  onClick={(e) => handleSetDefault(e, w.id)}
+                  title={isDefault ? "Default wedding (click to keep)" : "Set as default"}
+                  className={`shrink-0 rounded p-0.5 transition-colors ${
+                    isDefault ? "text-primary" : "text-muted-foreground hover:text-primary"
+                  }`}
+                >
+                  <Star className={`h-3.5 w-3.5 ${isDefault ? "fill-primary" : ""}`} />
+                </button>
+              )}
+            </DropdownMenuItem>
+          );
+        })}
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push("/onboarding?new=1")} className="gap-1.5">
+        <DropdownMenuItem
+          onClick={() => router.push("/onboarding?new=1")}
+          className="gap-1.5 cursor-pointer"
+        >
           <Plus className="h-3.5 w-3.5" />
           <span className="text-sm">New wedding</span>
         </DropdownMenuItem>

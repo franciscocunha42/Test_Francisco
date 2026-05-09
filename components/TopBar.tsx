@@ -7,15 +7,17 @@ import {
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Heart } from "lucide-react";
+import { WeddingSwitcher } from "@/components/WeddingSwitcher";
+import type { WeddingEntry } from "@/components/WeddingSwitcher";
 import type { Profile } from "@/lib/types/database";
 
 interface TopBarProps {
   profile: Profile | null;
-  weddingName: string;
+  currentWeddingId: string;
+  allWeddings: WeddingEntry[];
 }
 
-export function TopBar({ profile, weddingName }: TopBarProps) {
+export function TopBar({ profile, currentWeddingId, allWeddings }: TopBarProps) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -32,14 +34,8 @@ export function TopBar({ profile, weddingName }: TopBarProps) {
     .toUpperCase() ?? "VP";
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b bg-card px-4 md:px-6">
-      {/* Mobile logo */}
-      <div className="flex items-center gap-2 md:hidden">
-        <Heart className="h-4 w-4 text-primary fill-primary" />
-        <span className="font-serif text-base font-semibold text-primary">VowPlan</span>
-      </div>
-
-      <p className="hidden md:block text-sm text-muted-foreground truncate max-w-xs">{weddingName}</p>
+    <div className="sticky top-0 z-40 flex items-center justify-end gap-2 bg-background/80 px-4 py-3 backdrop-blur-sm md:px-6 md:py-4">
+      <WeddingSwitcher currentWeddingId={currentWeddingId} weddings={allWeddings} />
 
       <DropdownMenu>
         <DropdownMenuTrigger className="focus:outline-none">
@@ -59,6 +55,6 @@ export function TopBar({ profile, weddingName }: TopBarProps) {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    </header>
+    </div>
   );
 }

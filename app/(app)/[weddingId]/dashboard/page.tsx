@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { requireWeddingMember, getUserWeddings } from "@/lib/auth";
+import { requireWeddingMember } from "@/lib/auth";
 import type { Wedding, TimelineTask, Guest, Vendor, BudgetCategory, Expense } from "@/lib/types/database";
 import { formatDate } from "@/lib/utils/format";
 import { DashboardStatTiles } from "@/components/DashboardStatTiles";
@@ -21,14 +21,13 @@ export default async function DashboardPage({ params }: { params: { weddingId: s
   await requireWeddingMember(weddingId);
   const supabase = createClient();
 
-  const [weddingRes, tasksRes, guestsRes, vendorsRes, categoriesRes, expensesRes, memberships] = await Promise.all([
+  const [weddingRes, tasksRes, guestsRes, vendorsRes, categoriesRes, expensesRes] = await Promise.all([
     supabase.from("weddings").select("*").eq("id", weddingId).single(),
     supabase.from("timeline_tasks").select("*").eq("wedding_id", weddingId).order("due_date"),
     supabase.from("guests").select("*").eq("wedding_id", weddingId),
     supabase.from("vendors").select("*").eq("wedding_id", weddingId).order("created_at", { ascending: false }),
     supabase.from("budget_categories").select("*").eq("wedding_id", weddingId),
     supabase.from("expenses").select("vendor_id, planned_amount, actual_amount, payment_status").eq("wedding_id", weddingId),
-    getUserWeddings(),
   ]);
 
   const wedding = weddingRes.data as Wedding | null;
@@ -37,7 +36,6 @@ export default async function DashboardPage({ params }: { params: { weddingId: s
   const vendors = (vendorsRes.data ?? []) as Vendor[];
   const categories = (categoriesRes.data ?? []) as BudgetCategory[];
   const expenses = (expensesRes.data ?? []) as Pick<Expense, "vendor_id" | "planned_amount" | "actual_amount" | "payment_status">[];
-  const allWeddings = memberships.map((m) => m.weddings as unknown as Pick<Wedding, "id" | "name" | "wedding_date">);
 
   const currency = wedding?.currency ?? "USD";
   const totalBudget = wedding?.total_budget ?? 0;
@@ -53,11 +51,7 @@ export default async function DashboardPage({ params }: { params: { weddingId: s
   return (
     <div className="space-y-6">
       {wedding && (
-        <WeddingHeaderEditor
-          wedding={wedding}
-          weddingId={weddingId}
-          allWeddings={allWeddings}
-        />
+        <WeddingHeaderEditor wedding={wedding} weddingId={weddingId} />
       )}
 
       <DashboardStatTiles

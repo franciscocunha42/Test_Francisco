@@ -12,21 +12,34 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DEFAULT_BUDGET_CATEGORY_NAMES } from "@/lib/utils/budget-categories";
 import type { TimelineTask } from "@/lib/types/database";
 
 interface TaskFormDialogProps {
   weddingId: string;
   task?: TimelineTask;
   trigger: React.ReactNode;
+  /** Category names available in the dropdown. Defaults to the standard budget categories. */
+  categories?: string[];
   onSubmit?: (data: TaskFormValues, existing?: TimelineTask) => Promise<{ ok: boolean; error?: string }>;
 }
 
-export function TaskFormDialog({ weddingId, task, trigger, onSubmit: onSubmitProp }: TaskFormDialogProps) {
+export function TaskFormDialog({ weddingId, task, trigger, categories, onSubmit: onSubmitProp }: TaskFormDialogProps) {
   const [open, setOpen] = useState(false);
-  const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<TaskFormValues>({
+  const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
     defaultValues: task ?? { status: "not_started", priority: "medium" },
   });
+
+  const categoryValue = watch("category") ?? "";
+  // Merge defaults + the wedding's actual budget categories + the task's own category if it falls outside.
+  const categoryOptions = Array.from(
+    new Set([
+      ...DEFAULT_BUDGET_CATEGORY_NAMES,
+      ...(categories ?? []),
+      ...(task?.category ? [task.category] : []),
+    ].filter(Boolean) as string[]),
+  );
 
   async function onSubmit(data: TaskFormValues) {
     const result = onSubmitProp
@@ -58,7 +71,18 @@ export function TaskFormDialog({ weddingId, task, trigger, onSubmit: onSubmitPro
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label>Category</Label>
-              <Input {...register("category")} placeholder="e.g. venue" />
+              <Select
+                value={categoryValue || "none"}
+                onValueChange={(v) => setValue("category", v === "none" ? null : v, { shouldDirty: true })}
+              >
+                <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No category</SelectItem>
+                  {categoryOptions.map((name) => (
+                    <SelectItem key={name} value={name}>{name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1">
               <Label>Due Date</Label>

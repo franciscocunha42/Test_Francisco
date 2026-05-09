@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import {
-  Star, Users, Plus, CheckCircle2, Camera,
+  Star, Users, Plus, CheckCircle2, Camera, MapPin,
   TreeDeciduous, Building2, Utensils, Sparkles, Waves,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
@@ -108,12 +108,20 @@ export function VenueDirectoryCard({ venue, isSaved, isAdding, onAdd }: VenueDir
                 </button>
               }
             />
-            {venue.rating != null && (
-              <span className="mt-0.5 flex items-center gap-1 text-sm text-amber-500">
-                <Star className="h-3.5 w-3.5 fill-amber-400" />
-                {venue.rating.toFixed(1)}
-              </span>
-            )}
+            <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-sm">
+              {venue.rating != null && (
+                <span className="flex items-center gap-1 text-amber-500">
+                  <Star className="h-3.5 w-3.5 fill-amber-400" />
+                  {venue.rating.toFixed(1)}
+                </span>
+              )}
+              {venue.location && (
+                <span className="flex items-center gap-1 text-muted-foreground">
+                  <MapPin className="h-3.5 w-3.5" />
+                  {venue.location}
+                </span>
+              )}
+            </div>
           </div>
 
           {isSaved ? (

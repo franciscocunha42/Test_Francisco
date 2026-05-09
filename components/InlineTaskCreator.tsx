@@ -14,10 +14,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DEFAULT_BUDGET_CATEGORY_NAMES } from "@/lib/utils/budget-categories";
 import type { TaskFormValues } from "@/lib/schemas/timeline";
 
 interface InlineTaskCreatorProps {
   weddingId: string;
+  /** Category names available in the dropdown. Defaults to the standard budget categories. */
+  categories?: string[];
   /** When provided (guest mode), called instead of the createTask server action. */
   onSubmit?: (data: TaskFormValues) => Promise<{ ok: boolean; error?: string }>;
   /** Called after a task is successfully created (e.g. to re-fetch tasks). */
@@ -33,9 +36,12 @@ const EMPTY_FORM = {
   category: "",
 };
 
-export function InlineTaskCreator({ weddingId, onSubmit: onSubmitProp, onSuccess }: InlineTaskCreatorProps) {
+export function InlineTaskCreator({ weddingId, categories, onSubmit: onSubmitProp, onSuccess }: InlineTaskCreatorProps) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [pending, startTransition] = useTransition();
+  const categoryOptions = Array.from(
+    new Set([...DEFAULT_BUDGET_CATEGORY_NAMES, ...(categories ?? [])].filter(Boolean) as string[]),
+  );
 
   const canSubmit = form.title.trim().length > 0 && !pending;
 
@@ -128,18 +134,23 @@ export function InlineTaskCreator({ weddingId, onSubmit: onSubmitProp, onSuccess
           </Select>
         </div>
 
-        <div className="w-[140px] space-y-1">
-          <Label htmlFor="qa-category" className="text-xs text-muted-foreground">
-            Category
-          </Label>
-          <Input
-            id="qa-category"
-            value={form.category}
-            onChange={(e) => update("category", e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="e.g. venue"
+        <div className="w-[170px] space-y-1">
+          <Label className="text-xs text-muted-foreground">Category</Label>
+          <Select
+            value={form.category || "none"}
+            onValueChange={(v) => update("category", v === "none" ? "" : v)}
             disabled={pending}
-          />
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="none">No category</SelectItem>
+              {categoryOptions.map((name) => (
+                <SelectItem key={name} value={name}>{name}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <Button onClick={submit} disabled={!canSubmit} size="sm" className="h-9">

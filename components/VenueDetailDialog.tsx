@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import {
-  Star, Users, Plus, CheckCircle2, Camera, Globe,
+  Star, Users, Plus, CheckCircle2, Camera, Globe, MapPin, Mail,
   TreeDeciduous, Building2, Utensils, Sparkles, Waves,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
@@ -97,6 +97,12 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
                     {venue.rating.toFixed(1)}
                   </span>
                 )}
+                {venue.location && (
+                  <span className="flex items-center gap-1 text-muted-foreground">
+                    <MapPin className="h-3.5 w-3.5" />
+                    {venue.location}
+                  </span>
+                )}
                 {(venue.photos?.length ?? 0) > 0 && (
                   <span className="flex items-center gap-1 text-muted-foreground">
                     <Camera className="h-3.5 w-3.5" />
@@ -112,6 +118,15 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
                   >
                     <Globe className="h-3.5 w-3.5" />
                     Website
+                  </a>
+                )}
+                {venue.email && (
+                  <a
+                    href={`mailto:${venue.email}`}
+                    className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
+                  >
+                    <Mail className="h-3.5 w-3.5" />
+                    {venue.email}
                   </a>
                 )}
               </div>
