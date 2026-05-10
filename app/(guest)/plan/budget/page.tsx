@@ -6,11 +6,14 @@ import { PiggyBank, Plus } from "lucide-react";
 import { GuestAppShell } from "@/components/GuestAppShell";
 import { BudgetSummary } from "@/components/BudgetSummary";
 import { BudgetView } from "@/components/BudgetView";
+import { BudgetNotSetBanner } from "@/components/BudgetNotSetBanner";
 import { CategoryFormDialog } from "@/components/CategoryFormDialog";
 import { ExpenseFormDialog } from "@/components/ExpenseFormDialog";
 import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { useGuestStore } from "@/lib/guest-store/store";
+import { scaleDefaultCategories } from "@/lib/utils/default-budget";
+import type { Wedding } from "@/lib/types/database";
 
 export default function GuestBudgetPage() {
   const router = useRouter();
@@ -33,6 +36,22 @@ export default function GuestBudgetPage() {
 
   const currency = wedding.currency;
   const vendorOptions = vendors.map((v) => ({ id: v.id, name: v.name }));
+
+  async function handleSetBudget(totalBudget: number, currency: string) {
+    if (!wedding) return { ok: false, error: "No wedding loaded" };
+    const updateWedding = useGuestStore.getState().updateWedding;
+    const updateCategoryFn = useGuestStore.getState().updateBudgetCategory;
+    const createCategoryFn = useGuestStore.getState().createBudgetCategory;
+    updateWedding({ total_budget: totalBudget, currency });
+    const split = scaleDefaultCategories(totalBudget);
+    const byName = new Map(useGuestStore.getState().budgetCategories.map((c) => [c.name, c.id]));
+    for (const item of split) {
+      const id = byName.get(item.name);
+      if (id) updateCategoryFn(id, { planned_amount: item.planned_amount });
+      else createCategoryFn({ name: item.name, planned_amount: item.planned_amount });
+    }
+    return { ok: true };
+  }
 
   return (
     <GuestAppShell>
@@ -57,6 +76,10 @@ export default function GuestBudgetPage() {
             />
           </div>
         </div>
+
+        {(wedding.total_budget ?? 0) === 0 && (
+          <BudgetNotSetBanner wedding={wedding as Wedding} weddingId="guest" onSubmit={handleSetBudget} />
+        )}
 
         {categories.length === 0 ? (
           <EmptyState

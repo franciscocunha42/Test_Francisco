@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { requireWeddingMember } from "@/lib/auth";
 import { formatDate } from "@/lib/utils/format";
+import type { WeddingInvitation } from "@/lib/types/database";
 
 interface SendResult {
   sent: number;
@@ -123,4 +124,94 @@ export async function sendRsvpInvitations(
   }
 
   return { sent, skipped: skipped + (guestIds.length - guests.length), errors };
+}
+
+function inviteEmailHtml(opts: {
+  inviteeEmail: string;
+  weddingName: string;
+  partnerOne: string;
+  partnerTwo: string;
+  role: string;
+  acceptUrl: string;
+}): string {
+  const { inviteeEmail, weddingName, partnerOne, partnerTwo, role, acceptUrl } = opts;
+  const access = role === "viewer" ? "view" : "edit and view";
+  return `<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#fdf8f4;font-family:Georgia,serif">
+  <div style="max-width:560px;margin:40px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.08)">
+    <div style="background:#b5835a;padding:32px;text-align:center">
+      <p style="margin:0 0 8px;color:#fdf8f4;font-size:13px;letter-spacing:2px;text-transform:uppercase">You're invited to collaborate</p>
+      <h1 style="margin:0;color:#fff;font-size:24px;font-weight:normal">${partnerOne} &amp; ${partnerTwo}</h1>
+      <p style="margin:8px 0 0;color:#fdf8f4;font-size:14px">${weddingName}</p>
+    </div>
+    <div style="padding:32px">
+      <p style="margin:0 0 16px;font-size:15px;color:#3d2b1f">Hi,</p>
+      <p style="margin:0 0 16px;font-size:15px;color:#5c4033;line-height:1.6">
+        ${partnerOne} &amp; ${partnerTwo} have invited you (<strong>${inviteeEmail}</strong>) to help plan their wedding on VowPlan with <strong>${access}</strong> access.
+      </p>
+      <div style="text-align:center;margin:28px 0">
+        <a href="${acceptUrl}" style="display:inline-block;background:#b5835a;color:#fff;text-decoration:none;padding:13px 32px;border-radius:8px;font-size:15px;font-family:sans-serif">
+          Accept invitation
+        </a>
+      </div>
+      <p style="margin:16px 0 0;font-size:12px;color:#8a7060;text-align:center">
+        Or paste this link into your browser:<br/>
+        <a href="${acceptUrl}" style="color:#b5835a">${acceptUrl}</a>
+      </p>
+      <p style="margin:24px 0 0;font-size:12px;color:#a0907a;text-align:center">
+        This link expires in 14 days. If you weren't expecting this invitation you can safely ignore this email.
+      </p>
+    </div>
+    <div style="padding:14px 32px;border-top:1px solid #f0e8e0;text-align:center">
+      <p style="margin:0;font-size:12px;color:#b0a0a0">Powered by VowPlan</p>
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
+export async function sendInvitationEmail(
+  weddingId: string,
+  invitation: WeddingInvitation,
+): Promise<{ ok: boolean; error?: string }> {
+  await requireWeddingMember(weddingId);
+
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    return { ok: false, error: "Email sending is not configured. Add RESEND_API_KEY to send invitations automatically." };
+  }
+
+  const supabase = createClient();
+  const { data: wedding } = await supabase
+    .from("weddings")
+    .select("name, partner_one_name, partner_two_name")
+    .eq("id", weddingId)
+    .single();
+  if (!wedding) return { ok: false, error: "Wedding not found." };
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const acceptUrl = `${siteUrl}/invite/${invitation.token}`;
+
+  const { Resend } = await import("resend");
+  const resend = new Resend(apiKey);
+  const fromAddress = process.env.RESEND_FROM_EMAIL ?? "noreply@vowplan.app";
+
+  const { error } = await resend.emails.send({
+    from: `${wedding.partner_one_name} & ${wedding.partner_two_name} <${fromAddress}>`,
+    to: invitation.email,
+    subject: `Invitation to plan ${wedding.name}`,
+    html: inviteEmailHtml({
+      inviteeEmail: invitation.email,
+      weddingName: wedding.name as string,
+      partnerOne: wedding.partner_one_name as string,
+      partnerTwo: wedding.partner_two_name as string,
+      role: invitation.role,
+      acceptUrl,
+    }),
+  });
+
+  if (error) return { ok: false, error: error.message };
+  return { ok: true };
 }

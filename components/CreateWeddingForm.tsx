@@ -5,6 +5,8 @@ import { createWedding } from "@/lib/actions/wedding";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CURRENCY_OPTIONS } from "@/lib/utils/currencies";
 import { Plus } from "lucide-react";
 
 interface CreateWeddingFormProps {
@@ -19,6 +21,7 @@ interface CreateWeddingFormProps {
 export function CreateWeddingForm({ hasWeddings, onSubmit, submitLabel }: CreateWeddingFormProps) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [currency, setCurrency] = useState<string>("USD");
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -60,7 +63,17 @@ export function CreateWeddingForm({ hasWeddings, onSubmit, submitLabel }: Create
       </div>
       <div className="space-y-1">
         <Label htmlFor="currency">Currency</Label>
-        <Input id="currency" name="currency" defaultValue="USD" maxLength={3} />
+        <input type="hidden" name="currency" value={currency} />
+        <Select value={currency} onValueChange={setCurrency}>
+          <SelectTrigger id="currency"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {CURRENCY_OPTIONS.map((c) => (
+              <SelectItem key={c.code} value={c.code}>
+                {c.code} — {c.label} ({c.symbol})
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
       <div className="space-y-1">
         <Label htmlFor="venue_name">Venue Name</Label>

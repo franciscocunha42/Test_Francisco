@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireWeddingMember } from "@/lib/auth";
 import { budgetCategorySchema, expenseSchema } from "@/lib/schemas/budget";
+import { scaleDefaultCategories } from "@/lib/utils/default-budget";
 
 export async function createBudgetCategory(weddingId: string, data: unknown) {
   await requireWeddingMember(weddingId);
@@ -143,6 +144,47 @@ export async function patchExpenseStatus(
   if (error) return { ok: false, error: error.message };
   revalidatePath(`/${weddingId}/budget`);
   revalidatePath(`/${weddingId}/suppliers`);
+  revalidatePath(`/${weddingId}/dashboard`);
+  return { ok: true };
+}
+
+/** Distribute the wedding's total budget across the default category names.
+ *  Updates planned_amount on existing categories that match a default name,
+ *  and inserts any default categories that don't yet exist. Custom (non-default)
+ *  categories are left untouched. */
+export async function applyDefaultBudgetSplit(
+  weddingId: string,
+  totalBudget: number,
+): Promise<{ ok: boolean; error?: string }> {
+  await requireWeddingMember(weddingId);
+  const supabase = createClient();
+
+  const { data: existing, error: readErr } = await supabase
+    .from("budget_categories")
+    .select("id, name")
+    .eq("wedding_id", weddingId);
+  if (readErr) return { ok: false, error: readErr.message };
+
+  const existingByName = new Map((existing ?? []).map((c) => [c.name, c.id]));
+  const split = scaleDefaultCategories(totalBudget);
+
+  for (const { name, planned_amount } of split) {
+    const id = existingByName.get(name);
+    if (id) {
+      const { error } = await supabase
+        .from("budget_categories")
+        .update({ planned_amount })
+        .eq("id", id);
+      if (error) return { ok: false, error: error.message };
+    } else {
+      const { error } = await supabase
+        .from("budget_categories")
+        .insert({ wedding_id: weddingId, name, planned_amount, actual_amount: 0 });
+      if (error) return { ok: false, error: error.message };
+    }
+  }
+
+  revalidatePath(`/${weddingId}/budget`);
   revalidatePath(`/${weddingId}/dashboard`);
   return { ok: true };
 }
