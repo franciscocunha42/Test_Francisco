@@ -11,6 +11,28 @@ interface LoginFormProps {
   submitLabel?: string;
 }
 
+function mapLoginError(err: unknown): string {
+  if (err instanceof TypeError) {
+    return "Can't reach the server. Check your internet connection and try again.";
+  }
+  const message = (err as { message?: string } | null)?.message ?? "";
+  const status = (err as { status?: number } | null)?.status;
+
+  if (/failed to fetch|networkerror|fetch failed|network request failed/i.test(message)) {
+    return "Can't reach the server. Check your internet connection and try again.";
+  }
+  if (/invalid login credentials|invalid email or password/i.test(message)) {
+    return "Email or password is incorrect.";
+  }
+  if (/email not confirmed/i.test(message)) {
+    return "Your email isn't verified yet. Open the link in the email from Supabase, then try again.";
+  }
+  if (status === 429 || /rate limit/i.test(message)) {
+    return "Too many attempts. Wait a minute and try again.";
+  }
+  return message || "Something went wrong. Please try again.";
+}
+
 export function LoginForm({ onSuccess, submitLabel = "Sign in" }: LoginFormProps) {
   const supabase = createClient();
   const [email, setEmail] = useState("");
@@ -22,14 +44,19 @@ export function LoginForm({ onSuccess, submitLabel = "Sign in" }: LoginFormProps
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        setLoading(false);
+        setError(mapLoginError(error));
+        return;
+      }
+      await onSuccess?.();
       setLoading(false);
-      setError(error.message);
-      return;
+    } catch (err) {
+      setLoading(false);
+      setError(mapLoginError(err));
     }
-    await onSuccess?.();
-    setLoading(false);
   }
 
   return (
