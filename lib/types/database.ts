@@ -147,6 +147,22 @@ export interface FormResponse {
   submitted_at: string;
 }
 
+export type WeddingInvitationStatus = "pending" | "accepted" | "revoked" | "expired";
+
+export interface WeddingInvitation {
+  id: string;
+  wedding_id: string;
+  email: string;
+  role: Exclude<MemberRole, "owner">;
+  token: string;
+  status: WeddingInvitationStatus;
+  invited_by: string | null;
+  invited_at: string;
+  responded_at: string | null;
+  accepted_by: string | null;
+  expires_at: string;
+}
+
 export interface BudgetCategory {
   id: string;
   wedding_id: string;
@@ -252,6 +268,12 @@ export interface Database {
         Update: DR<Partial<SeatingTable>>;
         Relationships: [];
       };
+      wedding_invitations: {
+        Row: DR<WeddingInvitation>;
+        Insert: DR<Omit<WeddingInvitation, "id" | "invited_at" | "expires_at"> & { expires_at?: string }>;
+        Update: DR<Partial<WeddingInvitation>>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -268,6 +290,7 @@ export interface Database {
       form_type: FormType;
       question_type: QuestionType;
       payment_status: PaymentStatus;
+      wedding_invitation_status: WeddingInvitationStatus;
     };
   };
 }

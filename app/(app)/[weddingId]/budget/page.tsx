@@ -3,6 +3,7 @@ import { requireWeddingMember } from "@/lib/auth";
 import type { Wedding, BudgetCategory, Expense, Vendor } from "@/lib/types/database";
 import { BudgetSummary } from "@/components/BudgetSummary";
 import { BudgetView } from "@/components/BudgetView";
+import { BudgetNotSetBanner } from "@/components/BudgetNotSetBanner";
 import { CategoryFormDialog } from "@/components/CategoryFormDialog";
 import { ExpenseFormDialog } from "@/components/ExpenseFormDialog";
 import { EmptyState } from "@/components/EmptyState";
@@ -44,6 +45,10 @@ export default async function BudgetPage({ params }: { params: { weddingId: stri
           />
         </div>
       </div>
+
+      {wedding && (wedding.total_budget ?? 0) === 0 && (
+        <BudgetNotSetBanner wedding={wedding} weddingId={weddingId} />
+      )}
 
       {allCategories.length === 0 ? (
         <EmptyState

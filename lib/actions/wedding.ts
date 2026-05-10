@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/auth";
 import { weddingSchema } from "@/lib/schemas/wedding";
+import { scaleDefaultCategories } from "@/lib/utils/default-budget";
 
 export async function setDefaultWedding(weddingId: string): Promise<{ ok: boolean; error?: string }> {
   const user = await requireUser();
@@ -37,16 +38,6 @@ export async function setDefaultWedding(weddingId: string): Promise<{ ok: boolea
   return { ok: true };
 }
 
-const DEFAULT_BUDGET_CATEGORIES = [
-  { name: "Venue & Rentals",        planned_amount: 10500 },
-  { name: "Catering & Cake",        planned_amount:  8500 },
-  { name: "Photography & Video",    planned_amount:  3500 },
-  { name: "Flowers & Decor",        planned_amount:  2500 },
-  { name: "Music & Entertainment",  planned_amount:  1500 },
-  { name: "Beauty & Attire",        planned_amount:  2000 },
-  { name: "Honeymoon",              planned_amount:  1500 },
-];
-
 export async function createWedding(formData: FormData) {
   const user = await requireUser();
   const raw = Object.fromEntries(formData);
@@ -71,7 +62,7 @@ export async function createWedding(formData: FormData) {
   if (memberError) return { ok: false, error: memberError.message };
 
   await supabase.from("budget_categories").insert(
-    DEFAULT_BUDGET_CATEGORIES.map(({ name, planned_amount }) => ({
+    scaleDefaultCategories(parsed.data.total_budget).map(({ name, planned_amount }) => ({
       wedding_id: wedding.id,
       name,
       planned_amount,
@@ -79,7 +70,7 @@ export async function createWedding(formData: FormData) {
     }))
   );
 
-  redirect(`/${wedding.id}/dashboard`);
+  redirect(`/${wedding.id}/setup`);
 }
 
 export async function updateWedding(weddingId: string, formData: FormData) {
@@ -132,27 +123,6 @@ export async function deleteWedding(weddingId: string) {
   const { error } = await supabase.from("weddings").delete().eq("id", weddingId);
   if (error) return { ok: false, error: error.message };
   redirect("/onboarding");
-}
-
-export async function inviteMember(weddingId: string, email: string, role: string) {
-  const supabase = createClient();
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("email", email)
-    .single();
-
-  if (!profile) return { ok: false, error: "No user found with that email address." };
-
-  const { error } = await supabase.from("wedding_members").upsert({
-    wedding_id: weddingId,
-    user_id: profile.id,
-    role: role as "partner" | "planner" | "viewer",
-  });
-
-  if (error) return { ok: false, error: error.message };
-  revalidatePath(`/${weddingId}/settings`);
-  return { ok: true };
 }
 
 export async function removeMember(weddingId: string, userId: string) {

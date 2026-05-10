@@ -2,42 +2,40 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { updateWedding, deleteWedding, inviteMember, removeMember } from "@/lib/actions/wedding";
+import { updateWedding, deleteWedding } from "@/lib/actions/wedding";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { MembersAndInvitationsCard } from "@/components/MembersAndInvitationsCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CURRENCY_OPTIONS } from "@/lib/utils/currencies";
 import { exportToCsv } from "@/lib/utils/csv";
 import { toast } from "sonner";
-import { Trash2, UserMinus, Download } from "lucide-react";
-import type { Wedding, WeddingMember, Profile } from "@/lib/types/database";
+import { Trash2, Download } from "lucide-react";
+import type { Wedding } from "@/lib/types/database";
 
 export default function SettingsPage({ params }: { params: { weddingId: string } }) {
   const { weddingId } = params;
   const supabase = createClient();
 
   const [wedding, setWedding] = useState<Wedding | null>(null);
-  const [members, setMembers] = useState<(WeddingMember & { profiles: Profile })[]>([]);
   const [isSaving, startSaving] = useTransition();
-  const [inviteEmail, setInviteEmail] = useState("");
-  const [inviteRole, setInviteRole] = useState("partner");
-  const [inviting, setInviting] = useState(false);
+  const [currency, setCurrency] = useState("USD");
 
   useEffect(() => {
     async function load() {
-      const [{ data: w }, { data: m }] = await Promise.all([
-        supabase.from("weddings").select("*").eq("id", weddingId).single(),
-        supabase.from("wedding_members").select("*, profiles(*)").eq("wedding_id", weddingId),
-      ]);
+      const { data: w } = await supabase
+        .from("weddings")
+        .select("*")
+        .eq("id", weddingId)
+        .single();
       setWedding(w);
-      setMembers((m ?? []) as (WeddingMember & { profiles: Profile })[]);
+      if (w?.currency) setCurrency(w.currency);
     }
     load();
-  }, [weddingId]);
+  }, [weddingId, supabase]);
 
   async function handleSave(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -48,21 +46,6 @@ export default function SettingsPage({ params }: { params: { weddingId: string }
         else toast.success("Wedding details saved");
       });
     });
-  }
-
-  async function handleInvite() {
-    if (!inviteEmail) return;
-    setInviting(true);
-    const result = await inviteMember(weddingId, inviteEmail, inviteRole);
-    setInviting(false);
-    if (result?.ok === false) toast.error(result.error);
-    else { toast.success("Member invited"); setInviteEmail(""); }
-  }
-
-  async function handleRemoveMember(userId: string) {
-    const result = await removeMember(weddingId, userId);
-    if (result?.ok === false) toast.error(result.error);
-    else { toast.success("Member removed"); setMembers((m) => m.filter((x) => x.user_id !== userId)); }
   }
 
   async function handleExportGuests() {
@@ -110,7 +93,17 @@ export default function SettingsPage({ params }: { params: { weddingId: string }
               </div>
               <div className="space-y-1">
                 <Label htmlFor="currency">Currency</Label>
-                <Input id="currency" name="currency" defaultValue={wedding.currency} maxLength={3} />
+                <input type="hidden" name="currency" value={currency} />
+                <Select value={currency} onValueChange={setCurrency}>
+                  <SelectTrigger id="currency"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {CURRENCY_OPTIONS.map((c) => (
+                      <SelectItem key={c.code} value={c.code}>
+                        {c.code} — {c.label} ({c.symbol})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -127,65 +120,13 @@ export default function SettingsPage({ params }: { params: { weddingId: string }
               <Label htmlFor="location">Location</Label>
               <Input id="location" name="location" defaultValue={wedding.location ?? ""} />
             </div>
-            <Button type="submit">Save Changes</Button>
+            <Button type="submit" disabled={isSaving}>{isSaving ? "Saving…" : "Save Changes"}</Button>
           </form>
         </CardContent>
       </Card>
 
-      {/* Members */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Members</CardTitle>
-          <CardDescription>Invite your partner or wedding planner to collaborate</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            {members.map((m) => (
-              <div key={m.id} className="flex items-center justify-between rounded-md border px-3 py-2">
-                <div>
-                  <p className="text-sm font-medium">{m.profiles?.full_name ?? m.profiles?.email ?? "Unknown"}</p>
-                  <p className="text-xs text-muted-foreground">{m.profiles?.email}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="text-xs capitalize">{m.role}</Badge>
-                  {m.role !== "owner" && (
-                    <ConfirmDialog
-                      trigger={<Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive"><UserMinus className="h-3.5 w-3.5" /></Button>}
-                      title="Remove member"
-                      description={`Remove ${m.profiles?.full_name ?? "this member"} from the wedding?`}
-                      onConfirm={() => handleRemoveMember(m.user_id)}
-                    />
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-          <Separator />
-          <div className="space-y-2">
-            <p className="text-sm font-medium">Invite by email</p>
-            <div className="flex gap-2">
-              <Input
-                type="email"
-                placeholder="partner@example.com"
-                value={inviteEmail}
-                onChange={(e) => setInviteEmail(e.target.value)}
-                className="flex-1"
-              />
-              <Select value={inviteRole} onValueChange={setInviteRole}>
-                <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="partner">Partner</SelectItem>
-                  <SelectItem value="planner">Planner</SelectItem>
-                  <SelectItem value="viewer">Viewer</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button onClick={handleInvite} disabled={!inviteEmail || inviting}>
-                {inviting ? "Inviting..." : "Invite"}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Members & Invitations */}
+      <MembersAndInvitationsCard weddingId={weddingId} />
 
       {/* Export */}
       <Card>

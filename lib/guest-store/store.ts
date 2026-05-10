@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { generateDefaultTasks } from "@/lib/utils/seed-tasks";
+import { scaleDefaultCategories } from "@/lib/utils/default-budget";
 import type {
   Wedding,
   TimelineTask,
@@ -156,7 +157,7 @@ export const useGuestStore = create<StoreState>()(
             currency: input.currency ?? "USD",
             created_at: nowIso(),
           };
-          const defaultCategories: GuestBudgetCategory[] = DEFAULT_BUDGET_CATEGORIES.map(({ name, planned_amount }) => ({
+          const defaultCategories: GuestBudgetCategory[] = scaleDefaultCategories(wedding.total_budget).map(({ name, planned_amount }) => ({
             id: uuid(),
             wedding_id: weddingId,
             name,

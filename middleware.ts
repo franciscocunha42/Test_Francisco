@@ -36,6 +36,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/signup") ||
     pathname.startsWith("/forgot-password") ||
     pathname.startsWith("/plan") ||
+    pathname.startsWith("/invite/") ||
     pathname === "/";
 
   if (!isPublic && !user) {
