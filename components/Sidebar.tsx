@@ -7,16 +7,23 @@ import {
   PiggyBank, FileText, Settings, Heart, Lock, Armchair,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { useT } from "@/lib/i18n/provider";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
 
-const navItems = [
-  { href: "dashboard",  label: "Dashboard",   icon: LayoutDashboard, lockInGuest: false },
-  { href: "timeline",   label: "Timeline",     icon: Calendar,        lockInGuest: false },
-  { href: "guests",     label: "Guests & RSVP", icon: Users,           lockInGuest: false },
-  { href: "seating",    label: "Seating",      icon: Armchair,        lockInGuest: false },
-  { href: "suppliers",  label: "Suppliers",    icon: Store,           lockInGuest: false },
-  { href: "budget",     label: "Budget",       icon: PiggyBank,       lockInGuest: false },
-  { href: "forms",      label: "Forms",        icon: FileText,        lockInGuest: true  },
-  { href: "settings",   label: "Settings",     icon: Settings,        lockInGuest: false },
+const navItems: Array<{
+  href: string;
+  labelKey: TranslationKey;
+  icon: typeof LayoutDashboard;
+  lockInGuest: boolean;
+}> = [
+  { href: "dashboard",  labelKey: "nav.dashboard", icon: LayoutDashboard, lockInGuest: false },
+  { href: "timeline",   labelKey: "nav.timeline",  icon: Calendar,        lockInGuest: false },
+  { href: "guests",     labelKey: "nav.guests",    icon: Users,           lockInGuest: false },
+  { href: "seating",    labelKey: "nav.seating",   icon: Armchair,        lockInGuest: false },
+  { href: "suppliers",  labelKey: "nav.suppliers", icon: Store,           lockInGuest: false },
+  { href: "budget",     labelKey: "nav.budget",    icon: PiggyBank,       lockInGuest: false },
+  { href: "forms",      labelKey: "nav.forms",     icon: FileText,        lockInGuest: true  },
+  { href: "settings",   labelKey: "nav.settings",  icon: Settings,        lockInGuest: false },
 ];
 
 interface SidebarProps {
@@ -30,6 +37,7 @@ export function Sidebar({ weddingId, basePath }: SidebarProps) {
   const pathname = usePathname();
   const prefix = basePath ?? `/${weddingId}`;
   const isGuest = prefix === "/plan";
+  const t = useT();
 
   return (
     <>
@@ -40,10 +48,11 @@ export function Sidebar({ weddingId, basePath }: SidebarProps) {
           <span className="font-serif text-xl font-semibold text-primary">VowPlan</span>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1">
-          {navItems.map(({ href, label, icon: Icon, lockInGuest }) => {
+          {navItems.map(({ href, labelKey, icon: Icon, lockInGuest }) => {
             const full = `${prefix}/${href}`;
             const active = pathname === full;
             const locked = isGuest && lockInGuest;
+            const label = t(labelKey);
             return (
               <Link
                 key={href}
@@ -66,9 +75,10 @@ export function Sidebar({ weddingId, basePath }: SidebarProps) {
 
       {/* Mobile bottom tab bar */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t bg-card flex justify-around py-2">
-        {navItems.slice(0, 5).map(({ href, label, icon: Icon }) => {
+        {navItems.slice(0, 5).map(({ href, labelKey, icon: Icon }) => {
           const full = `${prefix}/${href}`;
           const active = pathname === full;
+          const label = t(labelKey);
           return (
             <Link key={href} href={full} className="flex flex-col items-center gap-0.5">
               <Icon className={cn("h-5 w-5", active ? "text-primary" : "text-muted-foreground")} />
