@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { VendorFormDialog } from "@/components/VendorFormDialog";
+import { VendorEmailDialog } from "@/components/VendorEmailDialog";
 import { ExpenseFormDialog } from "@/components/ExpenseFormDialog";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import {
@@ -201,6 +202,13 @@ export function VendorCard({
             </div>
           </div>
           <div className="flex gap-1 shrink-0">
+            {weddingId !== "guest" && (
+              <VendorEmailDialog
+                weddingId={weddingId}
+                vendor={{ id: vendor.id, name: vendor.name, email: vendor.email }}
+                trigger={<Button variant="ghost" size="icon" className="h-7 w-7" title="Draft email"><Mail className="h-3.5 w-3.5" /></Button>}
+              />
+            )}
             <VendorFormDialog
               weddingId={weddingId}
               vendor={vendor}
