@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useT } from "@/lib/i18n/provider";
 import type { Form, FormQuestion } from "@/lib/types/database";
 
 interface PublicRSVPFormProps {
@@ -16,6 +17,7 @@ interface PublicRSVPFormProps {
 }
 
 export function PublicRSVPForm({ form, questions }: PublicRSVPFormProps) {
+  const t = useT();
   const [values, setValues] = useState<Record<string, string | string[]>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -38,7 +40,7 @@ export function PublicRSVPForm({ form, questions }: PublicRSVPFormProps) {
 
     const data = await res.json();
     setSubmitting(false);
-    if (!res.ok) { setError(data.error ?? "Something went wrong."); return; }
+    if (!res.ok) { setError(data.error ?? t("common.somethingWrong")); return; }
     setSubmitted(true);
   }
 
@@ -46,8 +48,8 @@ export function PublicRSVPForm({ form, questions }: PublicRSVPFormProps) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center p-6 text-center">
         <Heart className="mb-4 h-12 w-12 text-primary fill-primary" />
-        <h1 className="font-serif text-3xl font-semibold">Thank you!</h1>
-        <p className="mt-2 text-muted-foreground">Your response has been recorded. We can&apos;t wait to celebrate with you!</p>
+        <h1 className="font-serif text-3xl font-semibold">{t("rsvp.thanks")}</h1>
+        <p className="mt-2 text-muted-foreground">{t("rsvp.recorded")}</p>
       </div>
     );
   }
@@ -116,7 +118,7 @@ export function PublicRSVPForm({ form, questions }: PublicRSVPFormProps) {
                   value={(values[q.id] as string) ?? ""}
                   onValueChange={(v) => setValue(q.id, v)}
                 >
-                  <SelectTrigger><SelectValue placeholder="Select an option" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder={t("rsvp.selectOption")} /></SelectTrigger>
                   <SelectContent>
                     {q.options_json.map((opt) => <SelectItem key={opt} value={opt}>{opt}</SelectItem>)}
                   </SelectContent>
@@ -148,10 +150,10 @@ export function PublicRSVPForm({ form, questions }: PublicRSVPFormProps) {
           ))}
           {error && <p className="text-sm text-destructive">{error}</p>}
           <Button type="submit" className="w-full" disabled={submitting}>
-            {submitting ? "Submitting..." : "Submit RSVP"}
+            {submitting ? t("rsvp.submitting") : t("rsvp.submit")}
           </Button>
         </form>
-        <p className="mt-6 text-center text-xs text-muted-foreground">Powered by VowPlan</p>
+        <p className="mt-6 text-center text-xs text-muted-foreground">{t("rsvp.poweredBy")}</p>
       </div>
     </div>
   );

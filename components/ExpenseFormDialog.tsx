@@ -12,13 +12,15 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useT } from "@/lib/i18n/provider";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
 import type { Expense, BudgetCategory } from "@/lib/types/database";
 
-const PAYMENT_STATUSES = [
-  { value: "unpaid", label: "Unpaid" },
-  { value: "deposit_paid", label: "Deposit Paid" },
-  { value: "partially_paid", label: "Partially Paid" },
-  { value: "paid", label: "Paid" },
+const PAYMENT_STATUSES: Array<{ value: "unpaid" | "deposit_paid" | "partially_paid" | "paid"; labelKey: TranslationKey }> = [
+  { value: "unpaid",         labelKey: "suppliers.paymentUnpaid" },
+  { value: "deposit_paid",   labelKey: "suppliers.paymentDepositPaid" },
+  { value: "partially_paid", labelKey: "suppliers.paymentPartiallyPaid" },
+  { value: "paid",           labelKey: "suppliers.paymentPaid" },
 ];
 
 interface ExpenseFormDialogProps {
@@ -33,6 +35,7 @@ interface ExpenseFormDialogProps {
 }
 
 export function ExpenseFormDialog({ weddingId, expense, prefill, categories, vendors, trigger, onSubmit: onSubmitProp }: ExpenseFormDialogProps) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const defaults = expense ?? {
     payment_status: "unpaid" as const,
@@ -54,7 +57,7 @@ export function ExpenseFormDialog({ weddingId, expense, prefill, categories, ven
         ? await updateExpense(weddingId, expense.id, data)
         : await createExpense(weddingId, data);
     if (result?.ok === false) { toast.error(result.error); return; }
-    toast.success(expense ? "Expense updated" : "Expense added");
+    toast.success(expense ? t("budget.expenseUpdated") : t("budget.expenseCreated"));
     setOpen(false);
     reset();
   }
@@ -63,36 +66,36 @@ export function ExpenseFormDialog({ weddingId, expense, prefill, categories, ven
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
-        <DialogHeader><DialogTitle>{expense ? "Edit Expense" : "Add Expense"}</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{expense ? t("budget.editExpense") : t("budget.newExpense")}</DialogTitle></DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-1">
-            <Label>Title *</Label>
-            <Input {...register("title")} placeholder="e.g. Venue deposit" />
+            <Label>{t("common.title")} *</Label>
+            <Input {...register("title")} />
             {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label>Category</Label>
+              <Label>{t("budget.expenseCategory")}</Label>
               <Select
                 defaultValue={expense?.category_id ?? prefill?.category_id ?? "none"}
                 onValueChange={(v) => setValue("category_id", v === "none" ? null : v)}
               >
-                <SelectTrigger><SelectValue placeholder="None" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={t("common.none")} /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="none">{t("common.none")}</SelectItem>
                   {categories.map((c) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1">
-              <Label>Vendor</Label>
+              <Label>{t("budget.vendor")}</Label>
               <Select
                 defaultValue={expense?.vendor_id ?? prefill?.vendor_id ?? "none"}
                 onValueChange={(v) => setValue("vendor_id", v === "none" ? null : v)}
               >
-                <SelectTrigger><SelectValue placeholder="None" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={t("common.none")} /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">None</SelectItem>
+                  <SelectItem value="none">{t("common.none")}</SelectItem>
                   {vendors.map((v) => <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>)}
                 </SelectContent>
               </Select>
@@ -100,39 +103,39 @@ export function ExpenseFormDialog({ weddingId, expense, prefill, categories, ven
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label>Planned Amount</Label>
+              <Label>{t("budget.plannedAmount")}</Label>
               <Input type="number" step="0.01" {...register("planned_amount")} />
             </div>
             <div className="space-y-1">
-              <Label>Actual Amount</Label>
+              <Label>{t("budget.actual")}</Label>
               <Input type="number" step="0.01" {...register("actual_amount")} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label>Payment Status</Label>
+              <Label>{t("budget.paymentStatus")}</Label>
               <Select
                 defaultValue={expense?.payment_status ?? "unpaid"}
                 onValueChange={(v) => setValue("payment_status", v as ExpenseFormValues["payment_status"])}
               >
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {PAYMENT_STATUSES.map((s) => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+                  {PAYMENT_STATUSES.map((s) => <SelectItem key={s.value} value={s.value}>{t(s.labelKey)}</SelectItem>)}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1">
-              <Label>Due Date</Label>
+              <Label>{t("timeline.dueDate")}</Label>
               <Input type="date" {...register("due_date")} />
             </div>
           </div>
           <div className="space-y-1">
-            <Label>Notes</Label>
+            <Label>{t("common.notes")}</Label>
             <Textarea {...register("notes")} rows={2} />
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Save"}</Button>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
+            <Button type="submit" disabled={isSubmitting}>{isSubmitting ? t("common.saving") : t("common.save")}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

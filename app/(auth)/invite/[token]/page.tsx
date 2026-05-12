@@ -4,9 +4,11 @@ import { createClient, createAuthClient } from "@/lib/supabase/server";
 import { acceptInvitation } from "@/lib/actions/invitations";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { getServerT } from "@/lib/i18n/server";
 
 export default async function InviteAcceptPage({ params }: { params: { token: string } }) {
   const supabase = createClient();
+  const t = getServerT();
   const { data: invitation } = await supabase
     .from("wedding_invitations")
     .select("*, weddings(name, partner_one_name, partner_two_name)")
@@ -17,10 +19,8 @@ export default async function InviteAcceptPage({ params }: { params: { token: st
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Invitation not found</CardTitle>
-          <CardDescription>
-            This invitation link is invalid or has been removed.
-          </CardDescription>
+          <CardTitle>{t("invite.notFoundTitle")}</CardTitle>
+          <CardDescription>{t("invite.notFoundDesc")}</CardDescription>
         </CardHeader>
       </Card>
     );
@@ -35,10 +35,8 @@ export default async function InviteAcceptPage({ params }: { params: { token: st
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Invitation revoked</CardTitle>
-          <CardDescription>
-            The workspace owner has cancelled this invitation. Ask them to send a new one if you still need access.
-          </CardDescription>
+          <CardTitle>{t("invite.revokedTitle")}</CardTitle>
+          <CardDescription>{t("invite.revokedDesc")}</CardDescription>
         </CardHeader>
       </Card>
     );
@@ -48,10 +46,8 @@ export default async function InviteAcceptPage({ params }: { params: { token: st
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Invitation expired</CardTitle>
-          <CardDescription>
-            This invitation expired on {new Date(invitation.expires_at).toLocaleDateString()}. Ask the workspace owner to send a new one.
-          </CardDescription>
+          <CardTitle>{t("invite.expiredTitle")}</CardTitle>
+          <CardDescription>{t("invite.expiredDesc")}</CardDescription>
         </CardHeader>
       </Card>
     );
@@ -66,8 +62,8 @@ export default async function InviteAcceptPage({ params }: { params: { token: st
   const auth = createAuthClient();
   const { data: { user } } = await auth.auth.getUser();
 
-  const ownerLine = wedding ? `${wedding.partner_one_name} & ${wedding.partner_two_name}` : "Wedding workspace";
-  const accessLabel = invitation.role === "viewer" ? "view" : "edit and view";
+  const ownerLine = wedding ? `${wedding.partner_one_name} & ${wedding.partner_two_name}` : "VowPlan";
+  const accessLabel = invitation.role === "viewer" ? t("invite.viewAccess") : t("invite.editAccess");
 
   // Not signed in — prompt to sign in or sign up with the invited email.
   if (!user) {
@@ -75,24 +71,23 @@ export default async function InviteAcceptPage({ params }: { params: { token: st
     return (
       <Card>
         <CardHeader>
-          <CardTitle>You&apos;ve been invited</CardTitle>
+          <CardTitle>{t("invite.invitedTitle")}</CardTitle>
           <CardDescription>
-            {ownerLine} have invited <span className="font-medium">{invitation.email}</span> to{" "}
-            <span className="font-medium">{accessLabel}</span> their wedding workspace
-            {wedding ? <> — &ldquo;{wedding.name}&rdquo;</> : null}.
+            {ownerLine} — <span className="font-medium">{invitation.email}</span> — <span className="font-medium">{accessLabel}</span>
+            {wedding ? <> · &ldquo;{wedding.name}&rdquo;</> : null}.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Sign in or create an account with <span className="font-medium">{invitation.email}</span> to accept.
+            {t("invite.signinPrompt").replace("{email}", invitation.email)}
           </p>
         </CardContent>
         <CardFooter className="flex gap-2">
           <Button asChild className="flex-1">
-            <Link href={`/login?next=${next}`}>Sign in</Link>
+            <Link href={`/login?next=${next}`}>{t("invite.signIn")}</Link>
           </Button>
           <Button asChild variant="outline" className="flex-1">
-            <Link href={`/signup?next=${next}`}>Create account</Link>
+            <Link href={`/signup?next=${next}`}>{t("invite.createAccount")}</Link>
           </Button>
         </CardFooter>
       </Card>
@@ -105,16 +100,14 @@ export default async function InviteAcceptPage({ params }: { params: { token: st
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Wrong account</CardTitle>
+          <CardTitle>{t("invite.wrongAccountTitle")}</CardTitle>
           <CardDescription>
-            This invitation was sent to <span className="font-medium">{invitation.email}</span>,
-            but you&apos;re signed in as <span className="font-medium">{user.email}</span>.
-            Sign out and sign back in with the invited email to accept.
+            {t("invite.wrongAccountDesc").replace("{email}", invitation.email).replace("{other}", user.email ?? "")}
           </CardDescription>
         </CardHeader>
         <CardFooter>
           <Button asChild variant="outline" className="w-full">
-            <Link href="/login">Switch account</Link>
+            <Link href="/login">{t("invite.switchAccount")}</Link>
           </Button>
         </CardFooter>
       </Card>
@@ -127,8 +120,8 @@ export default async function InviteAcceptPage({ params }: { params: { token: st
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Couldn&apos;t accept invitation</CardTitle>
-          <CardDescription>{result.error ?? "Something went wrong."}</CardDescription>
+          <CardTitle>{t("invite.acceptFailed")}</CardTitle>
+          <CardDescription>{result.error ?? t("common.somethingWrong")}</CardDescription>
         </CardHeader>
       </Card>
     );

@@ -20,12 +20,13 @@ import { ExpenseFormDialog } from "@/components/ExpenseFormDialog";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import {
   getVendorFinance,
-  paymentStatusLabel,
   paymentStatusVariant,
 } from "@/lib/utils/vendor-finance";
 import type { Vendor, Expense, BudgetCategory, PaymentStatus } from "@/lib/types/database";
 import type { VendorFormValues } from "@/lib/schemas/vendor";
 import type { ExpenseFormValues } from "@/lib/schemas/budget";
+import { useT } from "@/lib/i18n/provider";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
 
 const statusColors: Record<string, "default" | "secondary" | "warning" | "info" | "success" | "destructive"> = {
   researching: "secondary",
@@ -35,12 +36,22 @@ const statusColors: Record<string, "default" | "secondary" | "warning" | "info" 
   rejected: "destructive",
 };
 
-const PAYMENT_STATUSES: { value: PaymentStatus; label: string }[] = [
-  { value: "unpaid", label: "Unpaid" },
-  { value: "deposit_paid", label: "Deposit Paid" },
-  { value: "partially_paid", label: "Partially Paid" },
-  { value: "paid", label: "Paid" },
-];
+const VENDOR_STATUS_LABEL_KEYS: Record<string, TranslationKey> = {
+  researching: "suppliers.statusResearching",
+  contacted: "suppliers.statusContacted",
+  shortlisted: "suppliers.statusShortlisted",
+  booked: "suppliers.statusBooked",
+  rejected: "suppliers.statusRejected",
+};
+
+const PAYMENT_STATUS_LABEL_KEYS: Record<PaymentStatus, TranslationKey> = {
+  unpaid: "suppliers.paymentUnpaid",
+  deposit_paid: "suppliers.paymentDepositPaid",
+  partially_paid: "suppliers.paymentPartiallyPaid",
+  paid: "suppliers.paymentPaid",
+};
+
+const PAYMENT_STATUSES: PaymentStatus[] = ["unpaid", "deposit_paid", "partially_paid", "paid"];
 
 const CATEGORY_CONFIG: Record<string, { label: string; gradient: string; Icon: React.ElementType }> = {
   venue:       { label: "Venue",       gradient: "from-emerald-500 to-green-700",  Icon: TreeDeciduous },
@@ -94,7 +105,15 @@ export function VendorCard({
   onDeleteExpense,
   onUpdateExpenseStatus,
 }: VendorCardProps) {
+  const t = useT();
   const [showExpenses, setShowExpenses] = useState(false);
+
+  const PAYMENT_STATUS_TRANSLATED: Record<string, string> = {
+    paid: t("suppliers.paymentPaid"),
+    partial: t("suppliers.paymentPartiallyPaid"),
+    unpaid: t("suppliers.paymentUnpaid"),
+    no_expenses: t("budget.noVendor"),
+  };
 
   const linkedExpenses = expenses.filter((e) => e.vendor_id === vendor.id);
   const finance = getVendorFinance(vendor, expenses);
@@ -109,22 +128,22 @@ export function VendorCard({
       ? await onDelete(vendor.id)
       : await deleteVendor(weddingId, vendor.id);
     if (result?.ok === false) toast.error(result.error);
-    else toast.success("Vendor removed");
+    else toast.success(t("suppliers.vendorDeleted"));
   }
 
   async function handleExpenseDelete(expenseId: string) {
     const result = onDeleteExpense
       ? await onDeleteExpense(expenseId)
       : await deleteExpense(weddingId, expenseId);
-    if (result?.ok === false) toast.error(result.error ?? "Failed to delete expense");
-    else toast.success("Expense removed");
+    if (result?.ok === false) toast.error(result.error ?? t("common.somethingWrong"));
+    else toast.success(t("budget.expenseDeleted"));
   }
 
   async function handleStatusChange(expenseId: string, status: PaymentStatus) {
     const result = onUpdateExpenseStatus
       ? await onUpdateExpenseStatus(expenseId, status)
       : await patchExpenseStatus(weddingId, expenseId, status);
-    if (result?.ok === false) toast.error(result.error ?? "Failed to update status");
+    if (result?.ok === false) toast.error(result.error ?? t("common.somethingWrong"));
   }
 
   function makeExpenseSubmitHandler(existing?: Expense) {
@@ -195,9 +214,9 @@ export function VendorCard({
               <p className="font-semibold text-base leading-snug truncate">{vendor.name}</p>
             )}
             <div className="mt-1 flex flex-wrap items-center gap-1.5">
-              <Badge variant={statusColors[vendor.status]} className="text-xs">{capitalize(vendor.status)}</Badge>
+              <Badge variant={statusColors[vendor.status]} className="text-xs">{VENDOR_STATUS_LABEL_KEYS[vendor.status] ? t(VENDOR_STATUS_LABEL_KEYS[vendor.status]) : capitalize(vendor.status)}</Badge>
               <Badge variant={paymentStatusVariant[finance.status]} className="text-xs">
-                {paymentStatusLabel[finance.status]}
+                {PAYMENT_STATUS_TRANSLATED[finance.status]}
               </Badge>
             </div>
           </div>
@@ -206,7 +225,7 @@ export function VendorCard({
               <VendorEmailDialog
                 weddingId={weddingId}
                 vendor={{ id: vendor.id, name: vendor.name, email: vendor.email }}
-                trigger={<Button variant="ghost" size="icon" className="h-7 w-7" title="Draft email"><Mail className="h-3.5 w-3.5" /></Button>}
+                trigger={<Button variant="ghost" size="icon" className="h-7 w-7" title={t("suppliers.emailVendor")}><Mail className="h-3.5 w-3.5" /></Button>}
               />
             )}
             <VendorFormDialog
@@ -217,8 +236,8 @@ export function VendorCard({
             />
             <ConfirmDialog
               trigger={<Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive"><Trash2 className="h-3.5 w-3.5" /></Button>}
-              title="Remove vendor"
-              description={`Remove "${vendor.name}"?`}
+              title={t("suppliers.confirmDelete")}
+              description={`"${vendor.name}"`}
               onConfirm={handleVendorDelete}
             />
           </div>
@@ -239,14 +258,14 @@ export function VendorCard({
               <span className="flex items-center gap-1">
                 <Users className="h-3 w-3" />
                 {vendor.min_capacity != null && vendor.max_capacity != null
-                  ? `${vendor.min_capacity}–${vendor.max_capacity} guests`
+                  ? `${vendor.min_capacity}–${vendor.max_capacity} ${t("suppliers.guests")}`
                   : vendor.max_capacity != null
-                    ? `Up to ${vendor.max_capacity} guests`
-                    : `From ${vendor.min_capacity} guests`}
+                    ? `≤ ${vendor.max_capacity} ${t("suppliers.guests")}`
+                    : `≥ ${vendor.min_capacity} ${t("suppliers.guests")}`}
               </span>
             )}
             {vendor.price_per_person != null && (
-              <span>From {formatCurrency(vendor.price_per_person, currency)}/person</span>
+              <span>{formatCurrency(vendor.price_per_person, currency)}/{t("suppliers.perPerson")}</span>
             )}
           </div>
         )}
@@ -266,7 +285,7 @@ export function VendorCard({
             )}
             {vendor.website && (
               <a href={vendor.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-foreground">
-                <Globe className="h-3 w-3" />Website
+                <Globe className="h-3 w-3" />{t("suppliers.website")}
               </a>
             )}
           </div>
@@ -275,11 +294,11 @@ export function VendorCard({
         {/* Finance summary */}
         <div className="grid grid-cols-2 gap-2 rounded-md bg-muted/50 p-2 text-sm">
           <div>
-            <p className="text-xs text-muted-foreground">Planned</p>
+            <p className="text-xs text-muted-foreground">{t("budget.planned")}</p>
             <p className="font-medium">{finance.planned != null ? formatCurrency(finance.planned, currency) : "—"}</p>
           </div>
           <div>
-            <p className="text-xs text-muted-foreground">Actual</p>
+            <p className="text-xs text-muted-foreground">{t("budget.actual")}</p>
             <p className={cn(
               "font-medium",
               finance.actual != null && finance.planned != null && finance.actual > finance.planned && "text-destructive",
@@ -300,8 +319,8 @@ export function VendorCard({
               <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", showExpenses && "rotate-180")} />
               <Receipt className="h-3 w-3" />
               {linkedExpenses.length === 0
-                ? "No linked expenses"
-                : `${linkedExpenses.length} expense${linkedExpenses.length !== 1 ? "s" : ""} · ${formatCurrency(finance.paidPartial, currency)} paid`}
+                ? t("suppliers.noLinkedExpenses")
+                : t("suppliers.expensesPaidSummary").replace("{count}", String(linkedExpenses.length)).replace("{paid}", formatCurrency(finance.paidPartial, currency))}
             </button>
 
             {categories && (
@@ -313,7 +332,7 @@ export function VendorCard({
                 onSubmit={makeExpenseSubmitHandler()}
                 trigger={
                   <Button variant="ghost" size="sm" className="h-6 gap-1 px-1.5 text-xs">
-                    <Plus className="h-3 w-3" />Add
+                    <Plus className="h-3 w-3" />{t("common.add")}
                   </Button>
                 }
               />
@@ -340,8 +359,8 @@ export function VendorCard({
                     </SelectTrigger>
                     <SelectContent>
                       {PAYMENT_STATUSES.map((s) => (
-                        <SelectItem key={s.value} value={s.value} className="text-xs">
-                          {s.label}
+                        <SelectItem key={s} value={s} className="text-xs">
+                          {t(PAYMENT_STATUS_LABEL_KEYS[s])}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -366,8 +385,8 @@ export function VendorCard({
                         <Trash2 className="h-3 w-3" />
                       </Button>
                     }
-                    title="Delete expense"
-                    description={`Delete "${exp.title}"?`}
+                    title={t("budget.confirmDeleteExpense")}
+                    description={`"${exp.title}"`}
                     onConfirm={() => handleExpenseDelete(exp.id)}
                   />
                 </div>

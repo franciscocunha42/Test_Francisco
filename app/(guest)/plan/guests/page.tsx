@@ -9,9 +9,11 @@ import { GuestFormDialog } from "@/components/GuestFormDialog";
 import { GuestImportDialog } from "@/components/GuestImportDialog";
 import { Button } from "@/components/ui/button";
 import { useGuestStore } from "@/lib/guest-store/store";
+import { useT } from "@/lib/i18n/provider";
 
 export default function GuestGuestsPage() {
   const router = useRouter();
+  const t = useT();
   const wedding = useGuestStore((s) => s.wedding);
   const guests = useGuestStore((s) => s.guests);
   const createGuest = useGuestStore((s) => s.createGuest);
@@ -34,8 +36,8 @@ export default function GuestGuestsPage() {
       <div className="space-y-6">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
-            <h1 className="font-serif text-2xl font-semibold">Guests &amp; RSVP</h1>
-            <p className="text-sm text-muted-foreground">{guests.length} guests · {attending} attending · {declined} declined · {pending} pending</p>
+            <h1 className="font-serif text-2xl font-semibold">{t("guests.title")}</h1>
+            <p className="text-sm text-muted-foreground">{guests.length} {t("guests.totalSuffix")} · {attending} {t("guests.attending").toLowerCase()} · {declined} {t("guests.notAttending").toLowerCase()} · {pending} {t("guests.pending").toLowerCase()}</p>
           </div>
           <div className="flex gap-2">
             <GuestImportDialog
@@ -54,12 +56,12 @@ export default function GuestGuestsPage() {
                 );
                 return { ok: true, count };
               }}
-              trigger={<Button variant="outline" size="sm"><Upload className="mr-1.5 h-3.5 w-3.5" />Import CSV</Button>}
+              trigger={<Button variant="outline" size="sm"><Upload className="mr-1.5 h-3.5 w-3.5" />{t("guests.importCsv")}</Button>}
             />
             <GuestFormDialog
               weddingId="guest"
               onSubmit={async (data) => { createGuest(data); return { ok: true }; }}
-              trigger={<Button size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" />Add Guest</Button>}
+              trigger={<Button size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" />{t("guests.addGuest")}</Button>}
             />
           </div>
         </div>

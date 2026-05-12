@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { useT } from "@/lib/i18n/provider";
 import type { Guest } from "@/lib/types/database";
 
 interface SendRsvpDialogProps {
@@ -19,6 +20,7 @@ interface SendRsvpDialogProps {
 }
 
 export function SendRsvpDialog({ weddingId, formId, guests, trigger }: SendRsvpDialogProps) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [sending, setSending] = useState(false);
   const [filter, setFilter] = useState<"pending" | "all">("pending");
@@ -59,8 +61,8 @@ export function SendRsvpDialog({ weddingId, formId, guests, trigger }: SendRsvpD
     if (result.errors.length > 0 && result.sent === 0) {
       toast.error(result.errors[0]);
     } else {
-      const parts = [`${result.sent} invitation${result.sent !== 1 ? "s" : ""} sent`];
-      if (result.skipped > 0) parts.push(`${result.skipped} skipped (no email)`);
+      const parts = [t("sendRsvp.toastSent").replace("{count}", String(result.sent))];
+      if (result.skipped > 0) parts.push(t("sendRsvp.toastSkipped").replace("{count}", String(result.skipped)));
       toast.success(parts.join(" · "));
       setOpen(false);
     }
@@ -76,7 +78,7 @@ export function SendRsvpDialog({ weddingId, formId, guests, trigger }: SendRsvpD
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Mail className="h-4 w-4" />Send RSVP Invitations
+            <Mail className="h-4 w-4" />{t("sendRsvp.title")}
           </DialogTitle>
         </DialogHeader>
 
@@ -95,25 +97,25 @@ export function SendRsvpDialog({ weddingId, formId, guests, trigger }: SendRsvpD
                 }}
                 className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${filter === f ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"}`}
               >
-                {f === "pending" ? "Pending RSVP" : "All guests"}
+                {f === "pending" ? t("sendRsvp.tabPending") : t("sendRsvp.tabAll")}
               </button>
             ))}
           </div>
 
           {noEmailCount > 0 && (
             <p className="rounded-md bg-amber-50 border border-amber-200 px-3 py-2 text-xs text-amber-800">
-              {noEmailCount} guest{noEmailCount !== 1 ? "s" : ""} without an email address will be skipped.
+              {t("sendRsvp.skipped").replace("{count}", String(noEmailCount))}
             </p>
           )}
 
           {filtered.length === 0 ? (
-            <p className="py-4 text-center text-sm text-muted-foreground">No guests with email addresses in this group.</p>
+            <p className="py-4 text-center text-sm text-muted-foreground">{t("sendRsvp.noEmails")}</p>
           ) : (
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">{selected.size} of {filtered.length} selected</span>
+                <span className="text-xs text-muted-foreground">{selected.size} {t("sendRsvp.selectedSuffix").replace("{total}", String(filtered.length))}</span>
                 <button onClick={toggleAll} className="text-xs text-primary hover:underline">
-                  {selected.size === filtered.length ? "Deselect all" : "Select all"}
+                  {selected.size === filtered.length ? t("sendRsvp.deselectAll") : t("sendRsvp.selectAll")}
                 </button>
               </div>
               <div className="max-h-56 overflow-y-auto rounded-md border divide-y">
@@ -128,7 +130,7 @@ export function SendRsvpDialog({ weddingId, formId, guests, trigger }: SendRsvpD
                       <p className="text-xs text-muted-foreground truncate">{g.email}</p>
                     </div>
                     <Badge variant={g.rsvp_status === "attending" ? "success" : g.rsvp_status === "not_attending" ? "destructive" : "secondary"} className="shrink-0 text-xs">
-                      {g.rsvp_status === "attending" ? "Attending" : g.rsvp_status === "not_attending" ? "Declined" : "Pending"}
+                      {g.rsvp_status === "attending" ? t("guests.attending") : g.rsvp_status === "not_attending" ? t("guests.statusDeclined") : t("guests.pending")}
                     </Badge>
                   </label>
                 ))}
@@ -138,10 +140,10 @@ export function SendRsvpDialog({ weddingId, formId, guests, trigger }: SendRsvpD
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+          <Button variant="outline" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
           <Button onClick={handleSend} disabled={sending || selected.size === 0}>
-            {sending ? "Sending…" : (
-              <><Send className="mr-1.5 h-3.5 w-3.5" />Send to {selected.size}</>
+            {sending ? t("sendRsvp.sending") : (
+              <><Send className="mr-1.5 h-3.5 w-3.5" />{t("sendRsvp.send")} {selected.size}</>
             )}
           </Button>
         </DialogFooter>

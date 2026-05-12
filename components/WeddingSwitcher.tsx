@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { formatDate } from "@/lib/utils/format";
 import { setDefaultWedding } from "@/lib/actions/wedding";
+import { useT } from "@/lib/i18n/provider";
 
 export interface WeddingEntry {
   id: string;
@@ -30,6 +31,7 @@ interface WeddingSwitcherProps {
 export function WeddingSwitcher({ currentWeddingId, weddings }: WeddingSwitcherProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const t = useT();
   const current = weddings.find((w) => w.id === currentWeddingId);
 
   const [optimisticDefault, setOptimisticDefault] = useOptimistic<string | null>(
@@ -49,7 +51,7 @@ export function WeddingSwitcher({ currentWeddingId, weddings }: WeddingSwitcherP
       setOptimisticDefault(weddingId);
       const result = await setDefaultWedding(weddingId);
       if (!result.ok) {
-        toast.error(result.error ?? "Failed to save default wedding");
+        toast.error(result.error ?? t("common.somethingWrong"));
       }
       router.refresh();
     });
@@ -62,7 +64,7 @@ export function WeddingSwitcher({ currentWeddingId, weddings }: WeddingSwitcherP
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="h-8 gap-1.5 max-w-[200px]">
           <Heart className="h-3.5 w-3.5 shrink-0 text-primary fill-primary" />
-          <span className="truncate text-xs">{current?.name ?? "Select wedding"}</span>
+          <span className="truncate text-xs">{current?.name ?? t("weddingSwitcher.select")}</span>
           <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>
@@ -86,7 +88,7 @@ export function WeddingSwitcher({ currentWeddingId, weddings }: WeddingSwitcherP
               {hasMultiple && (
                 <button
                   onClick={(e) => handleSetDefault(e, w.id)}
-                  title={isDefault ? "Default wedding (click to keep)" : "Set as default"}
+                  title={isDefault ? t("weddingSwitcher.isDefault") : t("weddingSwitcher.setDefault")}
                   className={`shrink-0 rounded p-0.5 transition-colors ${
                     isDefault ? "text-primary" : "text-muted-foreground hover:text-primary"
                   }`}
@@ -103,7 +105,7 @@ export function WeddingSwitcher({ currentWeddingId, weddings }: WeddingSwitcherP
           className="gap-1.5 cursor-pointer"
         >
           <Plus className="h-3.5 w-3.5" />
-          <span className="text-sm">New wedding</span>
+          <span className="text-sm">{t("weddingSwitcher.new")}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

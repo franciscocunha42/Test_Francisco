@@ -18,6 +18,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils/cn";
 import { SetBudgetDialog } from "@/components/SetBudgetDialog";
 import { generateDefaultTimelineTasks } from "@/lib/actions/timeline";
+import { useT } from "@/lib/i18n/provider";
 import type { Wedding } from "@/lib/types/database";
 
 interface SetupGuideProps {
@@ -36,6 +37,7 @@ export function SetupGuide({
   hasVendors,
 }: SetupGuideProps) {
   const router = useRouter();
+  const t = useT();
   const [budgetOpen, setBudgetOpen] = useState(false);
   const [generating, startGenerating] = useTransition();
 
@@ -43,27 +45,25 @@ export function SetupGuide({
     {
       key: "budget",
       icon: PiggyBank,
-      title: "Set your wedding budget",
-      description:
-        "Tell us how much you plan to spend. We'll split it across the seven default categories so the planned amounts add up to your total.",
+      title: t("setup.budget.title"),
+      description: t("setup.budget.desc"),
       done: budgetSet,
       action: (
         <Button onClick={() => setBudgetOpen(true)} size="sm">
-          {budgetSet ? "Update budget" : "Set budget"}
+          {budgetSet ? t("setup.budget.ctaUpdate") : t("setup.budget.ctaSet")}
         </Button>
       ),
     },
     {
       key: "tasks",
       icon: ListChecks,
-      title: "Generate your wedding checklist",
-      description:
-        "Pre-fill a timeline of tasks based on your wedding date. You can edit, complete or delete them as you go.",
+      title: t("setup.checklist.title"),
+      description: t("setup.checklist.desc"),
       done: hasTasks,
       action: hasTasks ? (
         <Button asChild variant="outline" size="sm">
           <Link href={`/${weddingId}/timeline`}>
-            Open checklist <ChevronRight className="ml-1 h-3.5 w-3.5" />
+            {t("setup.checklist.ctaOpen")} <ChevronRight className="ml-1 h-3.5 w-3.5" />
           </Link>
         </Button>
       ) : (
@@ -74,26 +74,25 @@ export function SetupGuide({
             startGenerating(async () => {
               const result = await generateDefaultTimelineTasks(weddingId);
               if (result?.ok === false) toast.error(result.error);
-              else { toast.success("Checklist generated"); router.refresh(); }
+              else { toast.success(t("timeline.tasksGenerated")); router.refresh(); }
             });
           }}
         >
           <Wand2 className="mr-1.5 h-3.5 w-3.5" />
-          {generating ? "Generating…" : wedding.wedding_date ? "Generate checklist" : "Add a date first"}
+          {generating ? t("setup.checklist.ctaGenerating") : wedding.wedding_date ? t("setup.checklist.ctaGenerate") : t("setup.checklist.needDate")}
         </Button>
       ),
     },
     {
       key: "vendors",
       icon: Search,
-      title: "Browse and shortlist vendors",
-      description:
-        "Explore the venue directory and add the ones you like to your shortlist. We'll keep their contact info for you.",
+      title: t("setup.vendors.title"),
+      description: t("setup.vendors.desc"),
       done: hasVendors,
       action: (
         <Button asChild size="sm" variant={hasVendors ? "outline" : "default"}>
           <Link href={`/${weddingId}/suppliers`}>
-            {hasVendors ? "Manage suppliers" : "Browse vendors"}
+            {hasVendors ? t("setup.vendors.ctaManage") : t("setup.vendors.ctaBrowse")}
             <ChevronRight className="ml-1 h-3.5 w-3.5" />
           </Link>
         </Button>
@@ -102,14 +101,13 @@ export function SetupGuide({
     {
       key: "members",
       icon: UserPlus,
-      title: "Invite your partner or planner",
-      description:
-        "Share access with your partner or wedding planner so they can edit or view your plans.",
+      title: t("setup.invite.title"),
+      description: t("setup.invite.desc"),
       done: false,
       action: (
         <Button asChild size="sm" variant="outline">
           <Link href={`/${weddingId}/settings#members`}>
-            Invite people <ChevronRight className="ml-1 h-3.5 w-3.5" />
+            {t("setup.invite.cta")} <ChevronRight className="ml-1 h-3.5 w-3.5" />
           </Link>
         </Button>
       ),
@@ -124,14 +122,14 @@ export function SetupGuide({
         <CardContent className="p-0">
           <div className="flex items-center justify-between border-b p-4">
             <div>
-              <p className="text-sm font-semibold">Initial setup</p>
+              <p className="text-sm font-semibold">{t("setup.title")}</p>
               <p className="text-xs text-muted-foreground">
-                {completed} of {steps.length} complete
+                {completed} {t("setup.progress").replace("{total}", String(steps.length))}
               </p>
             </div>
             <Button asChild variant="ghost" size="sm">
               <Link href={`/${weddingId}/dashboard`}>
-                Skip for now <ChevronRight className="ml-1 h-3.5 w-3.5" />
+                {t("setup.skip")} <ChevronRight className="ml-1 h-3.5 w-3.5" />
               </Link>
             </Button>
           </div>
@@ -165,7 +163,7 @@ export function SetupGuide({
           </ol>
           <div className="border-t bg-muted/30 p-4 text-center">
             <Button asChild variant="ghost" size="sm">
-              <Link href={`/${weddingId}/dashboard`}>Go to dashboard</Link>
+              <Link href={`/${weddingId}/dashboard`}>{t("setup.goToDashboard")}</Link>
             </Button>
           </div>
         </CardContent>

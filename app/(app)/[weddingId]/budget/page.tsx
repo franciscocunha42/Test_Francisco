@@ -9,11 +9,13 @@ import { ExpenseFormDialog } from "@/components/ExpenseFormDialog";
 import { EmptyState } from "@/components/EmptyState";
 import { Button } from "@/components/ui/button";
 import { PiggyBank, Plus } from "lucide-react";
+import { getServerT } from "@/lib/i18n/server";
 
 export default async function BudgetPage({ params }: { params: { weddingId: string } }) {
   const { weddingId } = params;
   await requireWeddingMember(weddingId);
   const supabase = createClient();
+  const t = getServerT();
 
   const [weddingRes, categoriesRes, expensesRes, vendorsRes] = await Promise.all([
     supabase.from("weddings").select("*").eq("id", weddingId).single(),
@@ -32,16 +34,16 @@ export default async function BudgetPage({ params }: { params: { weddingId: stri
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="font-serif text-2xl font-semibold">Budget</h1>
-          <p className="text-sm text-muted-foreground">Track planned vs actual wedding costs</p>
+          <h1 className="font-serif text-2xl font-semibold">{t("budget.title")}</h1>
+          <p className="text-sm text-muted-foreground">{t("budget.subtitle")}</p>
         </div>
         <div className="flex gap-2">
-          <CategoryFormDialog weddingId={weddingId} trigger={<Button variant="outline" size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" />Category</Button>} />
+          <CategoryFormDialog weddingId={weddingId} trigger={<Button variant="outline" size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" />{t("budget.category")}</Button>} />
           <ExpenseFormDialog
             weddingId={weddingId}
             categories={allCategories}
             vendors={allVendors as { id: string; name: string }[]}
-            trigger={<Button size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" />Expense</Button>}
+            trigger={<Button size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" />{t("budget.expense")}</Button>}
           />
         </div>
       </div>
@@ -53,9 +55,9 @@ export default async function BudgetPage({ params }: { params: { weddingId: stri
       {allCategories.length === 0 ? (
         <EmptyState
           icon={PiggyBank}
-          title="No budget categories yet"
-          description="Create categories like Venue, Catering, Photography to start tracking spending."
-          action={<CategoryFormDialog weddingId={weddingId} trigger={<Button><Plus className="mr-1.5 h-4 w-4" />Add Category</Button>} />}
+          title={t("budget.title")}
+          description={t("budget.emptyDesc")}
+          action={<CategoryFormDialog weddingId={weddingId} trigger={<Button><Plus className="mr-1.5 h-4 w-4" />{t("budget.addCategory")}</Button>} />}
         />
       ) : (
         <>

@@ -20,6 +20,7 @@ import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { SeatingTableFormDialog } from "@/components/SeatingTableFormDialog";
 import { SeatingImportDialog } from "@/components/SeatingImportDialog";
 import { EmptyState } from "@/components/EmptyState";
+import { useT } from "@/lib/i18n/provider";
 import type { Guest, SeatingTable } from "@/lib/types/database";
 import type { parseSeatingCsv } from "@/lib/utils/csv";
 
@@ -54,6 +55,7 @@ export function SeatingPlan({
   onEditTableSubmit,
   onImport,
 }: SeatingPlanProps) {
+  const t = useT();
   const [pendingAssign, setPendingAssign] = useState<Record<string, boolean>>({});
 
   // Only attending guests are candidates for seating, but we still show
@@ -93,7 +95,7 @@ export function SeatingPlan({
       return rest;
     });
     if (result.ok === false) { toast.error(result.error); return; }
-    toast.success(tableId ? "Guest seated" : "Guest unassigned");
+    toast.success(tableId ? t("guests.guestSeated") : t("guests.guestUnassigned"));
   }
 
   async function handleDeleteTable(table: SeatingTable) {
@@ -101,12 +103,12 @@ export function SeatingPlan({
       ? await onDeleteTable(table.id)
       : await deleteSeatingTable(weddingId, table.id);
     if (result.ok === false) toast.error(result.error);
-    else toast.success(`${table.name} removed`);
+    else toast.success(t("seating.tableRemoved").replace("{name}", table.name));
   }
 
   function handleExport() {
     if (tables.length === 0) {
-      toast.error("No tables to export");
+      toast.error(t("seating.noTablesToExport"));
       return;
     }
     const rows: Record<string, string | number>[] = [];
@@ -136,28 +138,28 @@ export function SeatingPlan({
       }
     }
     exportToCsv(rows, "vowplan-seating-plan.csv");
-    toast.success("Seating plan exported");
+    toast.success(t("seating.planExported"));
   }
 
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="font-serif text-2xl font-semibold">Seating Plan</h1>
+          <h1 className="font-serif text-2xl font-semibold">{t("seating.planTitle")}</h1>
           <p className="text-sm text-muted-foreground">
-            {tables.length} {tables.length === 1 ? "table" : "tables"} · {totalAssigned} of {attendingGuests.length} attending guests seated
+            {tables.length} {tables.length === 1 ? t("seating.tableSingular") : t("seating.tablePlural")} · {t("seating.seatedSummary").replace("{seated}", String(totalAssigned)).replace("{total}", String(attendingGuests.length))}
           </p>
         </div>
         <div className="flex gap-2 flex-wrap">
           <Button variant="outline" size="sm" onClick={handleExport}>
-            <Download className="mr-1.5 h-3.5 w-3.5" />Export
+            <Download className="mr-1.5 h-3.5 w-3.5" />{t("seating.exportCsv")}
           </Button>
           <SeatingImportDialog
             weddingId={weddingId}
             onImport={onImport}
             trigger={
               <Button variant="outline" size="sm">
-                <Upload className="mr-1.5 h-3.5 w-3.5" />Import CSV
+                <Upload className="mr-1.5 h-3.5 w-3.5" />{t("seating.importCsv")}
               </Button>
             }
           />
@@ -166,7 +168,7 @@ export function SeatingPlan({
             onSubmit={onCreateTableSubmit}
             trigger={
               <Button size="sm">
-                <Plus className="mr-1.5 h-3.5 w-3.5" />Add Table
+                <Plus className="mr-1.5 h-3.5 w-3.5" />{t("seating.addTable")}
               </Button>
             }
           />
@@ -175,21 +177,21 @@ export function SeatingPlan({
 
       <Tabs defaultValue="tables" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="tables">Tables</TabsTrigger>
-          <TabsTrigger value="summary">Summary</TabsTrigger>
+          <TabsTrigger value="tables">{t("seating.tabTables")}</TabsTrigger>
+          <TabsTrigger value="summary">{t("seating.tabSummary")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="tables" className="space-y-4">
           {tables.length === 0 ? (
             <EmptyState
               icon={Armchair}
-              title="No tables yet"
-              description="Create your first table to start placing guests."
+              title={t("seating.emptyTitle")}
+              description={t("seating.emptyDesc")}
               action={
                 <SeatingTableFormDialog
                   weddingId={weddingId}
                   onSubmit={onCreateTableSubmit}
-                  trigger={<Button><Plus className="mr-1.5 h-4 w-4" />Add Table</Button>}
+                  trigger={<Button><Plus className="mr-1.5 h-4 w-4" />{t("seating.addTable")}</Button>}
                 />
               }
             />
@@ -204,23 +206,23 @@ export function SeatingPlan({
                 onAssign={handleAssign}
               />
               <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {tables.map((t) => {
-                  const seated = guestsByTable.get(t.id) ?? [];
-                  const free = t.capacity - seated.length;
+                {tables.map((tbl) => {
+                  const seated = guestsByTable.get(tbl.id) ?? [];
+                  const free = tbl.capacity - seated.length;
                   return (
-                    <Card key={t.id}>
+                    <Card key={tbl.id}>
                       <CardHeader className="pb-2">
                         <div className="flex items-start justify-between gap-2">
                           <div className="min-w-0">
-                            <CardTitle className="text-base truncate">{t.name}</CardTitle>
+                            <CardTitle className="text-base truncate">{tbl.name}</CardTitle>
                             <p className="mt-0.5 text-xs text-muted-foreground">
-                              {seated.length} / {t.capacity} seats {free === 0 ? "· full" : ""}
+                              {seated.length} / {tbl.capacity} {t("seating.seats")} {free === 0 ? `· ${t("seating.full")}` : ""}
                             </p>
                           </div>
                           <div className="flex items-center gap-1 shrink-0">
                             <SeatingTableFormDialog
                               weddingId={weddingId}
-                              table={t}
+                              table={tbl}
                               onSubmit={onEditTableSubmit}
                               trigger={
                                 <Button variant="ghost" size="icon" className="h-7 w-7">
@@ -234,9 +236,9 @@ export function SeatingPlan({
                                   <Trash2 className="h-3.5 w-3.5" />
                                 </Button>
                               }
-                              title="Remove table"
-                              description={`Remove ${t.name}? Guests on this table will be unassigned.`}
-                              onConfirm={() => handleDeleteTable(t)}
+                              title={t("seating.removeTable")}
+                              description={t("seating.removeTableConfirm").replace("{name}", tbl.name)}
+                              onConfirm={() => handleDeleteTable(tbl)}
                             />
                           </div>
                         </div>
@@ -245,12 +247,12 @@ export function SeatingPlan({
                         <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                           <div
                             className={`h-full transition-all ${free === 0 ? "bg-primary" : "bg-emerald-500"}`}
-                            style={{ width: `${Math.min(100, (seated.length / t.capacity) * 100)}%` }}
+                            style={{ width: `${Math.min(100, (seated.length / tbl.capacity) * 100)}%` }}
                           />
                         </div>
                         {seated.length === 0 ? (
                           <p className="rounded-md border border-dashed py-3 text-center text-xs text-muted-foreground">
-                            No guests assigned
+                            {t("seating.noGuestsAssigned")}
                           </p>
                         ) : (
                           <ul className="space-y-1">
@@ -276,7 +278,7 @@ export function SeatingPlan({
                                   className="h-6 w-6 shrink-0 text-muted-foreground hover:text-destructive"
                                   disabled={!!pendingAssign[g.id]}
                                   onClick={() => handleAssign(g.id, null)}
-                                  title="Remove from table"
+                                  title={t("seating.removeFromTable")}
                                 >
                                   <X className="h-3.5 w-3.5" />
                                 </Button>
@@ -286,11 +288,11 @@ export function SeatingPlan({
                         )}
                         {free > 0 && unassigned.length > 0 && (
                           <Select
-                            onValueChange={(v) => handleAssign(v, t.id)}
+                            onValueChange={(v) => handleAssign(v, tbl.id)}
                             value=""
                           >
                             <SelectTrigger className="h-8 text-xs">
-                              <SelectValue placeholder="Add guest…" />
+                              <SelectValue placeholder={t("seating.addGuest")} />
                             </SelectTrigger>
                             <SelectContent>
                               {unassigned.map((g) => (
@@ -313,10 +315,10 @@ export function SeatingPlan({
         <TabsContent value="summary" className="space-y-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
-              { label: "Tables",            value: tables.length,            icon: Armchair, color: "text-primary" },
-              { label: "Total Seats",       value: totalSeats,                icon: Armchair, color: "text-sky-600" },
-              { label: "Allocated",         value: allocatedAttending,        icon: Users,    color: "text-emerald-600" },
-              { label: "Unallocated",       value: unassigned.length,         icon: Users,    color: "text-amber-600" },
+              { label: t("seating.totalTables"),  value: tables.length,            icon: Armchair, color: "text-primary" },
+              { label: t("seating.totalSeats"),   value: totalSeats,                icon: Armchair, color: "text-sky-600" },
+              { label: t("seating.allocated"),    value: allocatedAttending,        icon: Users,    color: "text-emerald-600" },
+              { label: t("seating.unallocated"),  value: unassigned.length,         icon: Users,    color: "text-amber-600" },
             ].map(({ label, value, icon: Icon, color }) => (
               <Card key={label}>
                 <CardContent className="flex items-center gap-3 p-4">
@@ -332,34 +334,34 @@ export function SeatingPlan({
 
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-base">Table breakdown</CardTitle>
+              <CardTitle className="text-base">{t("seating.breakdown")}</CardTitle>
             </CardHeader>
             <CardContent>
               {tables.length === 0 ? (
-                <p className="py-6 text-center text-sm text-muted-foreground">No tables yet.</p>
+                <p className="py-6 text-center text-sm text-muted-foreground">{t("seating.emptyTitle")}</p>
               ) : (
                 <div className="overflow-hidden rounded-md border">
                   <table className="w-full text-sm">
                     <thead className="bg-muted/50">
                       <tr>
-                        <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">Table</th>
-                        <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">Filled</th>
-                        <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">Empty</th>
-                        <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">Capacity</th>
-                        <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">Status</th>
+                        <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">{t("seating.colTable")}</th>
+                        <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">{t("seating.colFilled")}</th>
+                        <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">{t("seating.colEmpty")}</th>
+                        <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">{t("seating.colCapacity")}</th>
+                        <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">{t("seating.colStatus")}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y">
-                      {tables.map((t) => {
-                        const filled = (guestsByTable.get(t.id) ?? []).length;
-                        const empty = t.capacity - filled;
+                      {tables.map((tbl) => {
+                        const filled = (guestsByTable.get(tbl.id) ?? []).length;
+                        const empty = tbl.capacity - filled;
                         const status = filled === 0 ? "empty" : empty === 0 ? "full" : "partial";
                         return (
-                          <tr key={t.id} className="hover:bg-muted/30 transition-colors">
-                            <td className="px-4 py-2.5 font-medium">{t.name}</td>
+                          <tr key={tbl.id} className="hover:bg-muted/30 transition-colors">
+                            <td className="px-4 py-2.5 font-medium">{tbl.name}</td>
                             <td className="px-4 py-2.5">{filled}</td>
                             <td className="px-4 py-2.5">{empty}</td>
-                            <td className="px-4 py-2.5 text-muted-foreground">{t.capacity}</td>
+                            <td className="px-4 py-2.5 text-muted-foreground">{tbl.capacity}</td>
                             <td className="px-4 py-2.5">
                               <Badge
                                 variant={
@@ -368,7 +370,7 @@ export function SeatingPlan({
                                   : "default"
                                 }
                               >
-                                {status === "full" ? "Full" : status === "empty" ? "Empty" : "Partial"}
+                                {status === "full" ? t("seating.statusFull") : status === "empty" ? t("seating.statusEmpty") : t("seating.statusPartial")}
                               </Badge>
                             </td>
                           </tr>
@@ -398,12 +400,13 @@ interface UnassignedGuestsCardProps {
 function UnassignedGuestsCard({
   tables, guestsByTable, unassigned, pendingAssign, onAssign,
 }: UnassignedGuestsCardProps) {
+  const t = useT();
   if (unassigned.length === 0) {
     return (
       <Card>
         <CardContent className="flex items-center gap-3 p-4">
           <Users className="h-5 w-5 text-emerald-600" />
-          <p className="text-sm">All attending guests are seated.</p>
+          <p className="text-sm">{t("seating.allSeated")}</p>
         </CardContent>
       </Card>
     );
@@ -412,7 +415,7 @@ function UnassignedGuestsCard({
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-base">Unassigned ({unassigned.length})</CardTitle>
+        <CardTitle className="text-base">{t("seating.unassigned")} ({unassigned.length})</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="flex flex-wrap gap-2">
@@ -420,7 +423,7 @@ function UnassignedGuestsCard({
             <div
               key={g.id}
               className={`flex items-center gap-2 rounded-md border px-2.5 py-1 text-sm ${g.dietary_requirements ? "bg-amber-50/50 border-amber-200" : "bg-muted/40"}`}
-              title={g.dietary_requirements ? `Dietary: ${g.dietary_requirements}` : undefined}
+              title={g.dietary_requirements ? `${t("guests.dietary")}: ${g.dietary_requirements}` : undefined}
             >
               {g.dietary_requirements && (
                 <span className="text-amber-600 text-xs font-bold">⚠</span>
@@ -432,15 +435,15 @@ function UnassignedGuestsCard({
                 disabled={!!pendingAssign[g.id]}
               >
                 <SelectTrigger className="h-7 w-[130px] text-xs">
-                  <SelectValue placeholder="Seat at…" />
+                  <SelectValue placeholder={t("seating.seatAt")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {tables.map((t) => {
-                    const filled = (guestsByTable.get(t.id) ?? []).length;
-                    const free = t.capacity - filled;
+                  {tables.map((tbl) => {
+                    const filled = (guestsByTable.get(tbl.id) ?? []).length;
+                    const free = tbl.capacity - filled;
                     return (
-                      <SelectItem key={t.id} value={t.id} disabled={free <= 0}>
-                        {t.name} ({free} free)
+                      <SelectItem key={tbl.id} value={tbl.id} disabled={free <= 0}>
+                        {tbl.name} ({free} {t("seating.freeSuffix")})
                       </SelectItem>
                     );
                   })}

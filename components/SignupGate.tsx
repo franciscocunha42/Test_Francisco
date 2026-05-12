@@ -9,6 +9,7 @@ import { SignupForm } from "@/components/auth/SignupForm";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { useGuestStore, getGuestSnapshot, hasGuestData } from "@/lib/guest-store/store";
 import { claimGuestWedding } from "@/lib/actions/claim";
+import { useT } from "@/lib/i18n/provider";
 
 interface SignupGateProps {
   open: boolean;
@@ -23,6 +24,7 @@ interface SignupGateProps {
 
 export function SignupGate({ open, actionLabel, onClose, onAuthed }: SignupGateProps) {
   const router = useRouter();
+  const t = useT();
   const [mode, setMode] = useState<"signup" | "login">("signup");
 
   async function handleAuthSuccess() {
@@ -30,11 +32,11 @@ export function SignupGate({ open, actionLabel, onClose, onAuthed }: SignupGateP
       const snapshot = getGuestSnapshot();
       const result = await claimGuestWedding(snapshot);
       if (!result.ok) {
-        toast.error(`Couldn't save your data: ${result.error}`);
+        toast.error(`${t("signupGate.failedSave")}: ${result.error}`);
         return;
       }
       useGuestStore.getState().reset();
-      toast.success("Your wedding has been saved");
+      toast.success(t("signupGate.savedToast"));
       await onAuthed?.(result.weddingId);
       onClose();
       router.push(`/${result.weddingId}/dashboard`);
@@ -47,38 +49,38 @@ export function SignupGate({ open, actionLabel, onClose, onAuthed }: SignupGateP
     router.refresh();
   }
 
+  const titleTemplate = mode === "signup" ? t("signupGate.createAccountToLabel") : t("signupGate.signInToLabel");
+
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {mode === "signup" ? "Create an account to" : "Sign in to"} {actionLabel}
+            {titleTemplate.replace("{label}", actionLabel)}
           </DialogTitle>
           <DialogDescription>
-            {mode === "signup"
-              ? "Your wedding planning so far will be saved to your new account."
-              : "We'll move your guest planning into your account."}
+            {mode === "signup" ? t("signupGate.descSignup") : t("signupGate.descLogin")}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           {mode === "signup" ? (
-            <SignupForm onSuccess={handleAuthSuccess} submitLabel="Create account & continue" />
+            <SignupForm onSuccess={handleAuthSuccess} submitLabel={t("signupGate.submitSignup")} />
           ) : (
-            <LoginForm onSuccess={handleAuthSuccess} submitLabel="Sign in & continue" />
+            <LoginForm onSuccess={handleAuthSuccess} submitLabel={t("signupGate.submitLogin")} />
           )}
           <div className="text-center text-sm text-muted-foreground">
             {mode === "signup" ? (
               <>
-                Already have an account?{" "}
+                {t("auth.alreadyHaveAccount")}{" "}
                 <Button variant="link" className="p-0 h-auto" onClick={() => setMode("login")}>
-                  Sign in
+                  {t("auth.signInLink")}
                 </Button>
               </>
             ) : (
               <>
-                New to VowPlan?{" "}
+                {t("signupGate.newPrompt")}{" "}
                 <Button variant="link" className="p-0 h-auto" onClick={() => setMode("signup")}>
-                  Create an account
+                  {t("signupGate.createAccount")}
                 </Button>
               </>
             )}
