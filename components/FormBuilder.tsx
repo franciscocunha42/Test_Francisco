@@ -9,16 +9,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { useT } from "@/lib/i18n/provider";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
 import type { FormQuestion, QuestionType } from "@/lib/types/database";
 
-const QUESTION_TYPES: { value: QuestionType; label: string }[] = [
-  { value: "text", label: "Short Text" },
-  { value: "textarea", label: "Long Text" },
-  { value: "email", label: "Email" },
-  { value: "phone", label: "Phone" },
-  { value: "select", label: "Dropdown" },
-  { value: "radio", label: "Single Choice" },
-  { value: "checkbox", label: "Multiple Choice" },
+const QUESTION_TYPES: { value: QuestionType; labelKey: TranslationKey }[] = [
+  { value: "text",     labelKey: "forms.qtText" },
+  { value: "textarea", labelKey: "forms.qtTextarea" },
+  { value: "email",    labelKey: "forms.qtEmail" },
+  { value: "phone",    labelKey: "forms.qtPhone" },
+  { value: "select",   labelKey: "forms.qtSelect" },
+  { value: "radio",    labelKey: "forms.qtRadio" },
+  { value: "checkbox", labelKey: "forms.qtCheckbox" },
 ];
 
 interface LocalQuestion {
@@ -37,6 +39,7 @@ interface FormBuilderProps {
 }
 
 export function FormBuilder({ weddingId, formId, initialQuestions }: FormBuilderProps) {
+  const t = useT();
   const [questions, setQuestions] = useState<LocalQuestion[]>(
     initialQuestions.map((q) => ({
       id: q.id,
@@ -69,7 +72,7 @@ export function FormBuilder({ weddingId, formId, initialQuestions }: FormBuilder
     const result = await upsertFormQuestions(weddingId, formId, questions);
     setSaving(false);
     if (result?.ok === false) toast.error(result.error);
-    else toast.success("Questions saved");
+    else toast.success(t("forms.questionsSaved"));
   }
 
   return (
@@ -80,16 +83,16 @@ export function FormBuilder({ weddingId, formId, initialQuestions }: FormBuilder
             <GripVertical className="h-5 w-5 shrink-0 text-muted-foreground mt-2" />
             <div className="flex-1 space-y-3">
               <div className="space-y-1">
-                <Label>Question</Label>
+                <Label>{t("forms.question")}</Label>
                 <Input
                   value={q.question_text}
                   onChange={(e) => updateQuestion(i, { question_text: e.target.value })}
-                  placeholder="Enter question..."
+                  placeholder={t("forms.questionPlaceholder")}
                 />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label>Type</Label>
+                  <Label>{t("forms.type")}</Label>
                   <Select
                     value={q.question_type}
                     onValueChange={(v) => updateQuestion(i, {
@@ -99,7 +102,7 @@ export function FormBuilder({ weddingId, formId, initialQuestions }: FormBuilder
                   >
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      {QUESTION_TYPES.map((t) => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                      {QUESTION_TYPES.map((qt) => <SelectItem key={qt.value} value={qt.value}>{t(qt.labelKey)}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
@@ -109,17 +112,16 @@ export function FormBuilder({ weddingId, formId, initialQuestions }: FormBuilder
                     checked={q.required}
                     onCheckedChange={(v) => updateQuestion(i, { required: v })}
                   />
-                  <Label htmlFor={`req-${i}`}>Required</Label>
+                  <Label htmlFor={`req-${i}`}>{t("forms.required")}</Label>
                 </div>
               </div>
               {["select", "radio", "checkbox"].includes(q.question_type) && (
                 <div className="space-y-1">
-                  <Label>Options (one per line)</Label>
+                  <Label>{t("forms.optionsPerLine")}</Label>
                   <textarea
                     className="flex min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     value={(q.options_json ?? []).join("\n")}
                     onChange={(e) => updateQuestion(i, { options_json: e.target.value.split("\n").filter(Boolean) })}
-                    placeholder="Option 1&#10;Option 2&#10;Option 3"
                   />
                 </div>
               )}
@@ -132,10 +134,10 @@ export function FormBuilder({ weddingId, formId, initialQuestions }: FormBuilder
       ))}
       <div className="flex gap-2">
         <Button variant="outline" onClick={addQuestion}>
-          <Plus className="h-4 w-4 mr-1" />Add Question
+          <Plus className="h-4 w-4 mr-1" />{t("forms.addQuestion")}
         </Button>
         <Button onClick={handleSave} disabled={saving}>
-          {saving ? "Saving..." : "Save Questions"}
+          {saving ? t("common.saving") : t("forms.saveQuestions")}
         </Button>
       </div>
     </div>

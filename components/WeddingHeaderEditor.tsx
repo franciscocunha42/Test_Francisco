@@ -9,6 +9,7 @@ import { WeddingDetailsDialog } from "@/components/WeddingDetailsDialog";
 import type { WeddingDetailsInput } from "@/components/WeddingDetailsDialog";
 import { formatDate } from "@/lib/utils/format";
 import { patchWeddingInline } from "@/lib/actions/wedding";
+import { useT } from "@/lib/i18n/provider";
 import type { Wedding } from "@/lib/types/database";
 
 interface WeddingHeaderEditorProps {
@@ -18,11 +19,12 @@ interface WeddingHeaderEditorProps {
 
 export function WeddingHeaderEditor({ wedding, weddingId }: WeddingHeaderEditorProps) {
   const router = useRouter();
+  const t = useT();
   const [editOpen, setEditOpen] = useState(false);
 
   async function handleSave(data: WeddingDetailsInput) {
     const result = await patchWeddingInline(weddingId, data);
-    if (!result.ok) throw new Error(result.error ?? "Failed to save");
+    if (!result.ok) throw new Error(result.error ?? t("common.somethingWrong"));
     router.refresh();
   }
 
@@ -31,13 +33,13 @@ export function WeddingHeaderEditor({ wedding, weddingId }: WeddingHeaderEditorP
       <div>
         <div className="flex items-center gap-2">
           <Heart className="h-5 w-5 text-primary fill-primary" />
-          <h1 className="font-serif text-2xl font-semibold">{wedding.name ?? "Dashboard"}</h1>
+          <h1 className="font-serif text-2xl font-semibold">{wedding.name ?? t("nav.dashboard")}</h1>
           <Button
             variant="ghost"
             size="icon"
             className="h-7 w-7 text-muted-foreground hover:text-foreground"
             onClick={() => setEditOpen(true)}
-            aria-label="Edit wedding details"
+            aria-label={t("common.edit")}
           >
             <Pencil className="h-3.5 w-3.5" />
           </Button>
@@ -62,7 +64,7 @@ export function WeddingHeaderEditor({ wedding, weddingId }: WeddingHeaderEditorP
       </div>
 
       <Button variant="outline" size="sm" asChild>
-        <Link href={`/${weddingId}/settings`}>Settings</Link>
+        <Link href={`/${weddingId}/settings`}>{t("nav.settings")}</Link>
       </Button>
 
       <WeddingDetailsDialog

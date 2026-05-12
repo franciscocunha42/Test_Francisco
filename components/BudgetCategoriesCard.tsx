@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils/cn";
 import { toRgba } from "@/lib/utils/budget-colors";
 import { getCategoryEmoji } from "@/lib/utils/category-emojis";
 import { deleteBudgetCategory } from "@/lib/actions/budget";
+import { useT } from "@/lib/i18n/provider";
 import type { BudgetCategory } from "@/lib/types/database";
 import type { BudgetCategoryFormValues } from "@/lib/schemas/budget";
 
@@ -72,21 +73,22 @@ export function BudgetCategoriesCard({
   selectedCategoryId,
   onCategoryClick,
 }: Props) {
+  const t = useT();
   return (
     <Card>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-base">Categories</CardTitle>
+          <CardTitle className="text-base">{t("budget.categoriesCard")}</CardTitle>
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
               size="sm"
               onClick={onSortToggle}
               className="h-7 gap-1.5 px-2 text-xs text-muted-foreground"
-              title={sortOrder === "desc" ? "Sorted: highest first" : "Sorted: lowest first"}
+              title={sortOrder === "desc" ? t("budget.sortDescending") : t("budget.sortAscending")}
             >
               <ArrowDownUp className="h-3.5 w-3.5" />
-              {sortOrder === "desc" ? "High → Low" : "Low → High"}
+              {sortOrder === "desc" ? "↓" : "↑"}
             </Button>
             <CategoryFormDialog
               weddingId={weddingId}
@@ -158,8 +160,8 @@ export function BudgetCategoriesCard({
                         <Trash2 className="h-3 w-3" />
                       </button>
                     }
-                    title="Delete category"
-                    description={`Delete "${cat.name}"?`}
+                    title={t("budget.deleteCategoryTitle")}
+                    description={`"${cat.name}"`}
                     onConfirm={
                       onDeleteCategory
                         ? () => onDeleteCategory(cat.id)

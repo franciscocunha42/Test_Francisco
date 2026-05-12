@@ -7,6 +7,7 @@ import { parseGuestCsv, downloadGuestCsvTemplate, decodeCsvFile } from "@/lib/ut
 import { bulkImportGuests } from "@/lib/actions/guest";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useT } from "@/lib/i18n/provider";
 
 interface GuestImportDialogProps {
   weddingId: string;
@@ -15,6 +16,7 @@ interface GuestImportDialogProps {
 }
 
 export function GuestImportDialog({ weddingId, trigger, onImport }: GuestImportDialogProps) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const [preview, setPreview] = useState<{ data: ReturnType<typeof parseGuestCsv>["data"]; errors: string[] } | null>(null);
   const [importing, setImporting] = useState(false);
@@ -33,7 +35,7 @@ export function GuestImportDialog({ weddingId, trigger, onImport }: GuestImportD
       : await bulkImportGuests(weddingId, preview.data);
     setImporting(false);
     if (result?.ok === false) { toast.error(result.error); return; }
-    toast.success(`Imported ${result.count ?? preview.data.length} guests`);
+    toast.success(t("import.importedGuests").replace("{count}", String(result.count ?? preview.data.length)));
     setOpen(false);
     setPreview(null);
   }
@@ -42,11 +44,11 @@ export function GuestImportDialog({ weddingId, trigger, onImport }: GuestImportD
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
-        <DialogHeader><DialogTitle>Import Guests from CSV</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{t("import.guestsTitle")}</DialogTitle></DialogHeader>
         <div className="space-y-4">
           <div className="flex items-start justify-between gap-3">
             <p className="text-sm text-muted-foreground">
-              CSV must have headers: <code className="font-mono text-xs bg-muted px-1 rounded">first_name, last_name</code>. Optional: email, phone, party_name, dietary_requirements, plus_one_allowed.
+              {t("import.guestsHeaders")}
             </p>
             <Button
               type="button"
@@ -56,7 +58,7 @@ export function GuestImportDialog({ weddingId, trigger, onImport }: GuestImportD
               onClick={() => downloadGuestCsvTemplate()}
             >
               <Download className="mr-1.5 h-3.5 w-3.5" />
-              Template
+              {t("import.template")}
             </Button>
           </div>
           <div
@@ -66,7 +68,7 @@ export function GuestImportDialog({ weddingId, trigger, onImport }: GuestImportD
             onDragOver={(e) => e.preventDefault()}
           >
             <Upload className="h-8 w-8 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">Drop CSV here or click to browse</p>
+            <p className="text-sm text-muted-foreground">{t("import.dropZone")}</p>
             <input ref={inputRef} type="file" accept=".csv" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }} />
           </div>
           {preview && (
@@ -76,15 +78,15 @@ export function GuestImportDialog({ weddingId, trigger, onImport }: GuestImportD
                   {preview.errors.map((e, i) => <p key={i}>{e}</p>)}
                 </div>
               )}
-              <p className="mb-2 text-sm font-medium">Preview ({preview.data.length} rows)</p>
+              <p className="mb-2 text-sm font-medium">{t("import.preview").replace("{count}", String(preview.data.length))}</p>
               <div className="max-h-48 overflow-y-auto rounded border text-xs">
                 <table className="w-full">
                   <thead className="bg-muted/50 sticky top-0">
                     <tr>
-                      <th className="px-2 py-1.5 text-left">First</th>
-                      <th className="px-2 py-1.5 text-left">Last</th>
-                      <th className="px-2 py-1.5 text-left">Email</th>
-                      <th className="px-2 py-1.5 text-left">Party</th>
+                      <th className="px-2 py-1.5 text-left">{t("import.colFirst")}</th>
+                      <th className="px-2 py-1.5 text-left">{t("import.colLast")}</th>
+                      <th className="px-2 py-1.5 text-left">{t("import.colEmail")}</th>
+                      <th className="px-2 py-1.5 text-left">{t("import.colParty")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y">
@@ -103,9 +105,9 @@ export function GuestImportDialog({ weddingId, trigger, onImport }: GuestImportD
           )}
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+          <Button variant="outline" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
           <Button disabled={!preview?.data.length || importing} onClick={handleImport}>
-            {importing ? "Importing..." : `Import ${preview?.data.length ?? 0} guests`}
+            {importing ? t("import.importing") : t("import.importGuestsCount").replace("{count}", String(preview?.data.length ?? 0))}
           </Button>
         </DialogFooter>
       </DialogContent>
