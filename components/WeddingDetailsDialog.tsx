@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useT } from "@/lib/i18n/provider";
 
 export interface WeddingDetailsInput {
   name: string;
@@ -37,9 +38,11 @@ export function WeddingDetailsDialog({
   onOpenChange,
   defaultValues,
   onSave,
-  title = "Edit wedding details",
+  title,
   requireNames = false,
 }: WeddingDetailsDialogProps) {
+  const t = useT();
+  const resolvedTitle = title ?? `${t("common.edit")} — ${t("settings.weddingDetails")}`;
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [values, setValues] = useState<{
@@ -85,7 +88,7 @@ export function WeddingDetailsDialog({
 
   async function handleSave() {
     if (requireNames && (!values.partner_one_name.trim() || !values.partner_two_name.trim())) {
-      setError("Please enter both partner names before saving.");
+      setError(t("createWedding.partnerName"));
       return;
     }
     setSaving(true);
@@ -99,7 +102,7 @@ export function WeddingDetailsDialog({
       });
       onOpenChange(false);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
+      setError(e instanceof Error ? e.message : t("common.somethingWrong"));
     } finally {
       setSaving(false);
     }
@@ -109,44 +112,41 @@ export function WeddingDetailsDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle>{resolvedTitle}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
           <div className="grid gap-1.5">
-            <Label htmlFor="wd-name">Wedding Name</Label>
+            <Label htmlFor="wd-name">{t("settings.weddingName")}</Label>
             <Input
               id="wd-name"
               value={values.name}
               onChange={(e) => set("name", e.target.value)}
-              placeholder="e.g. Alice & Bob's Wedding"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="grid gap-1.5">
-              <Label htmlFor="wd-p1">Partner 1 Name</Label>
+              <Label htmlFor="wd-p1">{t("settings.partnerOne")}</Label>
               <Input
                 id="wd-p1"
                 value={values.partner_one_name}
                 onChange={(e) => set("partner_one_name", e.target.value)}
-                placeholder="e.g. Alice"
               />
             </div>
             <div className="grid gap-1.5">
-              <Label htmlFor="wd-p2">Partner 2 Name</Label>
+              <Label htmlFor="wd-p2">{t("settings.partnerTwo")}</Label>
               <Input
                 id="wd-p2"
                 value={values.partner_two_name}
                 onChange={(e) => set("partner_two_name", e.target.value)}
-                placeholder="e.g. Bob"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="grid gap-1.5">
-              <Label htmlFor="wd-date">Wedding Date</Label>
+              <Label htmlFor="wd-date">{t("settings.weddingDate")}</Label>
               <Input
                 id="wd-date"
                 type="date"
@@ -155,23 +155,21 @@ export function WeddingDetailsDialog({
               />
             </div>
             <div className="grid gap-1.5">
-              <Label htmlFor="wd-venue">Venue Name</Label>
+              <Label htmlFor="wd-venue">{t("settings.venueName")}</Label>
               <Input
                 id="wd-venue"
                 value={values.venue_name ?? ""}
                 onChange={(e) => set("venue_name", e.target.value)}
-                placeholder="e.g. The Grand Hall"
               />
             </div>
           </div>
 
           <div className="grid gap-1.5">
-            <Label htmlFor="wd-location">Location</Label>
+            <Label htmlFor="wd-location">{t("settings.location")}</Label>
             <Input
               id="wd-location"
               value={values.location ?? ""}
               onChange={(e) => set("location", e.target.value)}
-              placeholder="e.g. New York, NY"
             />
           </div>
 
@@ -180,10 +178,10 @@ export function WeddingDetailsDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={saving}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button onClick={handleSave} disabled={saving}>
-            {saving ? "Saving…" : "Save"}
+            {saving ? t("common.savingChanges") : t("common.save")}
           </Button>
         </DialogFooter>
       </DialogContent>

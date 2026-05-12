@@ -20,6 +20,7 @@ import { scaleDefaultCategories, DEFAULT_BUDGET_CATEGORY_RATIOS } from "@/lib/ut
 import { formatCurrency } from "@/lib/utils/format";
 import { patchWeddingInline } from "@/lib/actions/wedding";
 import { applyDefaultBudgetSplit } from "@/lib/actions/budget";
+import { useT } from "@/lib/i18n/provider";
 
 interface SetBudgetDialogProps {
   open: boolean;
@@ -51,6 +52,7 @@ export function SetBudgetDialog({
   onSaved,
 }: SetBudgetDialogProps) {
   const router = useRouter();
+  const t = useT();
   const [budget, setBudget] = useState<number>(initialBudget || 0);
   const [currency, setCurrency] = useState<string>(initialCurrency);
   const [pending, startTransition] = useTransition();
@@ -69,26 +71,26 @@ export function SetBudgetDialog({
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (budget <= 0) {
-      setError("Enter a budget greater than 0.");
+      setError(t("budgetBanner.enterMore"));
       return;
     }
     setError(null);
     startTransition(async () => {
       if (onSubmit) {
         const result = await onSubmit(budget, currency);
-        if (!result.ok) { setError(result.error ?? "Failed to save"); return; }
+        if (!result.ok) { setError(result.error ?? t("budgetBanner.failedSave")); return; }
       } else {
         const wedRes = await patchWeddingInline(weddingId, {
           ...weddingDetails,
           total_budget: budget,
           currency,
         });
-        if (!wedRes.ok) { setError(wedRes.error ?? "Failed to save"); return; }
+        if (!wedRes.ok) { setError(wedRes.error ?? t("budgetBanner.failedSave")); return; }
         const splitRes = await applyDefaultBudgetSplit(weddingId, budget);
-        if (!splitRes.ok) { setError(splitRes.error ?? "Failed to update categories"); return; }
+        if (!splitRes.ok) { setError(splitRes.error ?? t("budgetBanner.failedCategories")); return; }
         router.refresh();
       }
-      toast.success("Budget set — categories were updated proportionally.");
+      toast.success(t("budgetBanner.toastSet"));
       onSaved?.();
       onOpenChange(false);
     });
@@ -98,16 +100,15 @@ export function SetBudgetDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg">
         <DialogHeader>
-          <DialogTitle>Set your wedding budget</DialogTitle>
+          <DialogTitle>{t("budgetBanner.title")}</DialogTitle>
           <DialogDescription>
-            Enter the total amount you plan to spend. We&apos;ll split it across the default
-            categories so the planned amounts add up to your budget.
+            {t("budgetBanner.dialogDesc")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label htmlFor="set-budget-currency">Currency</Label>
+              <Label htmlFor="set-budget-currency">{t("settings.currency")}</Label>
               <Select value={currency} onValueChange={setCurrency}>
                 <SelectTrigger id="set-budget-currency"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -120,7 +121,7 @@ export function SetBudgetDialog({
               </Select>
             </div>
             <div className="space-y-1">
-              <Label htmlFor="set-budget-amount">Total budget</Label>
+              <Label htmlFor="set-budget-amount">{t("budgetBanner.totalBudget")}</Label>
               <Input
                 id="set-budget-amount"
                 type="number"
@@ -128,7 +129,6 @@ export function SetBudgetDialog({
                 step={100}
                 value={budget || ""}
                 onChange={(e) => setBudget(Number(e.target.value) || 0)}
-                placeholder="30000"
                 required
               />
             </div>
@@ -136,7 +136,7 @@ export function SetBudgetDialog({
 
           <div className="rounded-md border bg-muted/30 p-3">
             <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              How we&apos;ll split it
+              {t("budgetBanner.howSplit")}
             </p>
             <ul className="space-y-1 text-sm">
               {preview.map((c, i) => {
@@ -157,10 +157,10 @@ export function SetBudgetDialog({
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={pending}>
-              Cancel
+              {t("common.cancel")}
             </Button>
             <Button type="submit" disabled={pending}>
-              {pending ? "Saving…" : "Set budget"}
+              {pending ? t("common.savingChanges") : t("budgetBanner.cta")}
             </Button>
           </DialogFooter>
         </form>

@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 import { useGuestStore, getGuestSnapshot } from "@/lib/guest-store/store";
 import { claimGuestWedding } from "@/lib/actions/claim";
+import { useT } from "@/lib/i18n/provider";
 
 interface ClaimGuestDataDialogProps {
   open: boolean;
@@ -16,6 +17,7 @@ interface ClaimGuestDataDialogProps {
 }
 
 export function ClaimGuestDataDialog({ open, onClose, onDone }: ClaimGuestDataDialogProps) {
+  const t = useT();
   const [busy, setBusy] = useState(false);
 
   async function handleClaim() {
@@ -24,11 +26,11 @@ export function ClaimGuestDataDialog({ open, onClose, onDone }: ClaimGuestDataDi
     const result = await claimGuestWedding(snapshot);
     setBusy(false);
     if (!result.ok) {
-      toast.error(`Couldn't move your guest data: ${result.error}`);
+      toast.error(`${t("claim.failed")}: ${result.error}`);
       return;
     }
     useGuestStore.getState().reset();
-    toast.success("Your guest planning has been added to your account");
+    toast.success(t("claim.added"));
     onDone(result.weddingId);
   }
 
@@ -41,19 +43,17 @@ export function ClaimGuestDataDialog({ open, onClose, onDone }: ClaimGuestDataDi
     <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>You started planning as a guest</DialogTitle>
+          <DialogTitle>{t("claim.title")}</DialogTitle>
           <DialogDescription>
-            We found a wedding you started planning before signing in. Move it
-            into your account so you can keep editing it from any device, or
-            discard it and start fresh.
+            {t("claim.desc")}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex-col gap-2 sm:flex-row sm:justify-end">
           <Button variant="outline" onClick={handleDiscard} disabled={busy}>
-            Discard guest data
+            {t("claim.discard")}
           </Button>
           <Button onClick={handleClaim} disabled={busy}>
-            {busy ? "Saving..." : "Move into my account"}
+            {busy ? t("common.saving") : t("claim.move")}
           </Button>
         </DialogFooter>
       </DialogContent>

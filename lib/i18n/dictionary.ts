@@ -239,6 +239,13 @@ const en = {
   "budgetBanner.desc":
     "Tell us how much you plan to spend and we'll split it across categories for you.",
   "budgetBanner.cta": "Set budget",
+  "budgetBanner.dialogDesc": "Enter the total amount you plan to spend. We'll split it across the default categories so the planned amounts add up to your budget.",
+  "budgetBanner.enterMore": "Enter a budget greater than 0.",
+  "budgetBanner.toastSet": "Budget set — categories were updated proportionally.",
+  "budgetBanner.failedSave": "Failed to save",
+  "budgetBanner.failedCategories": "Failed to update categories",
+  "budgetBanner.howSplit": "How we'll split it",
+  "budgetBanner.totalBudget": "Total budget",
   "budget.addCategory": "Add Category",
   "budget.addExpense": "Add Expense",
   "budget.summary": "Summary",
@@ -266,6 +273,16 @@ const en = {
   "budget.editCategory": "Edit Category",
   "budget.newExpense": "New Expense",
   "budget.editExpense": "Edit Expense",
+  "budget.totalBudget": "Total Budget",
+  "budget.totalPlanned": "Total Planned",
+  "budget.totalActual": "Total Actual",
+  "budget.remaining": "Remaining",
+  "budget.budgetUsed": "Budget used",
+  "budget.overPlanned": "{amount} over planned budget",
+  "budget.expenses": "Expenses",
+  "budget.noExpensesCategory": "No expenses in this category",
+  "budget.noExpenses": "No expenses yet",
+  "budget.colDue": "Due",
 
   // Setup guide
   "setup.title": "Initial setup",
@@ -334,6 +351,12 @@ const en = {
   "timeline.allStatuses": "All statuses",
   "timeline.allPriorities": "All priorities",
   "timeline.addInline": "Add a task...",
+  "timeline.quickAdd": "Quick add a task",
+  "timeline.whatToDo": "What do you need to do?",
+  "timeline.tipEnter": "Tip: only the title is required. Press Enter to add.",
+  "timeline.adding": "Adding…",
+  "timeline.taskAdded": "Task added",
+  "timeline.failedCreate": "Failed to create task",
 
   // Guests
   "guests.title": "Guests & RSVP",
@@ -372,6 +395,12 @@ const en = {
   "guests.guestSeated": "Guest seated",
   "guests.guestUnassigned": "Guest unassigned",
   "guests.search": "Search guests...",
+  "guests.colName": "Name",
+  "guests.colEmail": "Email",
+  "guests.colRsvp": "RSVP",
+  "guests.colMeal": "Meal",
+  "guests.noneFound": "No guests found.",
+  "guests.markedAs": "{name} marked as {status}",
 
   // Send RSVP dialog
   "sendRsvp.title": "Send RSVP Invitations",
@@ -636,6 +665,12 @@ const en = {
   "signupGate.createAccount": "Create an account",
   "signupGate.savedToast": "Your wedding has been saved",
   "signupGate.failedSave": "Couldn't save your data",
+  "claim.title": "You started planning as a guest",
+  "claim.desc": "We found a wedding you started planning before signing in. Move it into your account so you can keep editing it from any device, or discard it and start fresh.",
+  "claim.discard": "Discard guest data",
+  "claim.move": "Move into my account",
+  "claim.failed": "Couldn't move your guest data",
+  "claim.added": "Your guest planning has been added to your account",
 
   // Wedding switcher
   "weddingSwitcher.create": "Create new wedding",
@@ -879,6 +914,13 @@ const pt: Dict = {
   "budgetBanner.desc":
     "Diga-nos quanto pretende gastar e nós dividimos por categorias.",
   "budgetBanner.cta": "Definir orçamento",
+  "budgetBanner.dialogDesc": "Indique o valor total que pretende gastar. Vamos dividir pelas categorias padrão para que o total planeado corresponda ao seu orçamento.",
+  "budgetBanner.enterMore": "Indique um orçamento maior do que 0.",
+  "budgetBanner.toastSet": "Orçamento definido — as categorias foram atualizadas proporcionalmente.",
+  "budgetBanner.failedSave": "Não foi possível guardar",
+  "budgetBanner.failedCategories": "Não foi possível atualizar as categorias",
+  "budgetBanner.howSplit": "Como vamos dividir",
+  "budgetBanner.totalBudget": "Orçamento total",
   "budget.addCategory": "Adicionar categoria",
   "budget.addExpense": "Adicionar despesa",
   "budget.summary": "Resumo",
@@ -907,6 +949,16 @@ const pt: Dict = {
   "budget.editCategory": "Editar categoria",
   "budget.newExpense": "Nova despesa",
   "budget.editExpense": "Editar despesa",
+  "budget.totalBudget": "Orçamento total",
+  "budget.totalPlanned": "Total planeado",
+  "budget.totalActual": "Total gasto",
+  "budget.remaining": "Restante",
+  "budget.budgetUsed": "Orçamento utilizado",
+  "budget.overPlanned": "{amount} acima do orçamento planeado",
+  "budget.expenses": "Despesas",
+  "budget.noExpensesCategory": "Sem despesas nesta categoria",
+  "budget.noExpenses": "Ainda não há despesas",
+  "budget.colDue": "Vencimento",
 
   // Setup guide
   "setup.title": "Configuração inicial",
@@ -976,6 +1028,12 @@ const pt: Dict = {
   "timeline.allStatuses": "Todos os estados",
   "timeline.allPriorities": "Todas as prioridades",
   "timeline.addInline": "Adicionar uma tarefa...",
+  "timeline.quickAdd": "Adicionar tarefa rapidamente",
+  "timeline.whatToDo": "O que tem de fazer?",
+  "timeline.tipEnter": "Dica: só o título é obrigatório. Carregue em Enter para adicionar.",
+  "timeline.adding": "A adicionar…",
+  "timeline.taskAdded": "Tarefa adicionada",
+  "timeline.failedCreate": "Não foi possível criar a tarefa",
 
   // Guests
   "guests.title": "Convidados e RSVP",
@@ -1015,6 +1073,12 @@ const pt: Dict = {
   "guests.guestSeated": "Convidado colocado na mesa",
   "guests.guestUnassigned": "Convidado removido da mesa",
   "guests.search": "Pesquisar convidados...",
+  "guests.colName": "Nome",
+  "guests.colEmail": "E-mail",
+  "guests.colRsvp": "RSVP",
+  "guests.colMeal": "Ementa",
+  "guests.noneFound": "Nenhum convidado encontrado.",
+  "guests.markedAs": "{name} marcado como {status}",
 
   // Send RSVP dialog
   "sendRsvp.title": "Enviar convites RSVP",
@@ -1283,6 +1347,12 @@ const pt: Dict = {
   "signupGate.createAccount": "Criar conta",
   "signupGate.savedToast": "O seu casamento foi guardado",
   "signupGate.failedSave": "Não foi possível guardar os seus dados",
+  "claim.title": "Começou a planear como convidado",
+  "claim.desc": "Encontrámos um casamento que começou a planear antes de iniciar sessão. Mova-o para a sua conta para continuar a editar a partir de qualquer dispositivo, ou descarte e comece do zero.",
+  "claim.discard": "Descartar dados de convidado",
+  "claim.move": "Mover para a minha conta",
+  "claim.failed": "Não foi possível mover os dados",
+  "claim.added": "O seu planeamento foi adicionado à sua conta",
 
   // Wedding switcher
   "weddingSwitcher.create": "Criar novo casamento",
