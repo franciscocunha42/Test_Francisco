@@ -24,6 +24,21 @@ export async function POST(
       return NextResponse.json({ error: "First and last name are required." }, { status: 400 });
     }
 
+    // Fail fast with a clear message if the deployment is missing the
+    // service-role key. Without it the admin client can authenticate but
+    // every query gets rejected by Supabase Auth, which previously showed
+    // up as "RSVP form not found".
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      return NextResponse.json(
+        {
+          error:
+            "Server is missing Supabase credentials (SUPABASE_SERVICE_ROLE_KEY / NEXT_PUBLIC_SUPABASE_URL). " +
+            "Set them in your hosting provider's environment variables and redeploy.",
+        },
+        { status: 500 }
+      );
+    }
+
     const supabase = createAdminClient();
 
     // Resolve form by slug. Don't filter by type — the same endpoint serves
@@ -36,7 +51,18 @@ export async function POST(
       .eq("public_slug", params.slug)
       .maybeSingle();
 
-    if (formErr || !form) {
+    if (formErr) {
+      console.error("[rsvp/submit] form lookup error", formErr);
+      return NextResponse.json(
+        {
+          error:
+            `Couldn't reach the database (${formErr.message}). ` +
+            "This usually means the SUPABASE_SERVICE_ROLE_KEY env var is wrong or missing on the deployment.",
+        },
+        { status: 500 }
+      );
+    }
+    if (!form) {
       return NextResponse.json(
         { error: `RSVP form not found for slug "${params.slug}". The form may have been deleted or the link is incorrect.` },
         { status: 404 }
@@ -139,7 +165,9 @@ export async function POST(
     });
 
     return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ error: "Invalid request." }, { status: 400 });
+  } catch (e) {
+    console.error("[rsvp/submit] unexpected error", e);
+    const msg = e instanceof Error ? e.message : "Invalid request.";
+    return NextResponse.json({ error: msg }, { status: 400 });
   }
 }
