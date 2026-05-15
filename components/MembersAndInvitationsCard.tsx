@@ -69,27 +69,50 @@ export function MembersAndInvitationsCard({ weddingId }: Props) {
 
   useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [weddingId]);
 
+  function buildInviteMailto(inviteeEmail: string, inviteUrl: string): string {
+    const subject = "I'd love your help planning our wedding";
+    const body = [
+      "Hi!",
+      "",
+      "I'm using VowPlan to organise our wedding and would love you to help out. Use the link below to join the workspace — you'll need to create a free account with this email.",
+      "",
+      inviteUrl,
+      "",
+      "The link expires in 14 days.",
+    ].join("\n");
+    return `mailto:${encodeURIComponent(inviteeEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+
   function handleInvite() {
     if (!email) return;
+    const targetEmail = email;
     startTransition(async () => {
-      const result = await createInvitation(weddingId, email, role);
+      const result = await createInvitation(weddingId, targetEmail, role);
       if (!result.ok) { toast.error(result.error ?? "Couldn't send invite"); return; }
       if (result.emailSent === false && result.invitation) {
-        // Invitation row created but email send failed — auto-copy link so the
-        // inviter can share it manually right away.
+        // Invitation row created but the server couldn't send the email.
+        // Best UX path: copy the link, AND open the user's own mail app
+        // pre-filled with the invite so they can send it themselves with
+        // one click. This runs inside the same user-gesture click handler
+        // so popup blockers normally allow window.open.
         const inviteUrl = `${window.location.origin}/invite/${result.invitation.token}`;
+        navigator.clipboard.writeText(inviteUrl).catch(() => {});
+        const reason = result.error ?? "email service not configured";
+        const mailtoUrl = buildInviteMailto(targetEmail, inviteUrl);
+        toast.warning(
+          `We couldn't send the email automatically (${reason}). Opening your mail app — invite link is also copied to your clipboard.`,
+          {
+            duration: 10000,
+            action: {
+              label: "Open mail app",
+              onClick: () => window.open(mailtoUrl, "_blank"),
+            },
+          },
+        );
+        // Open mailto immediately so a one-click send is possible.
         try {
-          await navigator.clipboard.writeText(inviteUrl);
-          toast.warning(
-            `Email couldn't be sent (${result.error ?? "unknown"}). Invite link copied to clipboard — share it manually.`,
-            { duration: 8000 },
-          );
-        } catch {
-          toast.warning(
-            `Email couldn't be sent. Open Pending invitations below and copy the link.`,
-            { duration: 8000 },
-          );
-        }
+          window.open(mailtoUrl, "_blank");
+        } catch { /* ignored — user can still click the toast action */ }
       } else {
         toast.success("Invitation sent");
       }
@@ -219,6 +242,16 @@ export function MembersAndInvitationsCard({ weddingId }: Props) {
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        const url = `${window.location.origin}/invite/${inv.token}`;
+                        window.open(buildInviteMailto(inv.email, url), "_blank");
+                      }}
+                    >
+                      <Mail className="mr-1 h-3.5 w-3.5" /> Open in mail
+                    </Button>
                     <Button variant="ghost" size="sm" onClick={() => copyInviteLink(inv.token)}>
                       <Copy className="mr-1 h-3.5 w-3.5" /> Copy link
                     </Button>
