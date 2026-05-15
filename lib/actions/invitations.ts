@@ -75,7 +75,16 @@ export async function createInvitation(
     .single();
 
   if (error || !invitation) {
-    return { ok: false, error: error?.message ?? "Failed to create invitation." };
+    const msg = error?.message ?? "Failed to create invitation.";
+    if (msg.includes("schema cache") || msg.includes("wedding_invitations")) {
+      return {
+        ok: false,
+        error:
+          "Invitations table not found. Run the database migration " +
+          "supabase/migrations/0008_invitations.sql against your Supabase project.",
+      };
+    }
+    return { ok: false, error: msg };
   }
 
   // Best-effort email send. Failure to send does not block the invitation —

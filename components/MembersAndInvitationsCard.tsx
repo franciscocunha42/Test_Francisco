@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
-import { Copy, Mail, MailX, UserMinus } from "lucide-react";
+import { AlertTriangle, Copy, Mail, MailX, UserMinus } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,11 @@ import { removeMember } from "@/lib/actions/wedding";
 import { createInvitation, revokeInvitation } from "@/lib/actions/invitations";
 import { formatDate } from "@/lib/utils/format";
 import type { WeddingMember, Profile, WeddingInvitation } from "@/lib/types/database";
+
+function isMissingInvitationsTable(message: string | undefined): boolean {
+  if (!message) return false;
+  return message.includes("schema cache") || message.includes("wedding_invitations");
+}
 
 interface Props {
   weddingId: string;
@@ -39,6 +44,7 @@ export function MembersAndInvitationsCard({ weddingId }: Props) {
   const supabase = createClient();
   const [members, setMembers] = useState<(WeddingMember & { profiles: Profile | null })[]>([]);
   const [invitations, setInvitations] = useState<WeddingInvitation[]>([]);
+  const [missingTable, setMissingTable] = useState(false);
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<string>("partner");
   const [pending, startTransition] = useTransition();
@@ -58,6 +64,7 @@ export function MembersAndInvitationsCard({ weddingId }: Props) {
     ]);
     setMembers((membersRes.data ?? []) as (WeddingMember & { profiles: Profile | null })[]);
     setInvitations((invitesRes.data ?? []) as WeddingInvitation[]);
+    setMissingTable(isMissingInvitationsTable(invitesRes.error?.message));
   }
 
   useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [weddingId]);
@@ -124,6 +131,20 @@ export function MembersAndInvitationsCard({ weddingId }: Props) {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
+        {missingTable && (
+          <div className="flex items-start gap-2 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+            <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+            <div className="space-y-1">
+              <p className="font-medium">Invitations table is missing.</p>
+              <p className="text-xs">
+                Run the database migration{" "}
+                <code className="rounded bg-amber-100 px-1 py-0.5 font-mono">supabase/migrations/0008_invitations.sql</code>{" "}
+                against your Supabase project (SQL editor → paste &amp; run). Until then, inviting collaborators won&apos;t work.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Active members */}
         <div className="space-y-2">
           <p className="text-sm font-medium">Active members</p>
