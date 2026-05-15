@@ -11,6 +11,7 @@ import { BudgetDonutChart } from "@/components/BudgetDonutChart";
 import { BudgetVendorBreakdownTable } from "@/components/BudgetVendorBreakdownTable";
 import { WeddingDetailsDialog } from "@/components/WeddingDetailsDialog";
 import type { WeddingDetailsInput } from "@/components/WeddingDetailsDialog";
+import { GuestSetupGuide } from "@/components/GuestSetupGuide";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, MapPin, Heart, Pencil, AlertCircle } from "lucide-react";
@@ -24,6 +25,7 @@ export default function GuestDashboardPage() {
   const expenses = useGuestStore((s) => s.expenses);
   const categories = useGuestStore((s) => s.budgetCategories);
   const updateWedding = useGuestStore((s) => s.updateWedding);
+  const generateDefaultTasks = useGuestStore((s) => s.generateDefaultTasks);
   const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
@@ -100,6 +102,16 @@ export default function GuestDashboardPage() {
           onOpenChange={setEditOpen}
           defaultValues={wedding}
           onSave={handleSaveDetails}
+        />
+
+        <GuestSetupGuide
+          hasNames={!isGeneric}
+          hasBudget={(wedding.total_budget ?? 0) > 0}
+          hasTasks={tasks.length > 0}
+          hasVendors={vendors.length > 0}
+          canGenerateTasks={!!wedding.wedding_date}
+          onEditDetails={() => setEditOpen(true)}
+          onGenerateTasks={generateDefaultTasks}
         />
 
         <DashboardStatTiles

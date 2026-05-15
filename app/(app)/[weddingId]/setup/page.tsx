@@ -9,14 +9,19 @@ export default async function SetupPage({ params }: { params: { weddingId: strin
   await requireWeddingMember(weddingId);
   const supabase = createClient();
 
-  const [weddingRes, taskCountRes, vendorCountRes] = await Promise.all([
+  const [weddingRes, taskCountRes, vendorCountRes, membersRes, pendingInvitesRes] = await Promise.all([
     supabase.from("weddings").select("*").eq("id", weddingId).single(),
     supabase.from("timeline_tasks").select("id", { count: "exact", head: true }).eq("wedding_id", weddingId),
     supabase.from("vendors").select("id", { count: "exact", head: true }).eq("wedding_id", weddingId),
+    supabase.from("wedding_members").select("role").eq("wedding_id", weddingId).neq("role", "owner"),
+    supabase.from("wedding_invitations").select("email").eq("wedding_id", weddingId).eq("status", "pending"),
   ]);
 
   const wedding = weddingRes.data as Wedding | null;
   if (!wedding) redirect("/onboarding");
+
+  const acceptedMemberCount = (membersRes.data ?? []).length;
+  const pendingInviteEmails = ((pendingInvitesRes.data ?? []) as { email: string }[]).map((i) => i.email);
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
@@ -33,6 +38,9 @@ export default async function SetupPage({ params }: { params: { weddingId: strin
         budgetSet={(wedding.total_budget ?? 0) > 0}
         hasTasks={(taskCountRes.count ?? 0) > 0}
         hasVendors={(vendorCountRes.count ?? 0) > 0}
+        acceptedMemberCount={acceptedMemberCount}
+        pendingInviteCount={pendingInviteEmails.length}
+        pendingInviteEmails={pendingInviteEmails}
       />
     </div>
   );

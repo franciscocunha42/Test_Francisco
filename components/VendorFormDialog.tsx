@@ -36,6 +36,7 @@ export function VendorFormDialog({ weddingId, vendor, trigger, onSubmit: onSubmi
     defaultValues: vendor ?? { category: "other", status: "researching", photos: [] },
   });
   const selectedCategory = watch("category");
+  const selectedSubcategory = watch("subcategory");
 
   async function onSubmit(data: VendorFormValues) {
     data.photos = photosText
@@ -121,8 +122,8 @@ export function VendorFormDialog({ weddingId, vendor, trigger, onSubmit: onSubmi
                 <div className="space-y-1 col-span-2">
                   <Label>Venue Type</Label>
                   <Select
-                    defaultValue={vendor?.subcategory ?? ""}
-                    onValueChange={(v) => setValue("subcategory", v || null)}
+                    value={selectedSubcategory ?? ""}
+                    onValueChange={(v) => setValue("subcategory", v || null, { shouldDirty: true })}
                   >
                     <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
                     <SelectContent>

@@ -58,9 +58,9 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
           {cfg.label} · {venue.notes ?? "Wedding venue details"}
         </DialogDescription>
 
-        {/* Hero photo / placeholder */}
+        {/* Hero photo / placeholder — capped height so it doesn't push content out of view */}
         {hasPhotos ? (
-          <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted">
+          <div className="relative h-48 sm:h-56 w-full shrink-0 overflow-hidden bg-muted">
             <Image
               src={venue.photos![0]}
               alt={venue.name}
@@ -73,11 +73,11 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
         ) : (
           <div
             className={cn(
-              "flex aspect-[16/9] w-full flex-col items-center justify-center gap-2 bg-gradient-to-br",
+              "flex h-48 sm:h-56 w-full shrink-0 flex-col items-center justify-center gap-2 bg-gradient-to-br",
               cfg.gradient,
             )}
           >
-            <Icon className="h-16 w-16 text-white/70" />
+            <Icon className="h-12 w-12 text-white/70" />
             <span className="text-sm font-semibold uppercase tracking-wider text-white/80">
               {cfg.label}
             </span>

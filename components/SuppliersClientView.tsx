@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { toast } from "sonner";
 import {
   Search, X, ChevronDown, Plus, Store,
-  PiggyBank, Wallet, CheckCircle2, MapPin,
+  PiggyBank, Wallet, CheckCircle2, MapPin, LayoutGrid, List,
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { capitalize, formatCurrency } from "@/lib/utils/format";
@@ -124,8 +124,11 @@ export function SuppliersClientView({
   onUpdateExpenseStatus,
 }: SuppliersClientViewProps) {
 
-  // ── tab state ──
-  const [activeTab, setActiveTab] = useState<"browse" | "my-suppliers">("browse");
+  // ── tab state — default to My Suppliers when the user already has any ──
+  const [activeTab, setActiveTab] = useState<"browse" | "my-suppliers">(
+    allVendors.length > 0 ? "my-suppliers" : "browse",
+  );
+  const [myView, setMyView] = useState<"list" | "kanban">("list");
 
   // ── directory filter state ──
   const [dirSearch,    setDirSearch]    = useState("");
@@ -517,6 +520,36 @@ export function SuppliersClientView({
                   </DropdownMenuContent>
                 </DropdownMenu>
 
+                {/* List / Kanban view toggle */}
+                <div className="flex h-8 overflow-hidden rounded-md border">
+                  <button
+                    type="button"
+                    onClick={() => setMyView("list")}
+                    title="List view"
+                    className={cn(
+                      "flex items-center gap-1 px-2.5 text-xs font-medium transition-colors",
+                      myView === "list"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-background text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <List className="h-3.5 w-3.5" />List
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMyView("kanban")}
+                    title="Kanban view"
+                    className={cn(
+                      "flex items-center gap-1 border-l px-2.5 text-xs font-medium transition-colors",
+                      myView === "kanban"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-background text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    <LayoutGrid className="h-3.5 w-3.5" />Kanban
+                  </button>
+                </div>
+
                 {hasMyFilters && (
                   <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={clearMyFilters}>
                     <X className="mr-1 h-3.5 w-3.5" />Clear
@@ -534,7 +567,7 @@ export function SuppliersClientView({
                 <p className="py-12 text-center text-sm text-muted-foreground">
                   No suppliers match the filters.
                 </p>
-              ) : (
+              ) : myView === "list" ? (
                 <div className="flex flex-col gap-3">
                   {filteredMyVendors.map((v) => (
                     <VendorCard
@@ -552,6 +585,49 @@ export function SuppliersClientView({
                       onUpdateExpenseStatus={onUpdateExpenseStatus}
                     />
                   ))}
+                </div>
+              ) : (
+                <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-5">
+                  {VENDOR_STATUSES.map((status) => {
+                    const inColumn = filteredMyVendors.filter((v) => v.status === status);
+                    return (
+                      <div
+                        key={status}
+                        className="flex min-h-[200px] flex-col gap-2 rounded-lg border bg-muted/30 p-2"
+                      >
+                        <div className="flex items-center justify-between px-1">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                            {STATUS_LABELS[status]}
+                          </p>
+                          <span className="rounded-full bg-background px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+                            {inColumn.length}
+                          </span>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          {inColumn.length === 0 ? (
+                            <p className="px-1 py-2 text-xs text-muted-foreground/70">No suppliers</p>
+                          ) : (
+                            inColumn.map((v) => (
+                              <VendorCard
+                                key={v.id}
+                                vendor={v}
+                                weddingId={weddingId}
+                                currency={currency}
+                                expenses={expenses}
+                                categories={categories}
+                                onEditSubmit={onVendorEdit}
+                                onDelete={onVendorDelete}
+                                onAddExpense={onAddExpense}
+                                onUpdateExpense={onUpdateExpense}
+                                onDeleteExpense={onDeleteExpense}
+                                onUpdateExpenseStatus={onUpdateExpenseStatus}
+                              />
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </>

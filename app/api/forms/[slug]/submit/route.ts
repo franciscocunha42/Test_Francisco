@@ -9,6 +9,17 @@ export async function POST(
     const body = await req.json();
     const { responses } = body as { responses: Record<string, unknown> };
 
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY || !process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      return NextResponse.json(
+        {
+          error:
+            "Server is missing Supabase credentials (SUPABASE_SERVICE_ROLE_KEY / NEXT_PUBLIC_SUPABASE_URL). " +
+            "Set them in your hosting provider's environment variables and redeploy.",
+        },
+        { status: 500 }
+      );
+    }
+
     const supabase = createAdminClient();
 
     // Resolve form
@@ -16,10 +27,21 @@ export async function POST(
       .from("forms")
       .select("id, wedding_id, is_active")
       .eq("public_slug", params.slug)
-      .single();
+      .maybeSingle();
 
-    if (formErr || !form) {
-      return NextResponse.json({ error: "Form not found" }, { status: 404 });
+    if (formErr) {
+      console.error("[forms/submit] form lookup error", formErr);
+      return NextResponse.json(
+        {
+          error:
+            `Couldn't reach the database (${formErr.message}). ` +
+            "This usually means the SUPABASE_SERVICE_ROLE_KEY env var is wrong or missing on the deployment.",
+        },
+        { status: 500 }
+      );
+    }
+    if (!form) {
+      return NextResponse.json({ error: `Form not found for slug "${params.slug}".` }, { status: 404 });
     }
     if (!form.is_active) {
       return NextResponse.json({ error: "This form is no longer accepting responses" }, { status: 403 });

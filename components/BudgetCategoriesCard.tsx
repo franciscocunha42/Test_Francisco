@@ -44,6 +44,8 @@ interface Props {
   categories: BudgetCategory[];
   currency: string;
   weddingId: string;
+  /** Wedding total budget — used to show each category as a % of total. */
+  totalBudget?: number;
   sortOrder: SortOrder;
   onSortToggle: () => void;
   /** Stable color map built from the original (unsorted) category list. */
@@ -64,6 +66,7 @@ export function BudgetCategoriesCard({
   categories,
   currency,
   weddingId,
+  totalBudget = 0,
   sortOrder,
   onSortToggle,
   colorMap,
@@ -72,6 +75,8 @@ export function BudgetCategoriesCard({
   selectedCategoryId,
   onCategoryClick,
 }: Props) {
+  const plannedSum = categories.reduce((s, c) => s + (c.planned_amount ?? 0), 0);
+  const reference = totalBudget > 0 ? totalBudget : plannedSum;
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -108,6 +113,9 @@ export function BudgetCategoriesCard({
               : 0;
           const over = cat.actual_amount > cat.planned_amount;
           const rgb = colorMap?.get(cat.id);
+          const sharePct = reference > 0
+            ? Math.round((cat.planned_amount / reference) * 100)
+            : 0;
 
           const isSelected = selectedCategoryId === cat.id;
           const isDimmed = selectedCategoryId != null && !isSelected;
@@ -138,6 +146,11 @@ export function BudgetCategoriesCard({
                   className="flex items-center gap-2 shrink-0 ml-2"
                   onClick={(e) => e.stopPropagation()}
                 >
+                  {reference > 0 && (
+                    <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium tabular-nums text-muted-foreground">
+                      {sharePct}%
+                    </span>
+                  )}
                   <span className={cn("text-xs", over && "text-destructive")}>
                     {formatCurrency(cat.actual_amount, currency)} /{" "}
                     {formatCurrency(cat.planned_amount, currency)}

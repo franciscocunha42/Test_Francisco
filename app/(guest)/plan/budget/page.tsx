@@ -104,6 +104,7 @@ export default function GuestBudgetPage() {
               expenses={expenses}
               vendors={vendorOptions}
               currency={currency}
+              totalBudget={wedding.total_budget ?? 0}
               onSubmitCategory={async (data, existing) => {
                 if (existing) { updateCategory(existing.id, data); return { ok: true }; }
                 createCategory(data);
