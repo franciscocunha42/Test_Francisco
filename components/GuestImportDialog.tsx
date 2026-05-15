@@ -46,7 +46,7 @@ export function GuestImportDialog({ weddingId, trigger, onImport }: GuestImportD
         <div className="space-y-4">
           <div className="flex items-start justify-between gap-3">
             <p className="text-sm text-muted-foreground">
-              CSV must have headers: <code className="font-mono text-xs bg-muted px-1 rounded">first_name, last_name</code>. Optional: email, phone, party_name, dietary_requirements, plus_one_allowed.
+              CSV must have headers: <code className="font-mono text-xs bg-muted px-1 rounded">first_name, last_name</code>. Optional: email, phone, party_name, dietary_requirements.
             </p>
             <Button
               type="button"

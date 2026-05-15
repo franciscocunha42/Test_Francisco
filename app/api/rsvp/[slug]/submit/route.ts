@@ -26,16 +26,21 @@ export async function POST(
 
     const supabase = createAdminClient();
 
-    // Resolve form
+    // Resolve form by slug. Don't filter by type — the same endpoint serves
+    // any form that uses the bespoke RSVP UI, and a stricter filter caused
+    // "RSVP form not found." errors when the form was created with a
+    // non-"rsvp" form_type (e.g. custom) but configured as an RSVP.
     const { data: form, error: formErr } = await supabase
       .from("forms")
-      .select("id, wedding_id, is_active, config_json")
+      .select("id, wedding_id, is_active, config_json, public_slug")
       .eq("public_slug", params.slug)
-      .eq("type", "rsvp")
-      .single();
+      .maybeSingle();
 
     if (formErr || !form) {
-      return NextResponse.json({ error: "RSVP form not found." }, { status: 404 });
+      return NextResponse.json(
+        { error: `RSVP form not found for slug "${params.slug}". The form may have been deleted or the link is incorrect.` },
+        { status: 404 }
+      );
     }
     if (!form.is_active) {
       return NextResponse.json({ error: "This RSVP form is no longer accepting responses." }, { status: 403 });
