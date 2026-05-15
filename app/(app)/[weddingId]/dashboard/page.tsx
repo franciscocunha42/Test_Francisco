@@ -9,7 +9,7 @@ import { BudgetVendorBreakdownTable } from "@/components/BudgetVendorBreakdownTa
 import { WeddingHeaderEditor } from "@/components/WeddingHeaderEditor";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, ChevronRight, Sparkles } from "lucide-react";
 
 function isOverdue(task: TimelineTask): boolean {
   if (!task.due_date) return false;
@@ -48,10 +48,40 @@ export default async function DashboardPage({ params }: { params: { weddingId: s
   const futureTasks = pendingTasks.filter((t) => !isOverdue(t));
   const upcomingTasks = [...overdueTasks, ...futureTasks].slice(0, 7);
 
+  // Show a "next steps" prompt if the user hasn't set up their workspace yet.
+  const needsSetup =
+    !wedding?.partner_one_name?.trim() ||
+    !wedding?.partner_two_name?.trim() ||
+    (wedding?.total_budget ?? 0) === 0 ||
+    tasks.length === 0 ||
+    vendors.length === 0;
+
   return (
     <div className="space-y-6">
       {wedding && (
         <WeddingHeaderEditor wedding={wedding} weddingId={weddingId} />
+      )}
+
+      {needsSetup && (
+        <Card className="border-primary/30 bg-primary/5">
+          <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
+            <div className="flex items-start gap-3">
+              <Sparkles className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+              <div>
+                <p className="text-sm font-semibold">Finish setting up your workspace</p>
+                <p className="text-xs text-muted-foreground">
+                  A few quick steps — budget, checklist, suppliers, members — to get the most out of VowPlan.
+                </p>
+              </div>
+            </div>
+            <Button asChild size="sm">
+              <Link href={`/${weddingId}/setup`}>
+                Open setup guide
+                <ChevronRight className="ml-1 h-3.5 w-3.5" />
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
       )}
 
       <DashboardStatTiles

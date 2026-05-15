@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Guest } from "@/lib/types/database";
 
@@ -25,12 +24,10 @@ interface GuestFormDialogProps {
 
 export function GuestFormDialog({ weddingId, guest, trigger, onSaved, onSubmit: onSubmitProp }: GuestFormDialogProps) {
   const [open, setOpen] = useState(false);
-  const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<GuestFormValues>({
+  const { register, handleSubmit, setValue, reset, formState: { errors, isSubmitting } } = useForm<GuestFormValues>({
     resolver: zodResolver(guestSchema),
     defaultValues: guest ?? { rsvp_status: "pending", invitation_status: "not_sent", plus_one_allowed: false },
   });
-
-  const plusOneAllowed = watch("plus_one_allowed");
 
   async function onSubmit(data: GuestFormValues) {
     const result = onSubmitProp
@@ -98,20 +95,6 @@ export function GuestFormDialog({ weddingId, guest, trigger, onSaved, onSubmit: 
             <Label>Dietary Requirements</Label>
             <Input {...register("dietary_requirements")} placeholder="Allergies, preferences..." />
           </div>
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="plus_one"
-              checked={plusOneAllowed}
-              onCheckedChange={(v) => setValue("plus_one_allowed", !!v)}
-            />
-            <Label htmlFor="plus_one">Plus-one allowed</Label>
-          </div>
-          {plusOneAllowed && (
-            <div className="space-y-1">
-              <Label>Plus-one Name</Label>
-              <Input {...register("plus_one_name")} />
-            </div>
-          )}
           <div className="space-y-1">
             <Label>Notes</Label>
             <Textarea {...register("notes")} rows={2} />

@@ -12,6 +12,7 @@ interface Props {
   categories: BudgetCategory[];
   currency: string;
   weddingId: string;
+  totalBudget?: number;
   onSubmitCategory?: (
     data: BudgetCategoryFormValues,
     existing?: BudgetCategory,
@@ -25,6 +26,7 @@ export function BudgetSortableSection({
   categories,
   currency,
   weddingId,
+  totalBudget,
   onSubmitCategory,
   onDeleteCategory,
   selectedCategoryId,
@@ -65,6 +67,7 @@ export function BudgetSortableSection({
         categories={sorted}
         currency={currency}
         weddingId={weddingId}
+        totalBudget={totalBudget}
         sortOrder={sortOrder}
         onSortToggle={() => setSortOrder((s) => (s === "desc" ? "asc" : "desc"))}
         colorMap={colorMap}

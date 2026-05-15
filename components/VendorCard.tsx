@@ -42,6 +42,14 @@ const PAYMENT_STATUSES: { value: PaymentStatus; label: string }[] = [
   { value: "paid", label: "Paid" },
 ];
 
+const VENUE_SUBCATEGORY_LABELS: Record<string, string> = {
+  quinta: "Quinta",
+  hotel: "Hotel",
+  restaurante: "Restaurante",
+  "salão": "Salão",
+  praia: "Praia",
+};
+
 const CATEGORY_CONFIG: Record<string, { label: string; gradient: string; Icon: React.ElementType }> = {
   venue:       { label: "Venue",       gradient: "from-emerald-500 to-green-700",  Icon: TreeDeciduous },
   catering:    { label: "Catering",    gradient: "from-orange-400 to-amber-600",   Icon: Utensils },
@@ -145,15 +153,15 @@ export function VendorCard({
   }
 
   return (
-    <div className="flex rounded-xl border bg-card overflow-hidden transition-shadow hover:shadow-md">
+    <div className="flex items-stretch rounded-xl border bg-card overflow-hidden transition-shadow hover:shadow-md">
       {/* Left: photo or gradient placeholder */}
-      <div className="hidden sm:block relative w-44 shrink-0 overflow-hidden">
+      <div className="hidden sm:block relative w-44 shrink-0 self-stretch overflow-hidden bg-muted">
         {heroPhoto ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={heroPhoto}
             alt={vendor.name}
-            className="h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover"
           />
         ) : (
           <div
@@ -196,6 +204,11 @@ export function VendorCard({
             )}
             <div className="mt-1 flex flex-wrap items-center gap-1.5">
               <Badge variant={statusColors[vendor.status]} className="text-xs">{capitalize(vendor.status)}</Badge>
+              {vendor.category === "venue" && vendor.subcategory && (
+                <Badge variant="outline" className="text-xs">
+                  {VENUE_SUBCATEGORY_LABELS[vendor.subcategory] ?? capitalize(vendor.subcategory)}
+                </Badge>
+              )}
               <Badge variant={paymentStatusVariant[finance.status]} className="text-xs">
                 {paymentStatusLabel[finance.status]}
               </Badge>

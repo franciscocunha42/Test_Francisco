@@ -67,6 +67,7 @@ export default async function BudgetPage({ params }: { params: { weddingId: stri
             expenses={allExpenses}
             vendors={allVendors as { id: string; name: string }[]}
             currency={currency}
+            totalBudget={wedding?.total_budget ?? 0}
           />
         </>
       )}

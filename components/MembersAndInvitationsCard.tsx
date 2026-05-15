@@ -67,9 +67,22 @@ export function MembersAndInvitationsCard({ weddingId }: Props) {
     startTransition(async () => {
       const result = await createInvitation(weddingId, email, role);
       if (!result.ok) { toast.error(result.error ?? "Couldn't send invite"); return; }
-      if (result.error) {
-        // Invitation row created but email send failed — surface as warning.
-        toast.warning(`Invitation saved. ${result.error}`);
+      if (result.emailSent === false && result.invitation) {
+        // Invitation row created but email send failed — auto-copy link so the
+        // inviter can share it manually right away.
+        const inviteUrl = `${window.location.origin}/invite/${result.invitation.token}`;
+        try {
+          await navigator.clipboard.writeText(inviteUrl);
+          toast.warning(
+            `Email couldn't be sent (${result.error ?? "unknown"}). Invite link copied to clipboard — share it manually.`,
+            { duration: 8000 },
+          );
+        } catch {
+          toast.warning(
+            `Email couldn't be sent. Open Pending invitations below and copy the link.`,
+            { duration: 8000 },
+          );
+        }
       } else {
         toast.success("Invitation sent");
       }

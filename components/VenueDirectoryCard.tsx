@@ -42,7 +42,7 @@ export function VenueDirectoryCard({ venue, isSaved, isAdding, onAdd }: VenueDir
   return (
     <div
       className={cn(
-        "flex rounded-xl border bg-card overflow-hidden transition-shadow hover:shadow-md",
+        "flex items-stretch rounded-xl border bg-card overflow-hidden transition-shadow hover:shadow-md",
         isSaved && "border-emerald-400/60 bg-emerald-50/20",
       )}
     >
@@ -55,7 +55,7 @@ export function VenueDirectoryCard({ venue, isSaved, isAdding, onAdd }: VenueDir
         trigger={
           <button
             type="button"
-            className="hidden sm:block relative w-44 shrink-0 cursor-pointer overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="hidden sm:block relative w-44 shrink-0 self-stretch cursor-pointer overflow-hidden bg-muted focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label={`View details for ${venue.name}`}
           >
             {heroPhoto ? (

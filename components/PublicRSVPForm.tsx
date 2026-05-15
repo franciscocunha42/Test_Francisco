@@ -30,16 +30,23 @@ export function PublicRSVPForm({ form, questions }: PublicRSVPFormProps) {
     setSubmitting(true);
     setError(null);
 
-    const res = await fetch(`/api/forms/${form.public_slug}/submit`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ responses: values }),
-    });
+    try {
+      const res = await fetch(`/api/forms/${form.public_slug}/submit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ responses: values }),
+      });
 
-    const data = await res.json();
-    setSubmitting(false);
-    if (!res.ok) { setError(data.error ?? "Something went wrong."); return; }
-    setSubmitted(true);
+      let data: { error?: string } = {};
+      try { data = await res.json(); } catch { /* non-JSON response */ }
+
+      setSubmitting(false);
+      if (!res.ok) { setError(data.error ?? `Something went wrong (status ${res.status}).`); return; }
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitting(false);
+      setError(err instanceof Error ? err.message : "Network error. Please try again.");
+    }
   }
 
   if (submitted) {

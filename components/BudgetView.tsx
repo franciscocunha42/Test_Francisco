@@ -28,6 +28,7 @@ interface Props {
   expenses: Expense[];
   vendors: { id: string; name: string }[];
   currency: string;
+  totalBudget?: number;
   onSubmitCategory?: (
     data: BudgetCategoryFormValues,
     existing?: BudgetCategory,
@@ -46,6 +47,7 @@ export function BudgetView({
   expenses,
   vendors,
   currency,
+  totalBudget,
   onSubmitCategory,
   onDeleteCategory,
   onSubmitExpense,
@@ -67,6 +69,7 @@ export function BudgetView({
         categories={categories}
         currency={currency}
         weddingId={weddingId}
+        totalBudget={totalBudget}
         onSubmitCategory={onSubmitCategory}
         onDeleteCategory={onDeleteCategory}
         selectedCategoryId={filterId}

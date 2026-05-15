@@ -180,7 +180,7 @@ export async function sendInvitationEmail(
 
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    return { ok: false, error: "Email sending is not configured. Add RESEND_API_KEY to send invitations automatically." };
+    return { ok: false, error: "email service not configured" };
   }
 
   const supabase = createClient();

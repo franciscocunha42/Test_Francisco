@@ -16,7 +16,7 @@ export async function createInvitation(
   weddingId: string,
   email: string,
   role: string,
-): Promise<{ ok: boolean; error?: string; invitation?: WeddingInvitation }> {
+): Promise<{ ok: boolean; error?: string; invitation?: WeddingInvitation; emailSent?: boolean }> {
   const user = await requireUser();
   await requireWeddingMember(weddingId);
 
@@ -87,7 +87,7 @@ export async function createInvitation(
       // We don't roll back: the invitation row is the source of truth.
       // The UI surfaces the email error so the inviter can resend.
       revalidatePath(`/${weddingId}/settings`);
-      return { ok: true, invitation: invitation as WeddingInvitation, error: sendRes.error };
+      return { ok: true, invitation: invitation as WeddingInvitation, error: sendRes.error, emailSent: false };
     }
   } catch (e) {
     revalidatePath(`/${weddingId}/settings`);
@@ -95,11 +95,12 @@ export async function createInvitation(
       ok: true,
       invitation: invitation as WeddingInvitation,
       error: e instanceof Error ? e.message : "Email could not be sent.",
+      emailSent: false,
     };
   }
 
   revalidatePath(`/${weddingId}/settings`);
-  return { ok: true, invitation: invitation as WeddingInvitation };
+  return { ok: true, invitation: invitation as WeddingInvitation, emailSent: true };
 }
 
 export async function revokeInvitation(weddingId: string, invitationId: string) {

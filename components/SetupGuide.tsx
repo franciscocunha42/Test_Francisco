@@ -26,6 +26,12 @@ interface SetupGuideProps {
   budgetSet: boolean;
   hasTasks: boolean;
   hasVendors: boolean;
+  /** Number of accepted collaborators (excluding owner). */
+  acceptedMemberCount?: number;
+  /** Number of pending invitations. */
+  pendingInviteCount?: number;
+  /** Emails of pending invitations (for inline display). */
+  pendingInviteEmails?: string[];
 }
 
 export function SetupGuide({
@@ -34,6 +40,9 @@ export function SetupGuide({
   budgetSet,
   hasTasks,
   hasVendors,
+  acceptedMemberCount = 0,
+  pendingInviteCount = 0,
+  pendingInviteEmails = [],
 }: SetupGuideProps) {
   const router = useRouter();
   const [budgetOpen, setBudgetOpen] = useState(false);
@@ -104,12 +113,24 @@ export function SetupGuide({
       icon: UserPlus,
       title: "Invite your partner or planner",
       description:
-        "Share access with your partner or wedding planner so they can edit or view your plans.",
-      done: false,
+        acceptedMemberCount > 0 || pendingInviteCount > 0
+          ? [
+              acceptedMemberCount > 0
+                ? `${acceptedMemberCount} collaborator${acceptedMemberCount === 1 ? "" : "s"} joined`
+                : null,
+              pendingInviteCount > 0
+                ? `${pendingInviteCount} pending: ${pendingInviteEmails.slice(0, 3).join(", ")}${pendingInviteEmails.length > 3 ? "…" : ""}`
+                : null,
+            ]
+              .filter(Boolean)
+              .join(" · ")
+          : "Share access with your partner or wedding planner so they can edit or view your plans.",
+      done: acceptedMemberCount > 0,
       action: (
-        <Button asChild size="sm" variant="outline">
+        <Button asChild size="sm" variant={acceptedMemberCount > 0 ? "outline" : "default"}>
           <Link href={`/${weddingId}/settings#members`}>
-            Invite people <ChevronRight className="ml-1 h-3.5 w-3.5" />
+            {acceptedMemberCount > 0 || pendingInviteCount > 0 ? "Manage members" : "Invite people"}
+            <ChevronRight className="ml-1 h-3.5 w-3.5" />
           </Link>
         </Button>
       ),
