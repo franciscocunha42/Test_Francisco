@@ -7,6 +7,8 @@ import { deleteGuest, updateGuest } from "@/lib/actions/guest";
 import { Button } from "@/components/ui/button";
 import { GuestFormDialog } from "@/components/GuestFormDialog";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { useT } from "@/lib/i18n/provider";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
 import type { Guest, RsvpStatus } from "@/lib/types/database";
 import type { GuestFormValues } from "@/lib/schemas/guest";
 
@@ -16,10 +18,10 @@ const rsvpStyles: Record<RsvpStatus, string> = {
   pending:       "bg-secondary text-secondary-foreground border-transparent",
 };
 
-const rsvpLabels: Record<RsvpStatus, string> = {
-  attending:     "Attending",
-  not_attending: "Not Attending",
-  pending:       "Pending",
+const rsvpLabelKeys: Record<RsvpStatus, TranslationKey> = {
+  attending:     "guests.attending",
+  not_attending: "guests.notAttending",
+  pending:       "guests.pending",
 };
 
 interface GuestTableProps {
@@ -31,6 +33,7 @@ interface GuestTableProps {
 }
 
 export function GuestTable({ guests, weddingId, onEditSubmit, onDelete, onRsvpChange }: GuestTableProps) {
+  const t = useT();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<string>("all");
   const [pendingRsvp, setPendingRsvp] = useState<Record<string, boolean>>({});
@@ -47,7 +50,7 @@ export function GuestTable({ guests, weddingId, onEditSubmit, onDelete, onRsvpCh
       ? await onDelete(guest.id)
       : await deleteGuest(weddingId, guest.id);
     if (result?.ok === false) toast.error(result.error);
-    else toast.success("Guest removed");
+    else toast.success(t("guests.guestDeleted"));
   }
 
   async function handleRsvpChange(guest: Guest, status: RsvpStatus) {
@@ -58,7 +61,7 @@ export function GuestTable({ guests, weddingId, onEditSubmit, onDelete, onRsvpCh
       : await updateGuest(weddingId, guest.id, { rsvp_status: status });
     setPendingRsvp((p) => { const { [guest.id]: _, ...rest } = p; return rest; });
     if (result?.ok === false) toast.error(result.error);
-    else toast.success(`${guest.first_name} marked as ${rsvpLabels[status]}`);
+    else toast.success(t("guests.markedAs").replace("{name}", guest.first_name).replace("{status}", t(rsvpLabelKeys[status])));
   }
 
   return (
@@ -67,7 +70,7 @@ export function GuestTable({ guests, weddingId, onEditSubmit, onDelete, onRsvpCh
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search guests..."
+          placeholder={t("guests.search")}
           className="flex h-9 flex-1 rounded-md border border-input bg-background px-3 py-1 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         />
         <div className="flex gap-1 flex-wrap">
@@ -77,7 +80,7 @@ export function GuestTable({ guests, weddingId, onEditSubmit, onDelete, onRsvpCh
               onClick={() => setFilter(f)}
               className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${filter === f ? "bg-primary text-primary-foreground border-primary" : "border-border hover:bg-muted"}`}
             >
-              {f === "all" ? "All" : f === "dietary" ? "Dietary Needs" : rsvpLabels[f as RsvpStatus]}
+              {f === "all" ? t("common.all") : f === "dietary" ? t("guests.dietaryNeeds") : t(rsvpLabelKeys[f as RsvpStatus])}
             </button>
           ))}
         </div>
@@ -86,10 +89,10 @@ export function GuestTable({ guests, weddingId, onEditSubmit, onDelete, onRsvpCh
         <table className="w-full text-sm">
           <thead className="bg-muted/50">
             <tr>
-              <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">Name</th>
-              <th className="hidden sm:table-cell px-4 py-2.5 text-left font-medium text-muted-foreground">Email</th>
-              <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">RSVP</th>
-              <th className="hidden md:table-cell px-4 py-2.5 text-left font-medium text-muted-foreground">Meal</th>
+              <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">{t("guests.colName")}</th>
+              <th className="hidden sm:table-cell px-4 py-2.5 text-left font-medium text-muted-foreground">{t("guests.colEmail")}</th>
+              <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">{t("guests.colRsvp")}</th>
+              <th className="hidden md:table-cell px-4 py-2.5 text-left font-medium text-muted-foreground">{t("guests.colMeal")}</th>
               <th className="w-20 px-4 py-2.5" />
             </tr>
           </thead>
@@ -111,9 +114,9 @@ export function GuestTable({ guests, weddingId, onEditSubmit, onDelete, onRsvpCh
                     onChange={(e) => handleRsvpChange(guest, e.target.value as RsvpStatus)}
                     className={`cursor-pointer rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors appearance-none disabled:opacity-50 ${rsvpStyles[guest.rsvp_status]}`}
                   >
-                    <option value="attending">Attending</option>
-                    <option value="not_attending">Not Attending</option>
-                    <option value="pending">Pending</option>
+                    <option value="attending">{t("guests.attending")}</option>
+                    <option value="not_attending">{t("guests.notAttending")}</option>
+                    <option value="pending">{t("guests.pending")}</option>
                   </select>
                 </td>
                 <td className="hidden md:table-cell px-4 py-3 text-muted-foreground">{guest.meal_choice ?? "—"}</td>
@@ -127,8 +130,8 @@ export function GuestTable({ guests, weddingId, onEditSubmit, onDelete, onRsvpCh
                     />
                     <ConfirmDialog
                       trigger={<Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive"><Trash2 className="h-3.5 w-3.5" /></Button>}
-                      title="Remove guest"
-                      description={`Remove ${guest.first_name} ${guest.last_name}?`}
+                      title={t("guests.confirmDelete")}
+                      description={`${guest.first_name} ${guest.last_name}`}
                       onConfirm={() => handleDelete(guest)}
                     />
                   </div>
@@ -137,7 +140,7 @@ export function GuestTable({ guests, weddingId, onEditSubmit, onDelete, onRsvpCh
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground">No guests found.</td>
+                <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground">{t("guests.noneFound")}</td>
               </tr>
             )}
           </tbody>

@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { useT } from "@/lib/i18n/provider";
 import type { SeatingTable } from "@/lib/types/database";
 
 interface SeatingTableFormDialogProps {
@@ -21,6 +22,7 @@ interface SeatingTableFormDialogProps {
 }
 
 export function SeatingTableFormDialog({ weddingId, table, trigger, onSubmit: onSubmitProp }: SeatingTableFormDialogProps) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<SeatingTableFormValues>({
     resolver: zodResolver(seatingTableSchema),
@@ -34,7 +36,7 @@ export function SeatingTableFormDialog({ weddingId, table, trigger, onSubmit: on
         ? await updateSeatingTable(weddingId, table.id, data)
         : await createSeatingTable(weddingId, data);
     if (result?.ok === false) { toast.error(result.error); return; }
-    toast.success(table ? "Table updated" : "Table added");
+    toast.success(table ? t("seating.tableUpdated") : t("seating.tableCreated"));
     setOpen(false);
     reset();
   }
@@ -43,25 +45,25 @@ export function SeatingTableFormDialog({ weddingId, table, trigger, onSubmit: on
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
-        <DialogHeader><DialogTitle>{table ? "Edit Table" : "Add Table"}</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{table ? `${t("common.edit")} ${t("seating.tableSingular")}` : t("seating.addTable")}</DialogTitle></DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-1">
-            <Label>Table Name *</Label>
-            <Input {...register("name")} placeholder="e.g. Table 1, Family, Round 12" />
+            <Label>{t("seating.tableName")} *</Label>
+            <Input {...register("name")} />
             {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
           </div>
           <div className="space-y-1">
-            <Label>Capacity *</Label>
+            <Label>{t("seating.capacity")} *</Label>
             <Input type="number" min={1} max={50} {...register("capacity")} />
             {errors.capacity && <p className="text-xs text-destructive">{errors.capacity.message}</p>}
           </div>
           <div className="space-y-1">
-            <Label>Notes</Label>
-            <Textarea rows={2} {...register("notes")} placeholder="Optional venue notes" />
+            <Label>{t("common.notes")}</Label>
+            <Textarea rows={2} {...register("notes")} />
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Save"}</Button>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
+            <Button type="submit" disabled={isSubmitting}>{isSubmitting ? t("common.saving") : t("common.save")}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

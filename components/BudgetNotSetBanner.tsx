@@ -5,6 +5,7 @@ import { PiggyBank } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { SetBudgetDialog } from "@/components/SetBudgetDialog";
+import { useT } from "@/lib/i18n/provider";
 import type { Wedding } from "@/lib/types/database";
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
 
 export function BudgetNotSetBanner({ wedding, weddingId, onSubmit }: Props) {
   const [open, setOpen] = useState(false);
+  const t = useT();
 
   return (
     <>
@@ -26,13 +28,13 @@ export function BudgetNotSetBanner({ wedding, weddingId, onSubmit }: Props) {
               <PiggyBank className="h-4 w-4" />
             </div>
             <div>
-              <p className="font-medium leading-tight">Set your wedding budget</p>
+              <p className="font-medium leading-tight">{t("budgetBanner.title")}</p>
               <p className="text-sm text-muted-foreground">
-                Tell us how much you plan to spend and we&apos;ll split it across categories for you.
+                {t("budgetBanner.desc")}
               </p>
             </div>
           </div>
-          <Button size="sm" onClick={() => setOpen(true)}>Set budget</Button>
+          <Button size="sm" onClick={() => setOpen(true)}>{t("budgetBanner.cta")}</Button>
         </CardContent>
       </Card>
       <SetBudgetDialog

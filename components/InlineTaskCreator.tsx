@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DEFAULT_BUDGET_CATEGORY_NAMES } from "@/lib/utils/budget-categories";
+import { useT } from "@/lib/i18n/provider";
 import type { TaskFormValues } from "@/lib/schemas/timeline";
 
 interface InlineTaskCreatorProps {
@@ -37,6 +38,7 @@ const EMPTY_FORM = {
 };
 
 export function InlineTaskCreator({ weddingId, categories, onSubmit: onSubmitProp, onSuccess }: InlineTaskCreatorProps) {
+  const t = useT();
   const [form, setForm] = useState(EMPTY_FORM);
   const [pending, startTransition] = useTransition();
   const categoryOptions = Array.from(
@@ -73,10 +75,10 @@ export function InlineTaskCreator({ weddingId, categories, onSubmit: onSubmitPro
         ? await onSubmitProp(data)
         : await createTask(weddingId, data);
       if (result?.ok === false) {
-        toast.error(result.error ?? "Failed to create task");
+        toast.error(result.error ?? t("timeline.failedCreate"));
         return;
       }
-      toast.success("Task added");
+      toast.success(t("timeline.taskAdded"));
       setForm(EMPTY_FORM);
       onSuccess?.();
     });
@@ -86,26 +88,25 @@ export function InlineTaskCreator({ weddingId, categories, onSubmit: onSubmitPro
     <div className="rounded-lg border bg-card p-3 shadow-sm">
       <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
         <Sparkles className="h-3.5 w-3.5 text-primary" />
-        Quick add a task
+        {t("timeline.quickAdd")}
       </div>
       <div className="flex flex-wrap items-end gap-2">
         <div className="flex-1 min-w-[180px] space-y-1">
           <Label htmlFor="qa-title" className="text-xs text-muted-foreground">
-            What do you need to do? *
+            {t("timeline.whatToDo")} *
           </Label>
           <Input
             id="qa-title"
             value={form.title}
             onChange={(e) => update("title", e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="e.g. Book the florist"
             disabled={pending}
           />
         </div>
 
         <div className="w-[140px] space-y-1">
           <Label htmlFor="qa-date" className="text-xs text-muted-foreground">
-            Due date
+            {t("timeline.dueDate")}
           </Label>
           <Input
             id="qa-date"
@@ -117,7 +118,7 @@ export function InlineTaskCreator({ weddingId, categories, onSubmit: onSubmitPro
         </div>
 
         <div className="w-[120px] space-y-1">
-          <Label className="text-xs text-muted-foreground">Priority</Label>
+          <Label className="text-xs text-muted-foreground">{t("timeline.priority")}</Label>
           <Select
             value={form.priority}
             onValueChange={(v) => update("priority", v as Priority)}
@@ -127,25 +128,25 @@ export function InlineTaskCreator({ weddingId, categories, onSubmit: onSubmitPro
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="low">Low</SelectItem>
-              <SelectItem value="medium">Medium</SelectItem>
-              <SelectItem value="high">High</SelectItem>
+              <SelectItem value="low">{t("timeline.priorityLow")}</SelectItem>
+              <SelectItem value="medium">{t("timeline.priorityMedium")}</SelectItem>
+              <SelectItem value="high">{t("timeline.priorityHigh")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
         <div className="w-[170px] space-y-1">
-          <Label className="text-xs text-muted-foreground">Category</Label>
+          <Label className="text-xs text-muted-foreground">{t("timeline.category")}</Label>
           <Select
             value={form.category || "none"}
             onValueChange={(v) => update("category", v === "none" ? "" : v)}
             disabled={pending}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select category" />
+              <SelectValue placeholder={t("timeline.category")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="none">No category</SelectItem>
+              <SelectItem value="none">{t("common.none")}</SelectItem>
               {categoryOptions.map((name) => (
                 <SelectItem key={name} value={name}>{name}</SelectItem>
               ))}
@@ -155,11 +156,11 @@ export function InlineTaskCreator({ weddingId, categories, onSubmit: onSubmitPro
 
         <Button onClick={submit} disabled={!canSubmit} size="sm" className="h-9">
           <Plus className="mr-1 h-4 w-4" />
-          {pending ? "Adding…" : "Add"}
+          {pending ? t("timeline.adding") : t("common.add")}
         </Button>
       </div>
       <p className="mt-2 text-[11px] text-muted-foreground">
-        Tip: only the title is required. Press Enter to add.
+        {t("timeline.tipEnter")}
       </p>
     </div>
   );

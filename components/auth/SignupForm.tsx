@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { VerifyEmailDialog } from "@/components/auth/VerifyEmailDialog";
+import { useT } from "@/lib/i18n/provider";
 
 interface SignupFormProps {
   /** Called once auth.signUp succeeds AND a session is returned (i.e.
@@ -24,8 +25,9 @@ function isDuplicateUserError(message: string | undefined): boolean {
   return /already (registered|exists)|user with this email|email.*already/i.test(message);
 }
 
-export function SignupForm({ onSuccess, submitLabel = "Create account" }: SignupFormProps) {
+export function SignupForm({ onSuccess, submitLabel }: SignupFormProps) {
   const supabase = createClient();
+  const t = useT();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -33,6 +35,7 @@ export function SignupForm({ onSuccess, submitLabel = "Create account" }: Signup
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [verifyEmail, setVerifyEmail] = useState<string | null>(null);
+  const resolvedSubmitLabel = submitLabel ?? t("auth.createAccount");
 
   function resetForm() {
     setName("");
@@ -46,7 +49,7 @@ export function SignupForm({ onSuccess, submitLabel = "Create account" }: Signup
     setError(null);
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match. Please re-enter the same password in both fields.");
+      setError(t("auth.passwordsDontMatch"));
       return;
     }
 
@@ -89,19 +92,19 @@ export function SignupForm({ onSuccess, submitLabel = "Create account" }: Signup
     <>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1">
-          <Label htmlFor="signup-name">Full Name</Label>
+          <Label htmlFor="signup-name">{t("auth.fullName")}</Label>
           <Input id="signup-name" value={name} onChange={(e) => setName(e.target.value)} required autoComplete="name" />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="signup-email">Email</Label>
+          <Label htmlFor="signup-email">{t("auth.email")}</Label>
           <Input id="signup-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="email" />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="signup-password">Password</Label>
+          <Label htmlFor="signup-password">{t("auth.password")}</Label>
           <Input id="signup-password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6} autoComplete="new-password" />
         </div>
         <div className="space-y-1">
-          <Label htmlFor="signup-password-confirm">Confirm Password</Label>
+          <Label htmlFor="signup-password-confirm">{t("auth.confirmPassword")}</Label>
           <Input
             id="signup-password-confirm"
             type="password"
@@ -114,7 +117,7 @@ export function SignupForm({ onSuccess, submitLabel = "Create account" }: Signup
         </div>
         {error && <p className="text-sm text-destructive">{error}</p>}
         <Button type="submit" className="w-full" disabled={loading}>
-          {loading ? "Creating account..." : submitLabel}
+          {loading ? t("auth.creatingAccount") : resolvedSubmitLabel}
         </Button>
       </form>
       <VerifyEmailDialog

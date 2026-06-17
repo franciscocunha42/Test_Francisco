@@ -14,11 +14,13 @@ import { CURRENCY_OPTIONS } from "@/lib/utils/currencies";
 import { exportToCsv } from "@/lib/utils/csv";
 import { toast } from "sonner";
 import { Trash2, Download } from "lucide-react";
+import { useT } from "@/lib/i18n/provider";
 import type { Wedding } from "@/lib/types/database";
 
 export default function SettingsPage({ params }: { params: { weddingId: string } }) {
   const { weddingId } = params;
   const supabase = createClient();
+  const t = useT();
 
   const [wedding, setWedding] = useState<Wedding | null>(null);
   const [isSaving, startSaving] = useTransition();
@@ -43,7 +45,7 @@ export default function SettingsPage({ params }: { params: { weddingId: string }
     startSaving(() => {
       updateWedding(weddingId, data).then((r) => {
         if (r?.ok === false) toast.error(r.error);
-        else toast.success("Wedding details saved");
+        else toast.success(t("common.saveChanges"));
       });
     });
   }
@@ -63,36 +65,36 @@ export default function SettingsPage({ params }: { params: { weddingId: string }
   return (
     <div className="space-y-6 max-w-2xl">
       <div>
-        <h1 className="font-serif text-2xl font-semibold">Settings</h1>
-        <p className="text-sm text-muted-foreground">Manage your wedding workspace</p>
+        <h1 className="font-serif text-2xl font-semibold">{t("settings.title")}</h1>
+        <p className="text-sm text-muted-foreground">{t("settings.subtitle")}</p>
       </div>
 
       {/* Wedding details */}
       <Card>
-        <CardHeader><CardTitle>Wedding Details</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{t("settings.weddingDetails")}</CardTitle></CardHeader>
         <CardContent>
           <form onSubmit={handleSave} className="space-y-4">
             <div className="space-y-1">
-              <Label htmlFor="name">Wedding Name</Label>
+              <Label htmlFor="name">{t("settings.weddingName")}</Label>
               <Input id="name" name="name" defaultValue={wedding.name} required />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="partner_one_name">Partner One</Label>
+                <Label htmlFor="partner_one_name">{t("settings.partnerOne")}</Label>
                 <Input id="partner_one_name" name="partner_one_name" defaultValue={wedding.partner_one_name} required />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="partner_two_name">Partner Two</Label>
+                <Label htmlFor="partner_two_name">{t("settings.partnerTwo")}</Label>
                 <Input id="partner_two_name" name="partner_two_name" defaultValue={wedding.partner_two_name} required />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="wedding_date">Wedding Date</Label>
+                <Label htmlFor="wedding_date">{t("settings.weddingDate")}</Label>
                 <Input id="wedding_date" name="wedding_date" type="date" defaultValue={wedding.wedding_date ?? ""} />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="currency">Currency</Label>
+                <Label htmlFor="currency">{t("settings.currency")}</Label>
                 <input type="hidden" name="currency" value={currency} />
                 <Select value={currency} onValueChange={setCurrency}>
                   <SelectTrigger id="currency"><SelectValue /></SelectTrigger>
@@ -108,19 +110,19 @@ export default function SettingsPage({ params }: { params: { weddingId: string }
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="total_budget">Total Budget</Label>
+                <Label htmlFor="total_budget">{t("settings.totalBudget")}</Label>
                 <Input id="total_budget" name="total_budget" type="number" min="0" defaultValue={wedding.total_budget} />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="venue_name">Venue Name</Label>
+                <Label htmlFor="venue_name">{t("settings.venueName")}</Label>
                 <Input id="venue_name" name="venue_name" defaultValue={wedding.venue_name ?? ""} />
               </div>
             </div>
             <div className="space-y-1">
-              <Label htmlFor="location">Location</Label>
+              <Label htmlFor="location">{t("settings.location")}</Label>
               <Input id="location" name="location" defaultValue={wedding.location ?? ""} />
             </div>
-            <Button type="submit" disabled={isSaving}>{isSaving ? "Saving…" : "Save Changes"}</Button>
+            <Button type="submit" disabled={isSaving}>{isSaving ? t("common.savingChanges") : t("common.saveChanges")}</Button>
           </form>
         </CardContent>
       </Card>
@@ -131,15 +133,15 @@ export default function SettingsPage({ params }: { params: { weddingId: string }
       {/* Export */}
       <Card>
         <CardHeader>
-          <CardTitle>Export Data</CardTitle>
-          <CardDescription>Download your wedding data as CSV</CardDescription>
+          <CardTitle>{t("settings.exportData")}</CardTitle>
+          <CardDescription>{t("settings.exportDataDesc")}</CardDescription>
         </CardHeader>
         <CardContent className="flex gap-2">
           <Button variant="outline" onClick={handleExportGuests}>
-            <Download className="mr-1.5 h-4 w-4" />Export Guests
+            <Download className="mr-1.5 h-4 w-4" />{t("settings.exportGuests")}
           </Button>
           <Button variant="outline" onClick={handleExportExpenses}>
-            <Download className="mr-1.5 h-4 w-4" />Export Expenses
+            <Download className="mr-1.5 h-4 w-4" />{t("settings.exportExpenses")}
           </Button>
         </CardContent>
       </Card>
@@ -147,15 +149,15 @@ export default function SettingsPage({ params }: { params: { weddingId: string }
       {/* Danger zone */}
       <Card className="border-destructive/50">
         <CardHeader>
-          <CardTitle className="text-destructive">Danger Zone</CardTitle>
+          <CardTitle className="text-destructive">{t("settings.dangerZone")}</CardTitle>
         </CardHeader>
         <CardContent>
           <ConfirmDialog
-            trigger={<Button variant="destructive"><Trash2 className="mr-1.5 h-4 w-4" />Delete Wedding</Button>}
-            title="Delete wedding workspace"
-            description="This will permanently delete the wedding, all guests, vendors, tasks, forms and budget data. This cannot be undone."
+            trigger={<Button variant="destructive"><Trash2 className="mr-1.5 h-4 w-4" />{t("settings.deleteWedding")}</Button>}
+            title={t("settings.deleteWedding")}
+            description={t("settings.deleteDesc")}
             confirmText={wedding.name}
-            confirmLabel="Delete forever"
+            confirmLabel={t("common.delete")}
             onConfirm={async () => { await deleteWedding(weddingId); }}
           />
         </CardContent>

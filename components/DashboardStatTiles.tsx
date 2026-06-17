@@ -1,4 +1,7 @@
+"use client";
+
 import { formatCurrency } from "@/lib/utils/format";
+import { useT } from "@/lib/i18n/provider";
 
 interface DashboardStatTilesProps {
   totalBudget: number;
@@ -15,6 +18,7 @@ export function DashboardStatTiles({
   guestsTotal,
   currency,
 }: DashboardStatTilesProps) {
+  const t = useT();
   const remaining = totalBudget - spentSoFar;
   const overBudget = remaining < 0;
   const pctSpent = totalBudget > 0 ? Math.round((spentSoFar / totalBudget) * 100) : 0;
@@ -22,30 +26,30 @@ export function DashboardStatTiles({
 
   const tiles = [
     {
-      label: "Total Budget",
+      label: t("stat.totalBudget"),
       value: formatCurrency(totalBudget, currency),
-      sub: "across all categories",
+      sub: t("stat.totalBudgetSub"),
       bg: "bg-rose-200/70",
       border: "border-rose-300",
     },
     {
-      label: "Spent So Far",
+      label: t("stat.spentSoFar"),
       value: formatCurrency(spentSoFar, currency),
-      sub: `${pctSpent}% of budget used`,
+      sub: `${pctSpent}${t("stat.spentSub")}`,
       bg: "bg-sky-200/70",
       border: "border-sky-300",
     },
     {
-      label: overBudget ? "Over Budget" : "Remaining",
+      label: overBudget ? t("stat.overBudget") : t("stat.remaining"),
       value: formatCurrency(Math.abs(remaining), currency),
-      sub: overBudget ? "Exceeded plan" : "Available to spend",
+      sub: overBudget ? t("stat.overBudgetSub") : t("stat.remainingSub"),
       bg: overBudget ? "bg-red-200/70" : "bg-emerald-200/70",
       border: overBudget ? "border-red-300" : "border-emerald-300",
     },
     {
-      label: "Guests Booked",
+      label: t("stat.guestsBooked"),
       value: `${guestsAttending} / ${guestsTotal}`,
-      sub: `${pctConfirmed}% confirmed`,
+      sub: `${pctConfirmed}${t("stat.guestsSub")}`,
       bg: "bg-amber-200/70",
       border: "border-amber-300",
     },

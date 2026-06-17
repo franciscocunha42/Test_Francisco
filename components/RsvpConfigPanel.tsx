@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useT } from "@/lib/i18n/provider";
 import type { RsvpConfig } from "@/lib/types/database";
 
 interface RsvpConfigPanelProps {
@@ -18,6 +19,7 @@ interface RsvpConfigPanelProps {
 }
 
 export function RsvpConfigPanel({ weddingId, formId, initialConfig }: RsvpConfigPanelProps) {
+  const t = useT();
   const [mealOptions, setMealOptions] = useState<string[]>(initialConfig?.meal_options ?? []);
   const [allowNew, setAllowNew] = useState(initialConfig?.allow_new_guests ?? true);
   const [newOption, setNewOption] = useState("");
@@ -42,21 +44,21 @@ export function RsvpConfigPanel({ weddingId, formId, initialConfig }: RsvpConfig
     });
     setSaving(false);
     if (result.ok === false) { toast.error(result.error); return; }
-    toast.success("RSVP settings saved");
+    toast.success(t("rsvpConfig.saved"));
   }
 
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base">RSVP Form Settings</CardTitle>
+        <CardTitle className="text-base">{t("rsvpConfig.settings")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-5">
 
         {/* Meal options */}
         <div className="space-y-2">
-          <Label>Meal Options</Label>
+          <Label>{t("rsvpConfig.mealOptions")}</Label>
           <p className="text-xs text-muted-foreground">
-            Guests will choose from this list when RSVPing. Leave empty to hide the meal choice field.
+            {t("rsvpConfig.mealHelp")}
           </p>
           <div className="flex flex-wrap gap-2">
             {mealOptions.map((opt) => (
@@ -69,7 +71,7 @@ export function RsvpConfigPanel({ weddingId, formId, initialConfig }: RsvpConfig
                   type="button"
                   onClick={() => removeOption(opt)}
                   className="text-muted-foreground hover:text-destructive transition-colors"
-                  aria-label={`Remove ${opt}`}
+                  aria-label={t("rsvpConfig.removeOption").replace("{opt}", opt)}
                 >
                   <X className="h-3 w-3" />
                 </button>
@@ -80,7 +82,6 @@ export function RsvpConfigPanel({ weddingId, formId, initialConfig }: RsvpConfig
             <Input
               value={newOption}
               onChange={(e) => setNewOption(e.target.value)}
-              placeholder="e.g. Chicken, Fish, Vegan…"
               onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addOption(); } }}
             />
             <Button type="button" variant="outline" onClick={addOption} disabled={!newOption.trim()}>
@@ -92,9 +93,9 @@ export function RsvpConfigPanel({ weddingId, formId, initialConfig }: RsvpConfig
         {/* Allow new guests */}
         <div className="flex items-center justify-between rounded-lg border p-3">
           <div>
-            <p className="text-sm font-medium">Allow new guests to register</p>
+            <p className="text-sm font-medium">{t("rsvpConfig.allowNew")}</p>
             <p className="text-xs text-muted-foreground">
-              If off, only guests already on your list can submit an RSVP.
+              {t("rsvpConfig.allowNewHelp")}
             </p>
           </div>
           <Switch checked={allowNew} onCheckedChange={setAllowNew} />
@@ -102,7 +103,7 @@ export function RsvpConfigPanel({ weddingId, formId, initialConfig }: RsvpConfig
 
         <Button onClick={save} disabled={saving} size="sm">
           <Save className="mr-1.5 h-3.5 w-3.5" />
-          {saving ? "Saving…" : "Save settings"}
+          {saving ? t("common.savingChanges") : t("rsvpConfig.saveSettings")}
         </Button>
       </CardContent>
     </Card>

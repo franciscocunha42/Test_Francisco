@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TaskFormDialog } from "@/components/TaskFormDialog";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { useT } from "@/lib/i18n/provider";
 import type { TimelineTask } from "@/lib/types/database";
 
 type TaskStatus = "not_started" | "in_progress" | "completed";
@@ -46,11 +47,18 @@ function isOverdue(task: TimelineTask): boolean {
 }
 
 export function TimelineTaskCard({ task, weddingId, onToggle, onUpdate, onDelete, onEditSubmit }: TimelineTaskCardProps) {
+  const t = useT();
   const [status, setStatus] = useState<TaskStatus>(task.status as TaskStatus);
   const [pending, setPending] = useState(false);
   const done = status === "completed";
   const inProgress = status === "in_progress";
   const overdue = !done && isOverdue(task);
+
+  const priorityLabel: Record<string, string> = {
+    high: t("timeline.priorityHigh"),
+    medium: t("timeline.priorityMedium"),
+    low: t("timeline.priorityLow"),
+  };
 
   async function handleToggle() {
     if (pending) return;
@@ -69,7 +77,7 @@ export function TimelineTaskCard({ task, weddingId, onToggle, onUpdate, onDelete
     if (result?.ok === false) {
       setStatus(previous);
       onToggle?.(task.id, previous);
-      toast.error(result.error ?? "Failed to update task");
+      toast.error(result.error ?? t("timeline.taskUpdateFailed"));
     }
   }
 
@@ -78,15 +86,15 @@ export function TimelineTaskCard({ task, weddingId, onToggle, onUpdate, onDelete
       ? await onDelete(task.id)
       : await deleteTask(weddingId, task.id);
     if (result?.ok === false) toast.error(result.error);
-    else toast.success("Task deleted");
+    else toast.success(t("timeline.taskDeleted"));
   }
 
   const ariaLabel =
     status === "not_started"
-      ? "Mark in progress"
+      ? t("timeline.statusInProgress")
       : status === "in_progress"
-        ? "Mark complete"
-        : "Mark not started";
+        ? t("timeline.statusCompleted")
+        : t("timeline.statusNotStarted");
 
   return (
     <div className={cn(
@@ -124,7 +132,7 @@ export function TimelineTaskCard({ task, weddingId, onToggle, onUpdate, onDelete
               "text-xs",
               overdue ? "font-medium text-destructive" : "text-muted-foreground",
             )}>
-              {overdue && <span className="mr-1">Overdue ·</span>}
+              {overdue && <span className="mr-1">{t("dashboard.overdue")} ·</span>}
               {formatDate(task.due_date)}
             </span>
           )}
@@ -132,10 +140,10 @@ export function TimelineTaskCard({ task, weddingId, onToggle, onUpdate, onDelete
             <Badge variant="outline" className="text-xs py-0">{task.category}</Badge>
           )}
           <Badge variant={priorityColors[task.priority] as "destructive" | "warning" | "secondary"} className="text-xs py-0">
-            {task.priority}
+            {priorityLabel[task.priority] ?? task.priority}
           </Badge>
           {inProgress && (
-            <Badge variant="info" className="text-xs py-0">In Progress</Badge>
+            <Badge variant="info" className="text-xs py-0">{t("timeline.statusInProgress")}</Badge>
           )}
         </div>
       </div>
@@ -156,9 +164,9 @@ export function TimelineTaskCard({ task, weddingId, onToggle, onUpdate, onDelete
               <Trash2 className="h-3.5 w-3.5" />
             </Button>
           }
-          title="Delete task"
-          description={`Delete "${task.title}"? This cannot be undone.`}
-          confirmLabel="Delete"
+          title={t("timeline.confirmDelete")}
+          description={`"${task.title}"`}
+          confirmLabel={t("common.delete")}
           onConfirm={handleDelete}
         />
       </div>

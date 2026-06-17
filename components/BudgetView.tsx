@@ -12,6 +12,8 @@ import { capitalize, formatCurrency, formatDate } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
 import { getCategoryEmoji } from "@/lib/utils/category-emojis";
 import { deleteExpense as deleteExpenseAction } from "@/lib/actions/budget";
+import { useT } from "@/lib/i18n/provider";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
 import type { BudgetCategory, Expense } from "@/lib/types/database";
 import type { BudgetCategoryFormValues, ExpenseFormValues } from "@/lib/schemas/budget";
 
@@ -20,6 +22,13 @@ const paymentColors: Record<string, "secondary" | "warning" | "info" | "success"
   deposit_paid: "info",
   partially_paid: "warning",
   paid: "success",
+};
+
+const PAYMENT_STATUS_KEYS: Record<string, TranslationKey> = {
+  unpaid: "suppliers.paymentUnpaid",
+  deposit_paid: "suppliers.paymentDepositPaid",
+  partially_paid: "suppliers.paymentPartiallyPaid",
+  paid: "suppliers.paymentPaid",
 };
 
 interface Props {
@@ -51,6 +60,7 @@ export function BudgetView({
   onSubmitExpense,
   onDeleteExpense,
 }: Props) {
+  const t = useT();
   const [filterId, setFilterId] = useState<string | null>(null);
 
   const toggleFilter = (id: string) =>
@@ -76,7 +86,7 @@ export function BudgetView({
       <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-2 pb-2">
           <div className="flex flex-wrap items-center gap-2">
-            <CardTitle className="text-base">Expenses</CardTitle>
+            <CardTitle className="text-base">{t("budget.expenses")}</CardTitle>
             {selectedCategory && (
               <button
                 onClick={() => setFilterId(null)}
@@ -96,7 +106,7 @@ export function BudgetView({
             trigger={
               <Button size="sm">
                 <Plus className="mr-1.5 h-3.5 w-3.5" />
-                Add
+                {t("common.add")}
               </Button>
             }
           />
@@ -104,19 +114,19 @@ export function BudgetView({
         <CardContent>
           {filteredExpenses.length === 0 ? (
             <p className="py-6 text-center text-sm text-muted-foreground">
-              {filterId ? "No expenses in this category" : "No expenses yet"}
+              {filterId ? t("budget.noExpensesCategory") : t("budget.noExpenses")}
             </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="border-b">
                   <tr className="text-left text-muted-foreground">
-                    <th className="pb-2 font-medium">Title</th>
-                    <th className="pb-2 font-medium hidden sm:table-cell">Category</th>
-                    <th className="pb-2 font-medium">Planned</th>
-                    <th className="pb-2 font-medium">Actual</th>
-                    <th className="pb-2 font-medium hidden md:table-cell">Status</th>
-                    <th className="pb-2 font-medium hidden md:table-cell">Due</th>
+                    <th className="pb-2 font-medium">{t("common.title")}</th>
+                    <th className="pb-2 font-medium hidden sm:table-cell">{t("budget.expenseCategory")}</th>
+                    <th className="pb-2 font-medium">{t("budget.planned")}</th>
+                    <th className="pb-2 font-medium">{t("budget.actual")}</th>
+                    <th className="pb-2 font-medium hidden md:table-cell">{t("common.status")}</th>
+                    <th className="pb-2 font-medium hidden md:table-cell">{t("budget.colDue")}</th>
                     <th className="w-16 pb-2" />
                   </tr>
                 </thead>
@@ -134,7 +144,7 @@ export function BudgetView({
                           {formatCurrency(exp.actual_amount, currency)}
                         </td>
                         <td className="py-2.5 hidden md:table-cell">
-                          <Badge variant={paymentColors[exp.payment_status]}>{capitalize(exp.payment_status)}</Badge>
+                          <Badge variant={paymentColors[exp.payment_status]}>{t((PAYMENT_STATUS_KEYS[exp.payment_status] ?? "suppliers.paymentUnpaid") as TranslationKey)}</Badge>
                         </td>
                         <td className="py-2.5 hidden md:table-cell text-muted-foreground text-xs">
                           {formatDate(exp.due_date)}
@@ -163,8 +173,8 @@ export function BudgetView({
                                   <Trash2 className="h-3.5 w-3.5" />
                                 </Button>
                               }
-                              title="Delete expense"
-                              description={`Delete "${exp.title}"?`}
+                              title={t("budget.confirmDeleteExpense")}
+                              description={`"${exp.title}"`}
                               onConfirm={
                                 onDeleteExpense
                                   ? () => onDeleteExpense(exp.id)

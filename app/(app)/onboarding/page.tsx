@@ -3,6 +3,8 @@ import { requireUser, getUserWeddings, getLatestWeddingId } from "@/lib/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart } from "lucide-react";
 import { CreateWeddingForm } from "@/components/CreateWeddingForm";
+import { getServerT } from "@/lib/i18n/server";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export default async function OnboardingPage({
   searchParams,
@@ -19,8 +21,13 @@ export default async function OnboardingPage({
     if (latestId) redirect(`/${latestId}/dashboard`);
   }
 
+  const t = getServerT();
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-champagne-50 to-white p-4">
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-champagne-50 to-white p-4">
+      <div className="absolute right-4 top-4">
+        <LanguageSwitcher />
+      </div>
       <div className="mb-8 flex items-center gap-2">
         <Heart className="h-6 w-6 text-primary fill-primary" />
         <span className="font-serif text-2xl font-semibold text-primary">VowPlan</span>
@@ -29,8 +36,8 @@ export default async function OnboardingPage({
       <div className="w-full max-w-md">
         <Card>
           <CardHeader>
-            <CardTitle>{memberships.length > 0 ? "Create New Wedding" : "Create Your Wedding"}</CardTitle>
-            <CardDescription>Set up your wedding workspace to get started</CardDescription>
+            <CardTitle>{memberships.length > 0 ? t("onboarding.createNew") : t("onboarding.create")}</CardTitle>
+            <CardDescription>{t("onboarding.subtitle")}</CardDescription>
           </CardHeader>
           <CardContent>
             <CreateWeddingForm hasWeddings={memberships.length > 0} />

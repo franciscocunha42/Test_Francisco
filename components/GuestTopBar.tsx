@@ -8,6 +8,8 @@ import { useRequireAuth } from "@/lib/guest-store/use-require-auth";
 import { useGuestStore } from "@/lib/guest-store/store";
 import { WeddingDetailsDialog } from "@/components/WeddingDetailsDialog";
 import type { WeddingDetailsInput } from "@/components/WeddingDetailsDialog";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useT } from "@/lib/i18n/provider";
 
 function isGenericWedding(wedding: { partner_one_name?: string | null; partner_two_name?: string | null } | null): boolean {
   if (!wedding) return true;
@@ -20,19 +22,20 @@ export function GuestTopBar() {
   const updateWedding = useGuestStore((s) => s.updateWedding);
   const [bannerDismissed, setBannerDismissed] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const t = useT();
 
   function handleSaveToCloud() {
     if (isGenericWedding(wedding)) {
       setDetailsOpen(true);
     } else {
-      guard("save your wedding");
+      guard(t("guestTopBar.saveLabel"));
     }
   }
 
   async function handleDetailsSaved(data: WeddingDetailsInput) {
     updateWedding(data);
     // Small delay to let state settle before opening the auth gate
-    setTimeout(() => guard("save your wedding"), 50);
+    setTimeout(() => guard(t("guestTopBar.saveLabel")), 50);
   }
 
   return (
@@ -44,7 +47,7 @@ export function GuestTopBar() {
         </div>
 
         <p className="hidden md:block text-sm text-muted-foreground truncate max-w-xs">
-          {wedding?.name ?? "Your wedding"}
+          {wedding?.name ?? t("guestTopBar.yourWedding")}
         </p>
 
         <div className="flex items-center gap-2">
@@ -54,10 +57,11 @@ export function GuestTopBar() {
             onClick={handleSaveToCloud}
           >
             <Cloud className="mr-1.5 h-3.5 w-3.5" />
-            Save to cloud
+            {t("guestTopBar.saveToCloud")}
           </Button>
+          <LanguageSwitcher />
           <Link href="/login" className="text-sm text-muted-foreground hover:text-foreground">
-            Log In
+            {t("guestTopBar.logIn")}
           </Link>
         </div>
       </div>
@@ -65,19 +69,19 @@ export function GuestTopBar() {
       {!bannerDismissed && wedding && (
         <div className="flex items-center justify-between gap-3 bg-primary/10 px-4 py-2 text-xs md:px-6">
           <p className="text-foreground/80">
-            Your planning is saved on this device only.{" "}
+            {t("guestTopBar.bannerPrefix")}{" "}
             <button
               type="button"
               className="font-medium text-primary underline-offset-2 hover:underline"
               onClick={handleSaveToCloud}
             >
-              Save to cloud
+              {t("guestTopBar.saveToCloud")}
             </button>{" "}
-            to access from anywhere.
+            {t("guestTopBar.bannerSuffix")}
           </p>
           <button
             type="button"
-            aria-label="Dismiss banner"
+            aria-label={t("guestTopBar.dismiss")}
             onClick={() => setBannerDismissed(true)}
             className="text-muted-foreground hover:text-foreground"
           >
@@ -91,7 +95,7 @@ export function GuestTopBar() {
         onOpenChange={setDetailsOpen}
         defaultValues={wedding ?? {}}
         onSave={handleDetailsSaved}
-        title="Complete your wedding details"
+        title={t("guestTopBar.completeDetails")}
         requireNames
       />
     </header>

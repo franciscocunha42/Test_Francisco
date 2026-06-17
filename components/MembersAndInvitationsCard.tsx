@@ -14,17 +14,26 @@ import { createClient } from "@/lib/supabase/client";
 import { removeMember } from "@/lib/actions/wedding";
 import { createInvitation, revokeInvitation } from "@/lib/actions/invitations";
 import { formatDate } from "@/lib/utils/format";
+import { useT } from "@/lib/i18n/provider";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
 import type { WeddingMember, Profile, WeddingInvitation } from "@/lib/types/database";
 
 interface Props {
   weddingId: string;
 }
 
-const ACCESS_OPTIONS = [
-  { value: "partner", label: "Editor (Partner)", access: "edit" },
-  { value: "planner", label: "Editor (Planner)", access: "edit" },
-  { value: "viewer",  label: "Viewer",            access: "view" },
-] as const;
+const ACCESS_OPTIONS: ReadonlyArray<{ value: string; labelKey: TranslationKey; access: string }> = [
+  { value: "partner", labelKey: "members.roleEditorPartner", access: "edit" },
+  { value: "planner", labelKey: "members.roleEditorPlanner", access: "edit" },
+  { value: "viewer",  labelKey: "members.roleViewer",        access: "view" },
+];
+
+const INVITE_STATUS_KEYS: Record<WeddingInvitation["status"], TranslationKey> = {
+  accepted: "members.statusAccepted",
+  pending: "members.statusPending",
+  revoked: "members.statusRevoked",
+  expired: "members.statusExpired",
+};
 
 function statusBadgeVariant(status: WeddingInvitation["status"]) {
   switch (status) {
@@ -37,6 +46,7 @@ function statusBadgeVariant(status: WeddingInvitation["status"]) {
 
 export function MembersAndInvitationsCard({ weddingId }: Props) {
   const supabase = createClient();
+  const t = useT();
   const [members, setMembers] = useState<(WeddingMember & { profiles: Profile | null })[]>([]);
   const [invitations, setInvitations] = useState<WeddingInvitation[]>([]);
   const [email, setEmail] = useState("");
@@ -66,12 +76,12 @@ export function MembersAndInvitationsCard({ weddingId }: Props) {
     if (!email) return;
     startTransition(async () => {
       const result = await createInvitation(weddingId, email, role);
-      if (!result.ok) { toast.error(result.error ?? "Couldn't send invite"); return; }
+      if (!result.ok) { toast.error(result.error ?? t("common.somethingWrong")); return; }
       if (result.error) {
         // Invitation row created but email send failed — surface as warning.
-        toast.warning(`Invitation saved. ${result.error}`);
+        toast.warning(`${t("members.invitationSent")}. ${result.error}`);
       } else {
-        toast.success("Invitation sent");
+        toast.success(t("members.invitationSent"));
       }
       setEmail("");
       await load();
@@ -81,21 +91,21 @@ export function MembersAndInvitationsCard({ weddingId }: Props) {
   async function handleRemoveMember(userId: string) {
     const result = await removeMember(weddingId, userId);
     if (result?.ok === false) toast.error(result.error);
-    else { toast.success("Member removed"); setMembers((m) => m.filter((x) => x.user_id !== userId)); }
+    else { toast.success(t("members.memberRemoved")); setMembers((m) => m.filter((x) => x.user_id !== userId)); }
   }
 
   async function handleRevoke(invitationId: string) {
     const result = await revokeInvitation(weddingId, invitationId);
     if (!result.ok) { toast.error(result.error); return; }
-    toast.success("Invitation revoked");
+    toast.success(t("members.invitationRevoked"));
     await load();
   }
 
   function copyInviteLink(token: string) {
     const url = `${window.location.origin}/invite/${token}`;
     navigator.clipboard.writeText(url).then(
-      () => toast.success("Invitation link copied"),
-      () => toast.error("Failed to copy link"),
+      () => toast.success(t("common.copied")),
+      () => toast.error(t("members.copyFailed")),
     );
   }
 
@@ -105,22 +115,22 @@ export function MembersAndInvitationsCard({ weddingId }: Props) {
   return (
     <Card id="members">
       <CardHeader>
-        <CardTitle>Members & access</CardTitle>
+        <CardTitle>{t("settings.membersAccess")}</CardTitle>
         <CardDescription>
-          Invite collaborators by email. Editors can change everything; viewers can only see your plans.
+          {t("settings.membersDesc")}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
         {/* Active members */}
         <div className="space-y-2">
-          <p className="text-sm font-medium">Active members</p>
+          <p className="text-sm font-medium">{t("members.activeMembers")}</p>
           {members.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No members yet.</p>
+            <p className="text-sm text-muted-foreground">{t("members.noMembers")}</p>
           ) : (
             members.map((m) => (
               <div key={m.id} className="flex items-center justify-between rounded-md border px-3 py-2">
                 <div>
-                  <p className="text-sm font-medium">{m.profiles?.full_name ?? m.profiles?.email ?? "Unknown"}</p>
+                  <p className="text-sm font-medium">{m.profiles?.full_name ?? m.profiles?.email ?? "—"}</p>
                   <p className="text-xs text-muted-foreground">{m.profiles?.email}</p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -128,8 +138,8 @@ export function MembersAndInvitationsCard({ weddingId }: Props) {
                   {m.role !== "owner" && (
                     <ConfirmDialog
                       trigger={<Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive"><UserMinus className="h-3.5 w-3.5" /></Button>}
-                      title="Remove member"
-                      description={`Remove ${m.profiles?.full_name ?? m.profiles?.email ?? "this member"} from the wedding?`}
+                      title={t("members.remove")}
+                      description={m.profiles?.full_name ?? m.profiles?.email ?? ""}
                       onConfirm={() => handleRemoveMember(m.user_id)}
                     />
                   )}
@@ -143,11 +153,11 @@ export function MembersAndInvitationsCard({ weddingId }: Props) {
 
         {/* Invite form */}
         <div className="space-y-2">
-          <p className="text-sm font-medium">Invite by email</p>
+          <p className="text-sm font-medium">{t("members.inviteByEmail")}</p>
           <div className="flex flex-wrap gap-2">
             <Input
               type="email"
-              placeholder="partner@example.com"
+              placeholder={t("members.emailPh")}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="min-w-[200px] flex-1"
@@ -156,17 +166,17 @@ export function MembersAndInvitationsCard({ weddingId }: Props) {
               <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
               <SelectContent>
                 {ACCESS_OPTIONS.map((o) => (
-                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                  <SelectItem key={o.value} value={o.value}>{t(o.labelKey)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
             <Button onClick={handleInvite} disabled={!email || pending}>
               <Mail className="mr-1.5 h-4 w-4" />
-              {pending ? "Sending…" : "Send invite"}
+              {pending ? t("members.sending") : t("members.sendInvite")}
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
-            We&apos;ll email a secure accept link. Editors can edit everything; viewers can only see plans.
+            {t("members.inviteDesc")}
           </p>
         </div>
 
@@ -175,23 +185,23 @@ export function MembersAndInvitationsCard({ weddingId }: Props) {
           <>
             <Separator />
             <div className="space-y-2">
-              <p className="text-sm font-medium">Pending invitations</p>
+              <p className="text-sm font-medium">{t("members.pending")}</p>
               {pendingInvites.map((inv) => (
                 <div key={inv.id} className="flex flex-wrap items-center justify-between gap-2 rounded-md border px-3 py-2">
                   <div>
                     <p className="text-sm font-medium">{inv.email}</p>
                     <p className="text-xs text-muted-foreground">
-                      Invited {formatDate(inv.invited_at)} · expires {formatDate(inv.expires_at)} · {inv.role}
+                      {formatDate(inv.invited_at)} · {formatDate(inv.expires_at)} · {inv.role}
                     </p>
                   </div>
                   <div className="flex items-center gap-1">
                     <Button variant="ghost" size="sm" onClick={() => copyInviteLink(inv.token)}>
-                      <Copy className="mr-1 h-3.5 w-3.5" /> Copy link
+                      <Copy className="mr-1 h-3.5 w-3.5" /> {t("members.copyLink")}
                     </Button>
                     <ConfirmDialog
-                      trigger={<Button variant="ghost" size="sm" className="text-destructive hover:text-destructive"><MailX className="mr-1 h-3.5 w-3.5" /> Revoke</Button>}
-                      title="Revoke invitation"
-                      description={`Revoke the invitation sent to ${inv.email}?`}
+                      trigger={<Button variant="ghost" size="sm" className="text-destructive hover:text-destructive"><MailX className="mr-1 h-3.5 w-3.5" /> {t("members.revoke")}</Button>}
+                      title={t("members.revokeInvitation")}
+                      description={inv.email}
                       onConfirm={() => handleRevoke(inv.id)}
                     />
                   </div>
@@ -206,15 +216,15 @@ export function MembersAndInvitationsCard({ weddingId }: Props) {
           <>
             <Separator />
             <div className="space-y-2">
-              <p className="text-sm font-medium">Invitation history</p>
+              <p className="text-sm font-medium">{t("members.history")}</p>
               <div className="rounded-md border">
                 <table className="w-full text-sm">
                   <thead className="border-b bg-muted/40 text-xs uppercase tracking-wide text-muted-foreground">
                     <tr>
-                      <th className="px-3 py-2 text-left font-medium">Email</th>
-                      <th className="px-3 py-2 text-left font-medium">Role</th>
-                      <th className="px-3 py-2 text-left font-medium">Status</th>
-                      <th className="px-3 py-2 text-left font-medium">When</th>
+                      <th className="px-3 py-2 text-left font-medium">{t("members.email")}</th>
+                      <th className="px-3 py-2 text-left font-medium">{t("members.role")}</th>
+                      <th className="px-3 py-2 text-left font-medium">{t("members.status")}</th>
+                      <th className="px-3 py-2 text-left font-medium">{t("members.when")}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y">
@@ -224,7 +234,7 @@ export function MembersAndInvitationsCard({ weddingId }: Props) {
                         <td className="px-3 py-2 capitalize text-muted-foreground">{inv.role}</td>
                         <td className="px-3 py-2">
                           <Badge variant={statusBadgeVariant(inv.status)} className="capitalize">
-                            {inv.status}
+                            {t(INVITE_STATUS_KEYS[inv.status])}
                           </Badge>
                         </td>
                         <td className="px-3 py-2 text-xs text-muted-foreground">

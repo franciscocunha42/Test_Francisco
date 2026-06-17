@@ -11,18 +11,20 @@ import {
   Dialog, DialogContent, DialogTrigger, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useT } from "@/lib/i18n/provider";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
 import type { DefaultVenue } from "@/lib/data/default-porto-venues";
 
 const SUBCAT_CONFIG: Record<string, {
-  label: string;
+  labelKey: TranslationKey;
   gradient: string;
   Icon: React.ElementType;
 }> = {
-  quinta:      { label: "Quinta",       gradient: "from-emerald-500 to-green-700",  Icon: TreeDeciduous },
-  hotel:       { label: "Hotel",        gradient: "from-indigo-500 to-blue-700",    Icon: Building2 },
-  restaurante: { label: "Restaurant",   gradient: "from-orange-400 to-amber-600",   Icon: Utensils },
-  "salão":     { label: "Ballroom",     gradient: "from-purple-500 to-violet-700",  Icon: Sparkles },
-  praia:       { label: "Beach",        gradient: "from-cyan-400 to-sky-600",       Icon: Waves },
+  quinta:      { labelKey: "suppliers.subcatLabelQuinta",     gradient: "from-emerald-500 to-green-700", Icon: TreeDeciduous },
+  hotel:       { labelKey: "suppliers.subcatLabelHotel",      gradient: "from-indigo-500 to-blue-700",   Icon: Building2 },
+  restaurante: { labelKey: "suppliers.subcatLabelRestaurant", gradient: "from-orange-400 to-amber-600",  Icon: Utensils },
+  "salão":     { labelKey: "suppliers.subcatLabelBallroom",   gradient: "from-purple-500 to-violet-700", Icon: Sparkles },
+  praia:       { labelKey: "suppliers.subcatLabelBeach",      gradient: "from-cyan-400 to-sky-600",      Icon: Waves },
 };
 
 interface VenueDetailDialogProps {
@@ -34,13 +36,12 @@ interface VenueDetailDialogProps {
 }
 
 export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: VenueDetailDialogProps) {
+  const t = useT();
   const [open, setOpen] = useState(false);
-  const cfg = SUBCAT_CONFIG[venue.subcategory] ?? {
-    label: venue.subcategory,
-    gradient: "from-gray-400 to-gray-600",
-    Icon: Building2,
-  };
-  const { Icon } = cfg;
+  const cfg = SUBCAT_CONFIG[venue.subcategory];
+  const Icon = cfg?.Icon ?? Building2;
+  const subcatLabel = cfg ? t(cfg.labelKey) : venue.subcategory;
+  const gradient = cfg?.gradient ?? "from-gray-400 to-gray-600";
   const hasPhotos = (venue.photos?.length ?? 0) > 0;
   const features = venue.features ?? [];
 
@@ -55,7 +56,7 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto p-0">
         <DialogTitle className="sr-only">{venue.name}</DialogTitle>
         <DialogDescription className="sr-only">
-          {cfg.label} · {venue.notes ?? "Wedding venue details"}
+          {subcatLabel} · {venue.notes ?? t("venue.detailsDesc")}
         </DialogDescription>
 
         {/* Hero photo / placeholder */}
@@ -74,12 +75,12 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
           <div
             className={cn(
               "flex aspect-[16/9] w-full flex-col items-center justify-center gap-2 bg-gradient-to-br",
-              cfg.gradient,
+              gradient,
             )}
           >
             <Icon className="h-16 w-16 text-white/70" />
             <span className="text-sm font-semibold uppercase tracking-wider text-white/80">
-              {cfg.label}
+              {subcatLabel}
             </span>
           </div>
         )}
@@ -89,7 +90,7 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div>
               <h2 className="font-serif text-2xl font-semibold leading-tight">{venue.name}</h2>
-              <p className="mt-1 text-sm text-muted-foreground">{cfg.label}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{subcatLabel}</p>
               <div className="mt-2 flex flex-wrap items-center gap-3 text-sm">
                 {venue.rating != null && (
                   <span className="flex items-center gap-1 text-amber-600">
@@ -106,7 +107,7 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
                 {(venue.photos?.length ?? 0) > 0 && (
                   <span className="flex items-center gap-1 text-muted-foreground">
                     <Camera className="h-3.5 w-3.5" />
-                    Photos · {venue.photos!.length}
+                    {t("venue.photos")} · {venue.photos!.length}
                   </span>
                 )}
                 {venue.website && (
@@ -117,7 +118,7 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
                     className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
                   >
                     <Globe className="h-3.5 w-3.5" />
-                    Website
+                    {t("suppliers.website")}
                   </a>
                 )}
                 {venue.email && (
@@ -135,12 +136,12 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
             {isSaved ? (
               <Button variant="outline" disabled className="border-emerald-300 text-emerald-600">
                 <CheckCircle2 className="mr-1.5 h-4 w-4" />
-                Added
+                {t("venue.added")}
               </Button>
             ) : (
               <Button onClick={handleAdd} disabled={isAdding}>
                 <Plus className="mr-1.5 h-4 w-4" />
-                {isAdding ? "Adding…" : "Add to my wedding"}
+                {isAdding ? t("venue.adding") : t("venue.addToWedding")}
               </Button>
             )}
           </div>
@@ -149,7 +150,7 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
           {features.length > 0 && (
             <section>
               <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                Highlights
+                {t("venue.highlights")}
               </h3>
               <ul className="grid gap-2 sm:grid-cols-2">
                 {features.map((f) => (
@@ -166,24 +167,24 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
           <section className="grid gap-3 sm:grid-cols-2">
             {(venue.min_capacity != null || venue.max_capacity != null) && (
               <div className="rounded-lg border p-3">
-                <p className="text-xs uppercase text-muted-foreground">Capacity</p>
+                <p className="text-xs uppercase text-muted-foreground">{t("venue.capacity")}</p>
                 <p className="mt-0.5 flex items-center gap-1.5 text-sm font-medium">
                   <Users className="h-4 w-4" />
                   {venue.min_capacity != null && venue.max_capacity != null
-                    ? `${venue.min_capacity}–${venue.max_capacity} guests`
+                    ? `${venue.min_capacity}–${venue.max_capacity} ${t("suppliers.guests")}`
                     : venue.max_capacity != null
-                    ? `Up to ${venue.max_capacity} guests`
-                    : `From ${venue.min_capacity} guests`}
+                    ? `${t("venue.upTo")} ${venue.max_capacity} ${t("suppliers.guests")}`
+                    : `${t("venue.from")} ${venue.min_capacity} ${t("suppliers.guests")}`}
                 </p>
               </div>
             )}
             {(venue.price_per_person != null || venue.quoted_price != null) && (
               <div className="rounded-lg border p-3">
-                <p className="text-xs uppercase text-muted-foreground">Price</p>
+                <p className="text-xs uppercase text-muted-foreground">{t("venue.price")}</p>
                 <p className="mt-0.5 text-sm font-medium">
                   {venue.price_per_person != null
-                    ? `From €${venue.price_per_person}/person`
-                    : `From €${venue.quoted_price!.toLocaleString()}`}
+                    ? t("venue.priceFromPerPerson").replace("{price}", String(venue.price_per_person))
+                    : t("venue.priceFromTotal").replace("{price}", venue.quoted_price!.toLocaleString())}
                 </p>
               </div>
             )}
@@ -193,7 +194,7 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
           {venue.notes && (
             <section>
               <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                About
+                {t("venue.about")}
               </h3>
               <p className="text-sm leading-relaxed text-foreground/90">{venue.notes}</p>
             </section>
@@ -203,7 +204,7 @@ export function VenueDetailDialog({ venue, isSaved, isAdding, onAdd, trigger }: 
           {hasPhotos && (
             <section>
               <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                Gallery
+                {t("venue.gallery")}
               </h3>
               <div className="grid gap-2 sm:grid-cols-2">
                 {venue.photos!.map((src, i) => (

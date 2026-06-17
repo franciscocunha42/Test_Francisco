@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, Dialog
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useT } from "@/lib/i18n/provider";
 import type { BudgetCategory } from "@/lib/types/database";
 
 interface CategoryFormDialogProps {
@@ -20,6 +21,7 @@ interface CategoryFormDialogProps {
 }
 
 export function CategoryFormDialog({ weddingId, category, trigger, onSubmit: onSubmitProp }: CategoryFormDialogProps) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<BudgetCategoryFormValues>({
     resolver: zodResolver(budgetCategorySchema),
@@ -33,7 +35,7 @@ export function CategoryFormDialog({ weddingId, category, trigger, onSubmit: onS
         ? await updateBudgetCategory(weddingId, category.id, data)
         : await createBudgetCategory(weddingId, data);
     if (result?.ok === false) { toast.error(result.error); return; }
-    toast.success(category ? "Category updated" : "Category created");
+    toast.success(category ? t("budget.categoryUpdated") : t("budget.categoryCreated"));
     setOpen(false);
     reset();
   }
@@ -42,20 +44,20 @@ export function CategoryFormDialog({ weddingId, category, trigger, onSubmit: onS
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
-        <DialogHeader><DialogTitle>{category ? "Edit Category" : "New Budget Category"}</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{category ? t("budget.editCategory") : t("budget.newCategory")}</DialogTitle></DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-1">
-            <Label>Name *</Label>
-            <Input {...register("name")} placeholder="e.g. Photography" />
+            <Label>{t("budget.categoryName")} *</Label>
+            <Input {...register("name")} />
             {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
           </div>
           <div className="space-y-1">
-            <Label>Planned Amount</Label>
+            <Label>{t("budget.plannedAmount")}</Label>
             <Input type="number" step="0.01" {...register("planned_amount")} />
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Save"}</Button>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
+            <Button type="submit" disabled={isSubmitting}>{isSubmitting ? t("common.saving") : t("common.save")}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

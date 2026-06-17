@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatDate } from "@/lib/utils/format";
+import { useT } from "@/lib/i18n/provider";
 import type { Form, RsvpConfig } from "@/lib/types/database";
 
 interface WeddingInfo {
@@ -45,6 +46,7 @@ const EMPTY: FormValues = {
 };
 
 export function BespokeRsvpForm({ form, wedding }: BespokeRsvpFormProps) {
+  const t = useT();
   const [values, setValues] = useState<FormValues>(EMPTY);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -60,7 +62,7 @@ export function BespokeRsvpForm({ form, wedding }: BespokeRsvpFormProps) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!values.attending) { setError("Please let us know if you can attend."); return; }
+    if (!values.attending) { setError(t("rsvp.willAttend")); return; }
     setSubmitting(true);
     setError(null);
 
@@ -80,7 +82,7 @@ export function BespokeRsvpForm({ form, wedding }: BespokeRsvpFormProps) {
 
     const data = await res.json();
     setSubmitting(false);
-    if (!res.ok) { setError(data.error ?? "Something went wrong. Please try again."); return; }
+    if (!res.ok) { setError(data.error ?? t("common.somethingWrong")); return; }
     setSubmitted(true);
   }
 
@@ -89,12 +91,12 @@ export function BespokeRsvpForm({ form, wedding }: BespokeRsvpFormProps) {
       <div className="flex min-h-screen flex-col items-center justify-center p-6 text-center bg-gradient-to-b from-champagne-50 to-white">
         <CheckCircle2 className="mb-4 h-14 w-14 text-emerald-500" />
         <h1 className="font-serif text-3xl font-semibold">
-          {values.attending === "yes" ? "See you there!" : "Thanks for letting us know"}
+          {values.attending === "yes" ? t("rsvp.seeYouThere") : t("rsvp.thanksLetUsKnow")}
         </h1>
         <p className="mt-3 max-w-sm text-muted-foreground">
           {values.attending === "yes"
-            ? `We're so excited to celebrate with you, ${values.first_name}! We'll be in touch with more details soon.`
-            : `We're sorry you can't make it, ${values.first_name}. We'll be thinking of you!`}
+            ? t("rsvp.excitedAccept").replace("{name}", values.first_name)
+            : t("rsvp.sorryDecline").replace("{name}", values.first_name)}
         </p>
         <div className="mt-6 flex items-center gap-2 text-primary">
           <Heart className="h-4 w-4 fill-primary" />
@@ -140,47 +142,47 @@ export function BespokeRsvpForm({ form, wedding }: BespokeRsvpFormProps) {
           {/* Name */}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
-              <Label>First Name <span className="text-destructive">*</span></Label>
+              <Label>{t("rsvp.firstName")} <span className="text-destructive">*</span></Label>
               <Input
                 required
                 value={values.first_name}
                 onChange={(e) => set("first_name", e.target.value)}
-                placeholder="Jane"
+                placeholder={t("rsvp.firstNamePh")}
               />
             </div>
             <div className="space-y-1.5">
-              <Label>Last Name <span className="text-destructive">*</span></Label>
+              <Label>{t("rsvp.lastName")} <span className="text-destructive">*</span></Label>
               <Input
                 required
                 value={values.last_name}
                 onChange={(e) => set("last_name", e.target.value)}
-                placeholder="Smith"
+                placeholder={t("rsvp.lastNamePh")}
               />
             </div>
           </div>
 
           {/* Email */}
           <div className="space-y-1.5">
-            <Label>Email <span className="text-xs font-normal text-muted-foreground">(optional)</span></Label>
+            <Label>{t("rsvp.emailOptional")}</Label>
             <Input
               type="email"
               value={values.email}
               onChange={(e) => set("email", e.target.value)}
-              placeholder="jane@example.com"
+              placeholder={t("rsvp.emailPh")}
             />
           </div>
 
           {/* Attending */}
           <div className="space-y-2">
-            <Label>Will you be attending? <span className="text-destructive">*</span></Label>
+            <Label>{t("rsvp.willAttend")} <span className="text-destructive">*</span></Label>
             <RadioGroup
               value={values.attending}
               onValueChange={(v) => set("attending", v as "yes" | "no")}
               className="grid grid-cols-2 gap-3"
             >
               {[
-                { value: "yes", label: "Joyfully accepts" },
-                { value: "no",  label: "Regretfully declines" },
+                { value: "yes", label: t("rsvp.accepts") },
+                { value: "no",  label: t("rsvp.declines") },
               ].map(({ value, label }) => (
                 <label
                   key={value}
@@ -206,10 +208,10 @@ export function BespokeRsvpForm({ form, wedding }: BespokeRsvpFormProps) {
               {/* Meal choice */}
               {mealOptions.length > 0 && (
                 <div className="space-y-1.5">
-                  <Label>Meal Choice <span className="text-destructive">*</span></Label>
+                  <Label>{t("rsvp.mealChoice")} <span className="text-destructive">*</span></Label>
                   <Select value={values.meal_choice} onValueChange={(v) => set("meal_choice", v)}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select your meal preference" />
+                      <SelectValue placeholder={t("rsvp.selectMeal")} />
                     </SelectTrigger>
                     <SelectContent>
                       {mealOptions.map((opt) => (
@@ -222,24 +224,24 @@ export function BespokeRsvpForm({ form, wedding }: BespokeRsvpFormProps) {
 
               {/* Dietary requirements */}
               <div className="space-y-1.5">
-                <Label>Dietary Requirements &amp; Intolerances</Label>
+                <Label>{t("rsvp.dietary")}</Label>
                 <Input
                   value={values.dietary_requirements}
                   onChange={(e) => set("dietary_requirements", e.target.value)}
-                  placeholder="Vegetarian, nut allergy, gluten-free…"
+                  placeholder={t("rsvp.dietaryPh")}
                 />
-                <p className="text-xs text-muted-foreground">Leave blank if none.</p>
+                <p className="text-xs text-muted-foreground">{t("rsvp.leaveBlank")}</p>
               </div>
             </>
           )}
 
           {/* Notes */}
           <div className="space-y-1.5">
-            <Label>Message to the couple <span className="text-xs font-normal text-muted-foreground">(optional)</span></Label>
+            <Label>{t("rsvp.messageOptional")}</Label>
             <Textarea
               value={values.notes}
               onChange={(e) => set("notes", e.target.value)}
-              placeholder="Share your well-wishes or any other information…"
+              placeholder={t("rsvp.messagePh")}
               rows={3}
             />
           </div>
@@ -247,11 +249,11 @@ export function BespokeRsvpForm({ form, wedding }: BespokeRsvpFormProps) {
           {error && <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">{error}</p>}
 
           <Button type="submit" className="w-full" size="lg" disabled={submitting}>
-            {submitting ? "Sending…" : "Submit RSVP"}
+            {submitting ? t("rsvp.submitting") : t("rsvp.submit")}
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-xs text-muted-foreground">Powered by VowPlan</p>
+        <p className="mt-6 text-center text-xs text-muted-foreground">{t("rsvp.poweredBy")}</p>
       </div>
     </div>
   );

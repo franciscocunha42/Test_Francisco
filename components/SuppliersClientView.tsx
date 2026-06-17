@@ -28,22 +28,24 @@ import type { Vendor, Expense, BudgetCategory, VendorStatus, PaymentStatus } fro
 import type { VendorFormValues } from "@/lib/schemas/vendor";
 import type { ExpenseFormValues } from "@/lib/schemas/budget";
 import type { DefaultVenue } from "@/lib/data/default-porto-venues";
+import { useT } from "@/lib/i18n/provider";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
 
 // ─── constants ───────────────────────────────────────────────────────────────
 
-const VENUE_SUBCATEGORIES = [
-  { value: "quinta",      label: "Quintas" },
-  { value: "hotel",       label: "Hotels" },
-  { value: "restaurante", label: "Restaurants" },
-  { value: "salão",       label: "Ballrooms" },
-  { value: "praia",       label: "Beach Weddings" },
+const VENUE_SUBCATEGORIES: Array<{ value: string; labelKey: TranslationKey }> = [
+  { value: "quinta",      labelKey: "suppliers.subcatQuinta" },
+  { value: "hotel",       labelKey: "suppliers.subcatHotel" },
+  { value: "restaurante", labelKey: "suppliers.subcatRestaurante" },
+  { value: "salão",       labelKey: "suppliers.subcatSalao" },
+  { value: "praia",       labelKey: "suppliers.subcatPraia" },
 ];
 
-const PRICE_RANGES = [
-  { value: "under40",  label: "Under €40" },
-  { value: "40-70",    label: "€40 – €70" },
-  { value: "70-100",   label: "€70 – €100" },
-  { value: "over100",  label: "Over €100" },
+const PRICE_RANGES: Array<{ value: string; labelKey: TranslationKey }> = [
+  { value: "under40",  labelKey: "suppliers.priceUnder40" },
+  { value: "40-70",    labelKey: "suppliers.price40to70" },
+  { value: "70-100",   labelKey: "suppliers.price70to100" },
+  { value: "over100",  labelKey: "suppliers.priceOver100" },
 ];
 
 const CAPACITY_RANGES = [
@@ -54,12 +56,12 @@ const CAPACITY_RANGES = [
 ];
 
 const VENDOR_STATUSES: VendorStatus[] = ["researching", "contacted", "shortlisted", "booked", "rejected"];
-const STATUS_LABELS: Record<VendorStatus, string> = {
-  researching: "Researching",
-  contacted:   "Contacted",
-  shortlisted: "Shortlisted",
-  booked:      "Booked",
-  rejected:    "Rejected",
+const STATUS_LABEL_KEYS: Record<VendorStatus, TranslationKey> = {
+  researching: "suppliers.statusResearching",
+  contacted:   "suppliers.statusContacted",
+  shortlisted: "suppliers.statusShortlisted",
+  booked:      "suppliers.statusBooked",
+  rejected:    "suppliers.statusRejected",
 };
 
 // ─── props ────────────────────────────────────────────────────────────────────
@@ -123,6 +125,7 @@ export function SuppliersClientView({
   onDeleteExpense,
   onUpdateExpenseStatus,
 }: SuppliersClientViewProps) {
+  const t = useT();
 
   // ── tab state ──
   const [activeTab, setActiveTab] = useState<"browse" | "my-suppliers">("browse");
@@ -190,9 +193,9 @@ export function SuppliersClientView({
     const result = await onAddFromDirectory(venue);
     setPendingAdds((prev) => { const next = new Set(prev); next.delete(venue.name); return next; });
     if (result.ok) {
-      toast.success(`${venue.name} added to My Suppliers`);
+      toast.success(t("suppliers.addedToList").replace("{name}", venue.name));
     } else {
-      toast.error(result.error ?? "Failed to add venue");
+      toast.error(result.error ?? t("suppliers.failedToAdd"));
     }
   }
 
@@ -214,15 +217,15 @@ export function SuppliersClientView({
       {/* Page header */}
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="font-serif text-2xl font-semibold">Suppliers</h1>
+          <h1 className="font-serif text-2xl font-semibold">{t("suppliers.title")}</h1>
           <p className="text-sm text-muted-foreground">
-            {allVendors.length} {allVendors.length === 1 ? "supplier" : "suppliers"} added
+            {allVendors.length} {allVendors.length === 1 ? t("suppliers.totalSingular") : t("suppliers.totalPlural")} {t("suppliers.addedSuffix")}
           </p>
         </div>
         <VendorFormDialog
           weddingId={weddingId}
           onSubmit={onVendorCreate}
-          trigger={<Button size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" />Add Supplier</Button>}
+          trigger={<Button size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" />{t("suppliers.addSupplier")}</Button>}
         />
       </div>
 
@@ -243,14 +246,14 @@ export function SuppliersClientView({
             {tab === "browse" ? (
               <span className="flex items-center gap-1.5">
                 <MapPin className="h-3.5 w-3.5" />
-                Browse Venues
+                {t("suppliers.browseVenues")}
                 <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
                   {DEFAULT_PORTO_VENUES.length}
                 </span>
               </span>
             ) : (
               <span className="flex items-center gap-1.5">
-                My Suppliers
+                {t("suppliers.mySuppliers")}
                 {allVendors.length > 0 && (
                   <span className="rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
                     {allVendors.length}
@@ -274,7 +277,7 @@ export function SuppliersClientView({
               <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
               <Input
                 className="pl-8 text-sm"
-                placeholder="Search venues…"
+                placeholder={t("suppliers.searchVenues")}
                 value={dirSearch}
                 onChange={(e) => setDirSearch(e.target.value)}
               />
@@ -282,7 +285,7 @@ export function SuppliersClientView({
 
             {/* District */}
             <div>
-              <p className="mb-2.5 text-sm font-semibold">District</p>
+              <p className="mb-2.5 text-sm font-semibold">{t("suppliers.district")}</p>
               <ul className="space-y-2">
                 {ALL_DISTRICTS.map((d) => (
                   <li key={d} className="flex items-center gap-2">
@@ -308,7 +311,7 @@ export function SuppliersClientView({
 
             {/* Venue types */}
             <div>
-              <p className="mb-2.5 text-sm font-semibold">Venue type</p>
+              <p className="mb-2.5 text-sm font-semibold">{t("suppliers.venueType")}</p>
               <ul className="space-y-2">
                 {VENUE_SUBCATEGORIES.map((sub) => (
                   <li key={sub.value} className="flex items-center gap-2">
@@ -323,7 +326,7 @@ export function SuppliersClientView({
                       htmlFor={`subcat-${sub.value}`}
                       className="cursor-pointer text-sm select-none"
                     >
-                      {sub.label}
+                      {t(sub.labelKey)}
                     </label>
                   </li>
                 ))}
@@ -334,7 +337,7 @@ export function SuppliersClientView({
 
             {/* Price */}
             <div>
-              <p className="mb-2.5 text-sm font-semibold">Price per person</p>
+              <p className="mb-2.5 text-sm font-semibold">{t("suppliers.pricePerPerson")}</p>
               <ul className="space-y-2">
                 {PRICE_RANGES.map((r) => (
                   <li key={r.value} className="flex items-center gap-2">
@@ -349,7 +352,7 @@ export function SuppliersClientView({
                       htmlFor={`price-${r.value}`}
                       className="cursor-pointer text-sm select-none"
                     >
-                      {r.label}
+                      {t(r.labelKey)}
                     </label>
                   </li>
                 ))}
@@ -360,7 +363,7 @@ export function SuppliersClientView({
 
             {/* Guest count */}
             <div>
-              <p className="mb-2.5 text-sm font-semibold">Number of guests</p>
+              <p className="mb-2.5 text-sm font-semibold">{t("suppliers.numberOfGuests")}</p>
               <ul className="space-y-2">
                 {CAPACITY_RANGES.map((r) => (
                   <li key={r.value} className="flex items-center gap-2">
@@ -386,7 +389,7 @@ export function SuppliersClientView({
               <>
                 <div className="border-t" />
                 <Button variant="ghost" size="sm" className="w-full text-xs" onClick={clearDirFilters}>
-                  <X className="mr-1.5 h-3.5 w-3.5" />Clear filters
+                  <X className="mr-1.5 h-3.5 w-3.5" />{t("suppliers.clearFilters")}
                 </Button>
               </>
             )}
@@ -396,13 +399,13 @@ export function SuppliersClientView({
           <div className="flex-1 min-w-0 space-y-3">
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-                {filteredDirectory.length} Results
+                {filteredDirectory.length} {t("suppliers.results")}
               </p>
             </div>
 
             {filteredDirectory.length === 0 ? (
               <p className="py-16 text-center text-sm text-muted-foreground">
-                No venues match the filters.
+                {t("suppliers.noVenuesMatch")}
               </p>
             ) : (
               <div className="space-y-3">
@@ -429,10 +432,10 @@ export function SuppliersClientView({
           {allVendors.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
-                { label: "Planned",     value: totals.planned, icon: PiggyBank,    color: "text-sky-600" },
-                { label: "Actual",      value: totals.actual,  icon: Wallet,       color: "text-primary" },
-                { label: "Paid",        value: totals.paid,    icon: CheckCircle2, color: "text-emerald-600" },
-                { label: "Outstanding", value: remaining,      icon: Wallet,       color: "text-amber-600" },
+                { label: t("suppliers.summaryPlanned"),     value: totals.planned, icon: PiggyBank,    color: "text-sky-600" },
+                { label: t("suppliers.summaryActual"),      value: totals.actual,  icon: Wallet,       color: "text-primary" },
+                { label: t("suppliers.summaryPaid"),        value: totals.paid,    icon: CheckCircle2, color: "text-emerald-600" },
+                { label: t("suppliers.summaryOutstanding"), value: remaining,      icon: Wallet,       color: "text-amber-600" },
               ].map(({ label, value, icon: Icon, color }) => (
                 <Card key={label}>
                   <CardContent className="flex items-center gap-3 p-4">
@@ -450,17 +453,17 @@ export function SuppliersClientView({
           {allVendors.length === 0 ? (
             <EmptyState
               icon={Store}
-              title="No suppliers yet"
-              description='Browse the venue directory or click "Add Supplier" to add photographers, catering and more.'
+              title={t("suppliers.emptyTitle")}
+              description={t("suppliers.emptyDesc2")}
               action={
                 <div className="flex flex-wrap items-center justify-center gap-2">
                   <Button onClick={() => setActiveTab("browse")}>
-                    <MapPin className="mr-1.5 h-4 w-4" />Browse Venues
+                    <MapPin className="mr-1.5 h-4 w-4" />{t("suppliers.browseVenues")}
                   </Button>
                   <VendorFormDialog
                     weddingId={weddingId}
                     onSubmit={onVendorCreate}
-                    trigger={<Button variant="outline"><Plus className="mr-1.5 h-4 w-4" />Add Supplier</Button>}
+                    trigger={<Button variant="outline"><Plus className="mr-1.5 h-4 w-4" />{t("suppliers.addSupplier")}</Button>}
                   />
                 </div>
               }
@@ -482,7 +485,7 @@ export function SuppliersClientView({
                           : "border-border hover:border-primary/40",
                       )}
                     >
-                      {cat === "all" ? "All" : capitalize(cat)}
+                      {cat === "all" ? t("common.all") : capitalize(cat)}
                     </button>
                   ))}
                 </div>
@@ -491,7 +494,7 @@ export function SuppliersClientView({
                   <Search className="absolute left-2.5 top-2 h-3.5 w-3.5 text-muted-foreground" />
                   <Input
                     className="h-8 pl-8 text-sm"
-                    placeholder="Search suppliers…"
+                    placeholder={t("suppliers.searchSuppliers")}
                     value={mySearch}
                     onChange={(e) => setMySearch(e.target.value)}
                   />
@@ -500,7 +503,7 @@ export function SuppliersClientView({
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="h-8 text-xs gap-1">
-                      Status{myStatuses.length > 0 && ` · ${myStatuses.length}`}
+                      {t("common.status")}{myStatuses.length > 0 && ` · ${myStatuses.length}`}
                       <ChevronDown className="h-3.5 w-3.5" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -511,7 +514,7 @@ export function SuppliersClientView({
                         checked={myStatuses.includes(s)}
                         onCheckedChange={() => toggleStatus(s)}
                       >
-                        {STATUS_LABELS[s]}
+                        {t(STATUS_LABEL_KEYS[s])}
                       </DropdownMenuCheckboxItem>
                     ))}
                   </DropdownMenuContent>
@@ -519,20 +522,20 @@ export function SuppliersClientView({
 
                 {hasMyFilters && (
                   <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={clearMyFilters}>
-                    <X className="mr-1 h-3.5 w-3.5" />Clear
+                    <X className="mr-1 h-3.5 w-3.5" />{t("suppliers.clear")}
                   </Button>
                 )}
               </div>
 
               {hasMyFilters && (
                 <p className="text-xs text-muted-foreground">
-                  {filteredMyVendors.length} of {allVendors.length} suppliers
+                  {t("suppliers.suppliersMatchSummary").replace("{shown}", String(filteredMyVendors.length)).replace("{total}", String(allVendors.length))}
                 </p>
               )}
 
               {filteredMyVendors.length === 0 ? (
                 <p className="py-12 text-center text-sm text-muted-foreground">
-                  No suppliers match the filters.
+                  {t("suppliers.noSuppliersMatch")}
                 </p>
               ) : (
                 <div className="flex flex-col gap-3">

@@ -8,18 +8,20 @@ import {
 import { cn } from "@/lib/utils/cn";
 import { Button } from "@/components/ui/button";
 import { VenueDetailDialog } from "@/components/VenueDetailDialog";
+import { useT } from "@/lib/i18n/provider";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
 import type { DefaultVenue } from "@/lib/data/default-porto-venues";
 
 const SUBCAT_CONFIG: Record<string, {
-  label: string;
+  labelKey: TranslationKey;
   gradient: string;
   Icon: React.ElementType;
 }> = {
-  quinta:      { label: "Quinta",      gradient: "from-emerald-500 to-green-700",  Icon: TreeDeciduous },
-  hotel:       { label: "Hotel",       gradient: "from-indigo-500 to-blue-700",    Icon: Building2 },
-  restaurante: { label: "Restaurant",  gradient: "from-orange-400 to-amber-600",   Icon: Utensils },
-  "salão":     { label: "Ballroom",    gradient: "from-purple-500 to-violet-700",  Icon: Sparkles },
-  praia:       { label: "Beach",       gradient: "from-cyan-400 to-sky-600",       Icon: Waves },
+  quinta:      { labelKey: "suppliers.subcatLabelQuinta",     gradient: "from-emerald-500 to-green-700", Icon: TreeDeciduous },
+  hotel:       { labelKey: "suppliers.subcatLabelHotel",      gradient: "from-indigo-500 to-blue-700",   Icon: Building2 },
+  restaurante: { labelKey: "suppliers.subcatLabelRestaurant", gradient: "from-orange-400 to-amber-600",  Icon: Utensils },
+  "salão":     { labelKey: "suppliers.subcatLabelBallroom",   gradient: "from-purple-500 to-violet-700", Icon: Sparkles },
+  praia:       { labelKey: "suppliers.subcatLabelBeach",      gradient: "from-cyan-400 to-sky-600",      Icon: Waves },
 };
 
 interface VenueDirectoryCardProps {
@@ -30,12 +32,11 @@ interface VenueDirectoryCardProps {
 }
 
 export function VenueDirectoryCard({ venue, isSaved, isAdding, onAdd }: VenueDirectoryCardProps) {
-  const cfg = SUBCAT_CONFIG[venue.subcategory] ?? {
-    label: venue.subcategory,
-    gradient: "from-gray-400 to-gray-600",
-    Icon: Building2,
-  };
-  const { Icon } = cfg;
+  const t = useT();
+  const cfg = SUBCAT_CONFIG[venue.subcategory];
+  const Icon = cfg?.Icon ?? Building2;
+  const subcatLabel = cfg ? t(cfg.labelKey) : venue.subcategory;
+  const gradient = cfg?.gradient ?? "from-gray-400 to-gray-600";
   const heroPhoto = venue.photos?.[0];
   const photoCount = venue.photos?.length ?? 0;
 
@@ -56,7 +57,7 @@ export function VenueDirectoryCard({ venue, isSaved, isAdding, onAdd }: VenueDir
           <button
             type="button"
             className="hidden sm:block relative w-44 shrink-0 cursor-pointer overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-            aria-label={`View details for ${venue.name}`}
+            aria-label={t("venue.viewDetails").replace("{name}", venue.name)}
           >
             {heroPhoto ? (
               <Image
@@ -70,19 +71,19 @@ export function VenueDirectoryCard({ venue, isSaved, isAdding, onAdd }: VenueDir
               <div
                 className={cn(
                   "flex h-full w-full flex-col items-center justify-center gap-2 bg-gradient-to-br",
-                  cfg.gradient,
+                  gradient,
                 )}
               >
                 <Icon className="h-10 w-10 text-white/70" />
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-white/80">
-                  {cfg.label}
+                  {subcatLabel}
                 </span>
               </div>
             )}
             {photoCount > 0 && (
               <span className="absolute bottom-2 left-2 flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-[11px] font-medium text-white">
                 <Camera className="h-3 w-3" />
-                Photos · {photoCount}
+                {t("venue.photos")} · {photoCount}
               </span>
             )}
           </button>
@@ -132,12 +133,12 @@ export function VenueDirectoryCard({ venue, isSaved, isAdding, onAdd }: VenueDir
               className="shrink-0 border-emerald-300 text-emerald-600 hover:text-emerald-600"
             >
               <CheckCircle2 className="mr-1.5 h-3.5 w-3.5" />
-              Added
+              {t("venue.added")}
             </Button>
           ) : (
             <Button size="sm" className="shrink-0" onClick={onAdd} disabled={isAdding}>
               <Plus className="mr-1.5 h-3.5 w-3.5" />
-              {isAdding ? "Adding…" : "Add"}
+              {isAdding ? t("venue.adding") : t("common.add")}
             </Button>
           )}
         </div>
@@ -153,8 +154,8 @@ export function VenueDirectoryCard({ venue, isSaved, isAdding, onAdd }: VenueDir
             <span className="flex items-center gap-1.5">
               <span className="text-base">⛺</span>
               {venue.price_per_person != null
-                ? `From €${venue.price_per_person}/person`
-                : `From €${venue.quoted_price!.toLocaleString()}`}
+                ? t("venue.priceFromPerPerson").replace("{price}", String(venue.price_per_person))
+                : t("venue.priceFromTotal").replace("{price}", venue.quoted_price!.toLocaleString())}
             </span>
           )}
           {(venue.min_capacity != null || venue.max_capacity != null) && (
@@ -163,9 +164,9 @@ export function VenueDirectoryCard({ venue, isSaved, isAdding, onAdd }: VenueDir
               {venue.min_capacity != null && venue.max_capacity != null
                 ? `${venue.min_capacity}–${venue.max_capacity}`
                 : venue.max_capacity != null
-                ? `Up to ${venue.max_capacity}`
-                : `From ${venue.min_capacity}`}{" "}
-              guests
+                ? `${t("venue.upTo")} ${venue.max_capacity}`
+                : `${t("venue.from")} ${venue.min_capacity}`}{" "}
+              {t("suppliers.guests")}
             </span>
           )}
         </div>

@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DEFAULT_BUDGET_CATEGORY_NAMES } from "@/lib/utils/budget-categories";
+import { useT } from "@/lib/i18n/provider";
 import type { TimelineTask } from "@/lib/types/database";
 
 interface TaskFormDialogProps {
@@ -25,6 +26,7 @@ interface TaskFormDialogProps {
 }
 
 export function TaskFormDialog({ weddingId, task, trigger, categories, onSubmit: onSubmitProp }: TaskFormDialogProps) {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const { register, handleSubmit, setValue, watch, reset, formState: { errors, isSubmitting } } = useForm<TaskFormValues>({
     resolver: zodResolver(taskSchema),
@@ -48,7 +50,7 @@ export function TaskFormDialog({ weddingId, task, trigger, categories, onSubmit:
         ? await updateTask(weddingId, task.id, data)
         : await createTask(weddingId, data);
     if (result?.ok === false) { toast.error(result.error); return; }
-    toast.success(task ? "Task updated" : "Task created");
+    toast.success(task ? t("timeline.taskUpdated") : t("timeline.taskCreated"));
     setOpen(false);
     reset();
   }
@@ -57,27 +59,27 @@ export function TaskFormDialog({ weddingId, task, trigger, categories, onSubmit:
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
-        <DialogHeader><DialogTitle>{task ? "Edit Task" : "New Task"}</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{task ? t("timeline.editTask") : t("timeline.newTask")}</DialogTitle></DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-1">
-            <Label>Title *</Label>
-            <Input {...register("title")} placeholder="e.g. Book florist" />
+            <Label>{t("timeline.taskTitle")} *</Label>
+            <Input {...register("title")} />
             {errors.title && <p className="text-xs text-destructive">{errors.title.message}</p>}
           </div>
           <div className="space-y-1">
-            <Label>Description</Label>
-            <Textarea {...register("description")} placeholder="Optional notes..." rows={2} />
+            <Label>{t("timeline.description")}</Label>
+            <Textarea {...register("description")} rows={2} />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label>Category</Label>
+              <Label>{t("timeline.category")}</Label>
               <Select
                 value={categoryValue || "none"}
                 onValueChange={(v) => setValue("category", v === "none" ? null : v, { shouldDirty: true })}
               >
-                <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                <SelectTrigger><SelectValue placeholder={t("timeline.category")} /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">No category</SelectItem>
+                  <SelectItem value="none">{t("common.none")}</SelectItem>
                   {categoryOptions.map((name) => (
                     <SelectItem key={name} value={name}>{name}</SelectItem>
                   ))}
@@ -85,37 +87,37 @@ export function TaskFormDialog({ weddingId, task, trigger, categories, onSubmit:
               </Select>
             </div>
             <div className="space-y-1">
-              <Label>Due Date</Label>
+              <Label>{t("timeline.dueDate")}</Label>
               <Input type="date" {...register("due_date")} />
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <Label>Priority</Label>
+              <Label>{t("timeline.priority")}</Label>
               <Select defaultValue={task?.priority ?? "medium"} onValueChange={(v) => setValue("priority", v as TaskFormValues["priority"])}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="low">Low</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="low">{t("timeline.priorityLow")}</SelectItem>
+                  <SelectItem value="medium">{t("timeline.priorityMedium")}</SelectItem>
+                  <SelectItem value="high">{t("timeline.priorityHigh")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1">
-              <Label>Status</Label>
+              <Label>{t("timeline.status")}</Label>
               <Select defaultValue={task?.status ?? "not_started"} onValueChange={(v) => setValue("status", v as TaskFormValues["status"])}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="not_started">Not Started</SelectItem>
-                  <SelectItem value="in_progress">In Progress</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="not_started">{t("timeline.statusNotStarted")}</SelectItem>
+                  <SelectItem value="in_progress">{t("timeline.statusInProgress")}</SelectItem>
+                  <SelectItem value="completed">{t("timeline.statusCompleted")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Saving..." : "Save"}</Button>
+            <Button type="button" variant="outline" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
+            <Button type="submit" disabled={isSubmitting}>{isSubmitting ? t("common.saving") : t("common.save")}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

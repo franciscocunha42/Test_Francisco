@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useT } from "@/lib/i18n/provider";
 
 interface ConfirmDialogProps {
   trigger: React.ReactNode;
@@ -20,9 +21,11 @@ interface ConfirmDialogProps {
 }
 
 export function ConfirmDialog({
-  trigger, title, description, confirmLabel = "Confirm",
+  trigger, title, description, confirmLabel,
   confirmVariant = "destructive", confirmText, onConfirm,
 }: ConfirmDialogProps) {
+  const t = useT();
+  const resolvedConfirmLabel = confirmLabel ?? t("common.confirm");
   const [open, setOpen] = useState(false);
   const [typed, setTyped] = useState("");
   const [loading, setLoading] = useState(false);
@@ -48,15 +51,15 @@ export function ConfirmDialog({
         {confirmText && (
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground">
-              Type <span className="font-mono font-medium text-foreground">{confirmText}</span> to confirm.
+              <span className="font-mono font-medium text-foreground">{confirmText}</span>
             </p>
             <Input value={typed} onChange={(e) => setTyped(e.target.value)} placeholder={confirmText} />
           </div>
         )}
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
+          <Button variant="outline" onClick={() => setOpen(false)}>{t("common.cancel")}</Button>
           <Button variant={confirmVariant} disabled={!canConfirm || loading} onClick={handleConfirm}>
-            {loading ? "..." : confirmLabel}
+            {loading ? "..." : resolvedConfirmLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

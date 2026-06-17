@@ -14,14 +14,29 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils/cn";
 import { DEFAULT_BUDGET_CATEGORY_NAMES } from "@/lib/utils/budget-categories";
 import { useGuestStore } from "@/lib/guest-store/store";
+import { useT } from "@/lib/i18n/provider";
+import type { TranslationKey } from "@/lib/i18n/dictionary";
 
 const STATUS_VALUES = ["not_started", "in_progress", "completed"] as const;
 const PRIORITY_VALUES = ["high", "medium", "low"] as const;
 type Status = (typeof STATUS_VALUES)[number];
 type Priority = (typeof PRIORITY_VALUES)[number];
 
+const STATUS_LABEL_KEYS: Record<Status, TranslationKey> = {
+  not_started: "timeline.statusNotStarted",
+  in_progress: "timeline.statusInProgress",
+  completed: "timeline.statusCompleted",
+};
+
+const PRIORITY_LABEL_KEYS: Record<Priority, TranslationKey> = {
+  low: "timeline.priorityLow",
+  medium: "timeline.priorityMedium",
+  high: "timeline.priorityHigh",
+};
+
 export default function GuestTimelinePage() {
   const router = useRouter();
+  const t = useT();
   const wedding = useGuestStore((s) => s.wedding);
   const tasks = useGuestStore((s) => s.tasks);
   const budgetCategories = useGuestStore((s) => s.budgetCategories);
@@ -57,7 +72,7 @@ export default function GuestTimelinePage() {
 
   const grouped: Record<string, typeof tasks> = {};
   for (const task of filtered) {
-    const key = task.due_date ? format(parseISO(task.due_date), "MMMM yyyy") : "No date";
+    const key = task.due_date ? format(parseISO(task.due_date), "MMMM yyyy") : t("timeline.noDate");
     if (!grouped[key]) grouped[key] = [];
     grouped[key].push(task);
   }
@@ -71,42 +86,42 @@ export default function GuestTimelinePage() {
       <div className="space-y-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="font-serif text-2xl font-semibold">Timeline</h1>
+            <h1 className="font-serif text-2xl font-semibold">{t("timeline.title")}</h1>
             <p className="text-sm text-muted-foreground">
-              {tasks.length > 0 ? `${completed} / ${tasks.length} tasks completed` : "Track your wedding preparation tasks"}
+              {tasks.length > 0 ? `${completed} / ${tasks.length} ${t("timeline.completed")}` : t("timeline.subtitle")}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
-            <ViewToggle view={view} onChange={setView} />
+            <ViewToggle view={view} onChange={setView} t={t} />
             {tasks.length === 0 && wedding.wedding_date && (
               <Button variant="outline" size="sm" onClick={() => generateDefaults()}>
-                <Wand2 className="mr-1.5 h-3.5 w-3.5" />Generate tasks
+                <Wand2 className="mr-1.5 h-3.5 w-3.5" />{t("timeline.generate")}
               </Button>
             )}
             <TaskFormDialog
               weddingId="guest"
               categories={categoryOptions}
               onSubmit={async (data) => { createTask(data); return { ok: true }; }}
-              trigger={<Button size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" />Add Task</Button>}
+              trigger={<Button size="sm"><Plus className="mr-1.5 h-3.5 w-3.5" />{t("timeline.addTask")}</Button>}
             />
           </div>
         </div>
 
         <div className={cn("space-y-2", view === "gantt" && "hidden")}>
           <FilterRow
-            label="Status"
-            options={STATUS_VALUES.map((s) => ({ value: s, label: s.replace("_", " ") }))}
+            label={t("timeline.status")}
+            options={STATUS_VALUES.map((s) => ({ value: s, label: t(STATUS_LABEL_KEYS[s]) }))}
             selected={statusFilter}
             onToggle={(v) => toggleInList(setStatusFilter, v as Status)}
           />
           <FilterRow
-            label="Priority"
-            options={PRIORITY_VALUES.map((p) => ({ value: p, label: p }))}
+            label={t("timeline.priority")}
+            options={PRIORITY_VALUES.map((p) => ({ value: p, label: t(PRIORITY_LABEL_KEYS[p]) }))}
             selected={priorityFilter}
             onToggle={(v) => toggleInList(setPriorityFilter, v as Priority)}
           />
           <FilterRow
-            label="Category"
+            label={t("timeline.category")}
             options={categoryOptions.map((c) => ({ value: c, label: c }))}
             selected={categoryFilter}
             onToggle={(v) => toggleInList(setCategoryFilter, v)}
@@ -117,7 +132,7 @@ export default function GuestTimelinePage() {
               className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
             >
               <X className="h-3 w-3" />
-              Clear filters
+              {t("timeline.clearFilters")}
             </button>
           )}
         </div>
@@ -135,20 +150,20 @@ export default function GuestTimelinePage() {
         ) : filtered.length === 0 ? (
           <EmptyState
             icon={Calendar}
-            title={filtersActive ? "No tasks match the current filters" : "No tasks yet"}
-            description={filtersActive ? "Try clearing filters or adjusting your selection." : "Add tasks manually or generate a default wedding checklist."}
+            title={filtersActive ? t("timeline.noMatchTitle") : t("timeline.emptyTitle")}
+            description={filtersActive ? t("timeline.noMatchDesc") : t("timeline.emptyDesc")}
             action={
               <div className="flex gap-2">
                 {wedding.wedding_date && (
                   <Button variant="outline" onClick={() => generateDefaults()}>
-                    <Wand2 className="mr-1.5 h-4 w-4" />Generate tasks
+                    <Wand2 className="mr-1.5 h-4 w-4" />{t("timeline.generate")}
                   </Button>
                 )}
                 <TaskFormDialog
                   weddingId="guest"
                   categories={categoryOptions}
                   onSubmit={async (data) => { createTask(data); return { ok: true }; }}
-                  trigger={<Button><Plus className="mr-1.5 h-4 w-4" />Add Task</Button>}
+                  trigger={<Button><Plus className="mr-1.5 h-4 w-4" />{t("timeline.addTask")}</Button>}
                 />
               </div>
             }
@@ -222,7 +237,7 @@ function FilterRow<T extends string>({
   );
 }
 
-function ViewToggle({ view, onChange }: { view: "list" | "gantt"; onChange: (v: "list" | "gantt") => void }) {
+function ViewToggle({ view, onChange, t }: { view: "list" | "gantt"; onChange: (v: "list" | "gantt") => void; t: (key: TranslationKey) => string }) {
   return (
     <div className="inline-flex items-center rounded-lg border bg-muted/40 p-0.5">
       <button
@@ -233,7 +248,7 @@ function ViewToggle({ view, onChange }: { view: "list" | "gantt"; onChange: (v: 
           view === "list" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
         )}
       >
-        <List className="h-3.5 w-3.5" /> List
+        <List className="h-3.5 w-3.5" /> {t("timeline.viewList")}
       </button>
       <button
         type="button"
@@ -243,7 +258,7 @@ function ViewToggle({ view, onChange }: { view: "list" | "gantt"; onChange: (v: 
           view === "gantt" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground",
         )}
       >
-        <GanttChartSquare className="h-3.5 w-3.5" /> Gantt
+        <GanttChartSquare className="h-3.5 w-3.5" /> {t("timeline.viewGantt")}
       </button>
     </div>
   );
